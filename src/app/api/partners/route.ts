@@ -10,7 +10,7 @@ import { checkSubmission, text } from "@/lib/forms/submit";
 export async function GET() {
   const access = await requireRole([...REQUEST_MANAGER_ROLES]);
   if (!access.allowed) {
-    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "UNAUTHENTICATED" ? 401 : 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "FORBIDDEN" ? 403 : 401 });
   }
 
   const partners = await prisma.partner.findMany({

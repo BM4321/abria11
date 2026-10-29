@@ -6,6 +6,7 @@ import {
   ACTIVITY_COOKIE,
   ACTIVITY_COOKIE_MAX_AGE,
   IDLE_TIMEOUT_MS,
+  SESSION_COOKIE,
 } from "@/lib/session";
 
 export async function middleware(request: NextRequest) {
@@ -62,7 +63,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && pathname === "/login") {
+  // Only page loads from a browser with a console session skip the login page.
+  // A sign-in waiting at the "signed in on another device" prompt has a
+  // Supabase user but no console session, and posts its answer to /login.
+  if (
+    user &&
+    pathname === "/login" &&
+    request.method === "GET" &&
+    request.cookies.has(SESSION_COOKIE)
+  ) {
     const next = safeNextPath(request.nextUrl.searchParams.get("next"), "/operations/dashboard");
     return NextResponse.redirect(new URL(next, request.url));
   }

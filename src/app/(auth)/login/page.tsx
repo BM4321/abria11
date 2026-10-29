@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ setup?: string; reset?: string; error?: string; next?: string; timeout?: string; denied?: string }>;
+  searchParams: Promise<{ setup?: string; reset?: string; error?: string; next?: string; timeout?: string; denied?: string; replaced?: string }>;
 }) {
-  const { setup, reset, error, next, timeout, denied } = await searchParams;
+  const { setup, reset, error, next, timeout, denied, replaced } = await searchParams;
 
   const missing: string[] = [];
   if (!supabaseUrl) missing.push("NEXT_PUBLIC_SUPABASE_URL");
@@ -43,6 +43,13 @@ export default async function LoginPage({
         <AuthNotice tone="warning" title="Signed out for inactivity">
           You were inactive for 5 minutes, so we signed you out to keep your
           account secure. Sign in to continue.
+        </AuthNotice>
+      )}
+
+      {replaced === "1" && (
+        <AuthNotice tone="warning" title="Signed in on another device">
+          Your account was signed in on another device, so this one was signed
+          out. Only one device can use the console at a time.
         </AuthNotice>
       )}
 

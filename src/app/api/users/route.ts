@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const access = await requireRole(["ADMIN"]);
   if (!access.allowed) {
-    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "UNAUTHENTICATED" ? 401 : 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "FORBIDDEN" ? 403 : 401 });
   }
 
   const users = await prisma.opsUser.findMany({
@@ -31,7 +31,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const access = await requireRole(["ADMIN"]);
   if (!access.allowed) {
-    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "UNAUTHENTICATED" ? 401 : 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "FORBIDDEN" ? 403 : 401 });
   }
 
   let body: { email?: unknown; password?: unknown; name?: unknown; role?: unknown };

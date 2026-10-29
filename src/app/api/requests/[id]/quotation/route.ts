@@ -11,7 +11,7 @@ export async function GET(
 ) {
   const access = await requireRole([...REQUEST_MANAGER_ROLES]);
   if (!access.allowed) {
-    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "UNAUTHENTICATED" ? 401 : 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "FORBIDDEN" ? 403 : 401 });
   }
 
   const { id } = await params;
@@ -30,7 +30,7 @@ export async function POST(
 ) {
   const access = await requireRole([...REQUEST_MANAGER_ROLES]);
   if (!access.allowed) {
-    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "UNAUTHENTICATED" ? 401 : 403 });
+    return NextResponse.json({ error: "Forbidden" }, { status: access.reason === "FORBIDDEN" ? 403 : 401 });
   }
 
   const { id } = await params;

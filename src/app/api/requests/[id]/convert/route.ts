@@ -15,7 +15,7 @@ export async function POST(
   if (!access.allowed) {
     return NextResponse.json(
       { error: "Forbidden" },
-      { status: access.reason === "UNAUTHENTICATED" ? 401 : 403 }
+      { status: access.reason === "FORBIDDEN" ? 403 : 401 }
     );
   }
 

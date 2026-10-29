@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ACTIVITY_COOKIE, ACTIVITY_COOKIE_MAX_AGE, IDLE_TIMEOUT_MS } from "@/lib/session";
+import {
+  ACTIVITY_COOKIE,
+  ACTIVITY_COOKIE_MAX_AGE,
+  IDLE_TIMEOUT_MS,
+  SESSION_SEEN_INTERVAL_MS,
+} from "@/lib/session";
 
 const WARN_BEFORE_MS = 60 * 1000; // show the warning in the final minute
 const COOKIE_WRITE_THROTTLE_MS = 10 * 1000;
@@ -94,6 +99,35 @@ export default function IdleLogout() {
       window.removeEventListener("storage", onStorage);
     };
   }, [markActive]);
+
+  // Heartbeat while the user is active: marks the session as in use (so a
+  // sign-in elsewhere is warned) and leaves at once if another device took it.
+  useEffect(() => {
+    const check = async () => {
+      if (loggingOutRef.current) return;
+      if (Date.now() - lastRef.current > SESSION_SEEN_INTERVAL_MS) return;
+      try {
+        const res = await fetch("/api/auth/session", { cache: "no-store" });
+        const body = (await res.json()) as { status?: string };
+        if (body.status === "SESSION_REPLACED" || body.status === "SESSION_MISSING") {
+          loggingOutRef.current = true;
+          window.location.href =
+            body.status === "SESSION_REPLACED" ? "/api/auth/logout?replaced=1" : "/api/auth/logout";
+        }
+      } catch {
+        /* offline or server error: try again on the next beat */
+      }
+    };
+    const timer = window.setInterval(check, SESSION_SEEN_INTERVAL_MS);
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") void check();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
 
   // Poll the idle state; log out once the timeout passes, warn in the last minute.
   useEffect(() => {
