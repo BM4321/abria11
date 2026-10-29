@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}</style>
+</helmet>
+<header style="position:relative;background:var(--color-bg);box-shadow:{{ headShadow }};transition:box-shadow .25s ease">
+  <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:3px;overflow:hidden;pointer-events:none"><div ref="{{ barRef }}" style="height:100%;background:var(--color-accent);transform-origin:0 50%;transform:scaleX(0)"></div></div>
+  <div style="max-width:1200px;margin:0 auto;padding:0 clamp(20px,5vw,72px);min-height:{{ barH }};display:flex;align-items:center;gap:24px;transition:min-height .25s ease">
+    <a href="Home.dc.html" aria-label="ABRIA Logistics, home" style="display:flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--color-text);margin-right:auto">
+      <span style="font-weight:600;font-size:26px;letter-spacing:0.08em;line-height:1">ABRIA</span>
+      <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+        <span style="font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 70%,transparent)">Logistics</span>
+      </sc-if>
+    </a>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <nav class="nav" aria-label="Main" style="padding:0;gap:22px">
+        <div style="position:relative" onMouseLeave="{{ closeSol }}">
+          <button type="button" aria-expanded="{{ sol }}" aria-haspopup="true" onClick="{{ toggleSol }}" onMouseEnter="{{ openSol }}" style="display:flex;align-items:center;gap:5px;background:none;border:0;padding:10px 0;font:inherit;font-size:14px;color:{{ solColor }};cursor:pointer">{{ t.solutions }}<i class="ph ph-caret-down" aria-hidden="true" style="font-size:12px"></i></button>
+          <sc-if value="{{ sol }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:100%;left:-24px;padding-top:8px;z-index:60">
+              <div style="width:580px;background:var(--color-bg);box-shadow:var(--shadow-lg);border-radius:var(--radius-lg);padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:2px 12px">
+                <sc-for list="{{ solutions }}" as="s" hint-placeholder-count="6">
+                  <a href="{{ s.href }}" style="display:flex;gap:12px;padding:12px;border-radius:var(--radius-md);color:var(--color-text)" style-hover="background:color-mix(in srgb,var(--color-accent) 9%,transparent)">
+                    <i class="{{ s.iconClass }}" aria-hidden="true" style="font-size:24px;color:var(--color-accent);flex:none"></i>
+                    <span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600;font-size:15px">{{ s.name }}</span><span style="font-size:13px;line-height:1.4;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ s.shortL }}</span></span>
+                  </a>
+                </sc-for>
+                <a href="Solutions.dc.html" style="grid-column:1/-1;padding:12px;font-size:14px;color:var(--color-accent-700)">{{ t.all }} →</a>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+        <sc-for list="{{ links }}" as="l" hint-placeholder-count="5">
+          <a href="{{ l.href }}" aria-current="{{ l.aria }}" style="padding:10px 0">{{ l.label }}</a>
+        </sc-for>
+      </nav>
+      <div role="group" aria-label="Language" style="display:flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+        <button type="button" onClick="{{ setEn }}" aria-pressed="{{ en }}" style="background:{{ enBg }};color:{{ enFg }};border:0;padding:6px 9px;font:inherit;font-size:12px;letter-spacing:0.06em;cursor:pointer">EN</button>
+        <button type="button" onClick="{{ setSw }}" aria-pressed="{{ sw }}" style="background:{{ swBg }};color:{{ swFg }};border:0;padding:6px 9px;font:inherit;font-size:12px;letter-spacing:0.06em;cursor:pointer">SW</button>
+      </div>
+      <button type="button" data-ripple="1" aria-label="{{ t.theme }}" aria-pressed="{{ isDark }}" onClick="{{ toggleTheme }}" style="width:40px;height:40px;border-radius:50%;border:1px solid var(--color-divider);background:transparent;color:var(--color-text);display:grid;place-items:center;cursor:pointer;flex:none" style-hover="background:color-mix(in srgb,var(--color-text) 8%,transparent)"><i class="{{ themeIcon }}" aria-hidden="true" style="font-size:20px;transition:transform .6s cubic-bezier(.4,0,.2,1);transform:rotate({{ themeRot }})"></i></button>
+      <a class="btn btn-primary" href="Request%20Quote.dc.html" onClick="{{ quoteClick }}" style="min-height:40px">{{ t.quote }}</a>
+    </sc-if>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button type="button" data-ripple="1" aria-label="{{ t.theme }}" aria-pressed="{{ isDark }}" onClick="{{ toggleTheme }}" style="width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--color-text);display:grid;place-items:center;cursor:pointer;flex:none"><i class="{{ themeIcon }}" aria-hidden="true" style="font-size:24px;transition:transform .6s cubic-bezier(.4,0,.2,1);transform:rotate({{ themeRot }})"></i></button>
+      <a class="btn btn-primary" href="Request%20Quote.dc.html" onClick="{{ quoteClick }}" style="min-height:44px;padding-inline:14px">{{ t.quoteShort }}</a>
+      <button type="button" aria-label="{{ t.menu }}" aria-expanded="{{ open }}" aria-controls="abria-mobile-menu" onClick="{{ toggleMenu }}" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:0;color:var(--color-text);cursor:pointer;margin-right:-10px">
+        <i class="{{ menuIcon }}" aria-hidden="true" style="font-size:28px"></i>
+      </button>
+    </sc-if>
+  </div>
+  <sc-if value="{{ notice }}" hint-placeholder-val="{{ false }}">
+    <p style="margin:0;background:var(--color-accent-100);color:var(--color-accent-800);font-size:13px;line-height:20px;padding:8px clamp(20px,5vw,72px);text-align:left">{{ noticeText }}</p>
+  </sc-if>
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <div id="abria-mobile-menu" aria-hidden="{{ closedAria }}" style="position:fixed;left:0;right:0;top:72px;bottom:0;z-index:70;background:var(--color-bg);overflow-y:auto;padding:12px clamp(20px,5vw,72px) 40px;transition:opacity .18s ease, transform .18s ease;opacity:{{ mOp }};transform:translateY({{ mY }});visibility:{{ mVis }}">
+      <p style="margin:12px 0 4px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 70%,transparent)">{{ t.solutions }}</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0 16px">
+        <sc-for list="{{ solutions }}" as="s" hint-placeholder-count="6">
+          <a href="{{ s.href }}" style="display:flex;align-items:center;gap:10px;min-height:48px;color:var(--color-text);text-decoration:none;font-size:17px"><i class="{{ s.iconClass }}" aria-hidden="true" style="font-size:22px;color:var(--color-accent)"></i>{{ s.name }}</a>
+        </sc-for>
+      </div>
+      <nav aria-label="Mobile" style="display:flex;flex-direction:column;margin-top:16px">
+        <sc-for list="{{ mobileLinks }}" as="l" hint-placeholder-count="8">
+          <a href="{{ l.href }}" aria-current="{{ l.aria }}" style="display:flex;align-items:center;min-height:52px;font-size:24px;font-weight:600;letter-spacing:-0.01em;color:{{ l.color }};text-decoration:none">{{ l.label }}</a>
+        </sc-for>
+      </nav>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:28px">
+        <a class="btn btn-primary" href="Request%20Quote.dc.html" style="min-height:52px;font-size:16px">{{ t.quote }}</a>
+        <a class="btn btn-secondary" href="Register%20Truck.dc.html" style="min-height:52px;font-size:16px">{{ t.truck }}</a>
+        <a class="btn btn-ghost" href="{{ waHref }}" target="_blank" rel="noopener" style="min-height:52px;font-size:16px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:22px"></i>WhatsApp +255 723 999 039</a>
+      </div>
+      <div role="group" aria-label="Language" style="display:flex;width:fit-content;margin-top:28px;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+        <button type="button" onClick="{{ setEn }}" aria-pressed="{{ en }}" style="background:{{ enBg }};color:{{ enFg }};border:0;min-height:44px;padding:0 16px;font:inherit;font-size:14px;cursor:pointer">English</button>
+        <button type="button" onClick="{{ setSw }}" aria-pressed="{{ sw }}" style="background:{{ swBg }};color:{{ swFg }};border:0;min-height:44px;padding:0 16px;font:inherit;font-size:14px;cursor:pointer">Kiswahili</button>
+      </div>
+    </div>
+  </sc-if>
+  <div style="position:fixed;right:clamp(16px,3vw,32px);bottom:clamp(16px,3vw,32px);z-index:65;display:flex;flex-direction:column;align-items:flex-end;gap:14px;transition:opacity .2s ease, transform .2s ease;opacity:{{ fabOp }};transform:translateY({{ fabY }});pointer-events:{{ fabPE }}">
+    <button type="button" data-ripple="1" aria-label="{{ t.top }}" onClick="{{ toTop }}" style="width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;background:var(--color-surface);color:var(--color-text);box-shadow:var(--shadow-md);transition:opacity .2s ease, transform .2s ease;opacity:{{ topOp }};transform:scale({{ topScale }});pointer-events:{{ topPE }}" style-hover="box-shadow:var(--shadow-lg)"><i class="ph ph-arrow-up" aria-hidden="true" style="font-size:20px"></i></button>
+    <a href="{{ waHref }}" target="_blank" rel="noopener" data-ripple="1" onClick="{{ fabClick }}" aria-label="WhatsApp +255 723 999 039" style="display:flex;align-items:center;gap:10px;height:56px;padding:0 {{ fabPad }};border-radius:16px;background:var(--color-accent);color:var(--color-bg);text-decoration:none;font-size:15px;font-weight:500;letter-spacing:0.01em;box-shadow:var(--shadow-lg);transition:box-shadow .2s ease, background .2s ease" style-hover="background:var(--color-accent-600);box-shadow:0 16px 36px color-mix(in srgb,#2d2b2b 28%,transparent)"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:26px"></i><sc-if value="{{ fabLabel }}" hint-placeholder-val="{{ true }}"><span>{{ t.fab }}</span></sc-if></a>
+  </div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;120px&quot;},&quot;current&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;solutions&quot;,&quot;how&quot;,&quot;shippers&quot;,&quot;carriers&quot;,&quot;tech&quot;,&quot;about&quot;,&quot;contact&quot;,&quot;track&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;translated&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'en', ready: false, sol: false, open: false, wide: true };
+  componentDidMount() {
+    const boot = () => { if (!window.ABRIA) return setTimeout(boot, 40); this.setState({ ready: true, lang: window.ABRIA.getLang() }); };
+    boot();
+    this._l = e => this.setState({ lang: e.detail });
+    this._th = e => this.setState({ theme: e.detail });
+    window.addEventListener('abria-theme', this._th);
+    const tb = () => { if (!window.ABRIA) return setTimeout(tb, 40); this.setState({ theme: window.ABRIA.getTheme() }); }; tb();
+    this._r = () => { const wide = window.innerWidth >= 1040; if (wide !== this.state.wide) this.setState({ wide, open: false }); };
+    this._k = e => { if (e.key === 'Escape') this.setMenu(false), this.setState({ sol: false }); };
+    window.addEventListener('abria-lang', this._l);
+    window.addEventListener('resize', this._r);
+    window.addEventListener('keydown', this._k);
+    this._r();
+    this._s = () => {
+      if (this._raf) return;
+      this._raf = requestAnimationFrame(() => {
+        this._raf = 0;
+        const y = window.scrollY, max = document.documentElement.scrollHeight - window.innerHeight;
+        if (this.barRef.current) this.barRef.current.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
+        const scrolled = y > 8, deep = y > 600, down = y > (this._lastY || 0) && y > 200;
+        this._lastY = y;
+        if (scrolled !== this.state.scrolled || deep !== this.state.deep || down !== this.state.down) this.setState({ scrolled, deep, down });
+      });
+    };
+    window.addEventListener('scroll', this._s, { passive: true });
+    this._s();
+  }
+  barRef = React.createRef();
+  componentWillUnmount() {
+    window.removeEventListener('abria-lang', this._l);
+    window.removeEventListener('resize', this._r);
+    window.removeEventListener('keydown', this._k);
+    window.removeEventListener('scroll', this._s);
+    window.removeEventListener('abria-theme', this._th);
+    document.body.style.overflow = '';
+  }
+  setMenu(open) { document.body.style.overflow = open ? 'hidden' : ''; this.setState({ open }); }
+  setLang(l) { window.ABRIA && window.ABRIA.setLang(l); this.setState({ lang: l }); }
+  renderVals() {
+    const A = window.ABRIA, sw = this.state.lang === 'sw', cur = this.props.current;
+    const T = (e, s) => (sw ? s : e);
+    const P = A ? A.pages : {};
+    const on = { bg: 'var(--color-text)', fg: 'var(--color-bg)' }, off = { bg: 'transparent', fg: 'var(--color-text)' };
+    const mk = (key, en, s) => ({ href: P[key], label: T(en, s), aria: cur === key ? 'page' : undefined, color: cur === key ? 'var(--color-accent-700)' : 'var(--color-text)' });
+    const links = [
+      mk('how', 'How It Works', 'Jinsi Inavyofanya Kazi'),
+      mk('shippers', 'For Businesses', 'Kwa Biashara'),
+      mk('carriers', 'For Carriers', 'Kwa Wasafirishaji'),
+      mk('tech', 'Technology', 'Teknolojia'),
+      mk('about', 'About', 'Kuhusu Sisi')
+    ];
+    const mobileLinks = links.concat([mk('track', 'Track Shipment', 'Fuatilia Mzigo'), mk('contact', 'Contact', 'Wasiliana Nasi')]);
+    const translated = !!this.props.translated;
+    const open = this.state.open;
+    return {
+      t: {
+        solutions: T('Solutions', 'Huduma'), all: T('All solutions', 'Huduma zote'),
+        quote: T('Request a Quote', 'Omba Bei'), quoteShort: T('Get a Quote', 'Omba Bei'),
+        truck: T('Register Your Truck', 'Sajili Lori Lako'), menu: T('Menu', 'Menyu'),
+        top: T('Back to top', 'Rudi juu'),
+        theme: this.state.theme === 'dark' ? T('Switch to light mode', 'Badili kwenda mwanga') : T('Switch to dark mode', 'Badili kwenda giza'), fab: T('Chat with us', 'Tuandikie')
+      },
+      wide: this.state.wide, narrow: !this.state.wide,
+      sol: this.state.sol,
+      solColor: cur === 'solutions' ? 'var(--color-accent-700)' : 'var(--color-text)',
+      openSol: () => this.setState({ sol: true }),
+      closeSol: () => this.setState({ sol: false }),
+      toggleSol: () => this.setState(s => ({ sol: !s.sol })),
+      solutions: (A ? A.solutions : []).map(s => Object.assign({}, s, { shortL: sw ? s.shortSw : s.short })),
+      links, mobileLinks,
+      en: !sw, sw,
+      enBg: sw ? off.bg : on.bg, enFg: sw ? off.fg : on.fg,
+      swBg: sw ? on.bg : off.bg, swFg: sw ? on.fg : off.fg,
+      setEn: () => this.setLang('en'), setSw: () => this.setLang('sw'),
+      open, toggleMenu: () => this.setMenu(!open),
+      menuIcon: open ? 'ph ph-x' : 'ph ph-list',
+      mOp: open ? 1 : 0, mY: open ? '0' : '-8px', mVis: open ? 'visible' : 'hidden', closedAria: open ? 'false' : 'true',
+      notice: sw,
+      noticeText: translated
+        ? 'Rasimu ya Kiswahili: inasubiri kuhakikiwa na mzungumzaji asilia kabla ya kuchapishwa.'
+        : 'Ukurasa huu bado unapatikana kwa Kiingereza pekee. Tafsiri ya Kiswahili inaandaliwa.',
+      waHref: A ? A.wa(T('Hello ABRIA, I have a question.', 'Habari ABRIA, nina swali.')) : '#',
+      quoteClick: () => A && A.track('request_quote_click', { from: 'nav' }),
+      barRef: this.barRef,
+      isDark: this.state.theme === 'dark',
+      themeIcon: this.state.theme === 'dark' ? 'ph-duotone ph-sun' : 'ph-duotone ph-moon',
+      themeRot: (this.state.rot || 0) + 'deg',
+      toggleTheme: e => { if (!A) return; this.setState(s => ({ rot: (s.rot || 0) + 180 })); A.toggleTheme(e); A.track('theme_toggle'); },
+      headShadow: this.state.scrolled ? 'var(--shadow-md)' : 'none',
+      barH: this.state.scrolled && this.state.wide ? '60px' : '72px',
+      fabOp: open ? 0 : 1, fabY: open ? '12px' : '0', fabPE: open ? 'none' : 'auto',
+      fabLabel: !this.state.down, fabPad: this.state.down ? '15px' : '20px',
+      topOp: this.state.deep ? 1 : 0, topScale: this.state.deep ? 1 : 0.6, topPE: this.state.deep ? 'auto' : 'none',
+      toTop: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+      fabClick: () => A && A.track('whatsapp_click', { from: 'fab' })
+    };
+  }
+}
+</script>
+</body>
+</html>

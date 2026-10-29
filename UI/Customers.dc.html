@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Customers | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="customers" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <div><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Customers</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Businesses and cargo owners who have requested transport.</p></div>
+    <dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" search="Search by name, company, phone or email" noun="customers" page-size="{{ 10 }}" simulate="{{ simulate }}" empty-title="No customers yet" empty-text="Customers are created automatically from their first transport request." empty-icon="ph-users" hint-size="100%,560px"></dc-import>
+  </sc-if>
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-user-circle-minus" aria-hidden="true" style="font-size:44px;color:var(--app-muted)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Customer not found</h1><a class="btn btn-primary" href="Customers.dc.html" style="margin-top:12px;min-height:40px;border-radius:10px">Back to customers</a></div>
+  </sc-if>
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Breadcrumb" style="display:flex;gap:8px;font-size:13px;color:var(--app-muted)"><a href="Customers.dc.html" style="text-decoration:none">Customers</a><span aria-hidden="true">/</span><span aria-current="page">{{ c.name }}</span></nav>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 20px;margin-top:-8px">
+      <span style="width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 16%,transparent);color:var(--color-accent-800);font-size:20px;font-weight:600;flex:none">{{ ini }}</span>
+      <div style="margin-right:auto;min-width:0"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">{{ c.name }}</h1><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border-radius:999px;font-size:13px;font-weight:500;background:{{ st.bg }};color:{{ st.fg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ st.dot }}"></span>{{ st.label }}</span></div><p style="margin:4px 0 0;font-size:14px;color:var(--app-muted)">{{ c.company }} · {{ c.region }} · Customer since {{ since }}</p></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn btn-primary" href="{{ waHref }}" target="_blank" rel="noopener" style="min-height:40px;border-radius:10px"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i>WhatsApp</a><a class="btn btn-secondary" href="{{ tel }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-phone" aria-hidden="true"></i>Call</a></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px">
+      <sc-for list="{{ stats }}" as="k"><div style="padding:16px 18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><div style="font-size:13px;color:var(--app-muted)">{{ k.k }}</div><div style="margin-top:4px;font-size:24px;font-weight:600">{{ k.v }}</div></div></sc-for>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section aria-labelledby="ci-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><h2 id="ci-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Customer information</h2><dl style="margin:0;display:flex;flex-direction:column;gap:12px"><sc-for list="{{ info }}" as="k"><div><dt style="font-size:12px;color:var(--app-muted)">{{ k.k }}</dt><dd style="margin:2px 0 0;font-size:14.5px">{{ k.v }}</dd></div></sc-for></dl></section>
+        <section aria-labelledby="co-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><h2 id="co-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Companies</h2><div style="display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;background:var(--app-page)"><i class="ph-duotone ph-buildings" aria-hidden="true" style="font-size:26px;color:var(--color-accent)"></i><div><div style="font-weight:600">{{ c.company }}</div><div style="font-size:12.5px;color:var(--app-muted)">TIN {{ c.tin }} · {{ c.region }} · Primary</div></div></div></section>
+        <section aria-labelledby="ca-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><h2 id="ca-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Activity</h2><ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px"><sc-for list="{{ activity }}" as="a"><li style="display:flex;gap:10px"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:18px;color:var(--color-accent);flex:none;margin-top:1px"></i><div><div style="font-size:14px">{{ a.text }}</div><div style="font-size:12px;color:var(--app-muted)">{{ a.when }}</div></div></li></sc-for></ol></section>
+      </div>
+      <div style="flex:2 1 560px;min-width:0;display:flex;flex-direction:column;gap:12px">
+        <div role="tablist" aria-label="Customer records" style="display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--app-card);box-shadow:var(--shadow-sm);width:fit-content;max-width:100%;overflow-x:auto">
+          <sc-for list="{{ tabs }}" as="t"><button type="button" role="tab" aria-selected="{{ t.on }}" onClick="{{ t.pick }}" style="min-height:36px;padding:0 16px;border:0;border-radius:9px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }} <span style="opacity:.7">{{ t.n }}</span></button></sc-for>
+        </div>
+        <sc-if value="{{ tabReq }}"><dc-import name="DataTable" compact="{{ true }}" columns="{{ reqCols }}" rows="{{ reqRows }}" page-size="{{ 6 }}" noun="requests" empty-title="No requests" empty-text="This customer hasn’t requested transport yet." hint-size="100%,360px"></dc-import></sc-if>
+        <sc-if value="{{ tabShip }}"><dc-import name="DataTable" compact="{{ true }}" columns="{{ shipCols }}" rows="{{ shipRows }}" page-size="{{ 6 }}" noun="shipments" empty-title="No shipments yet" empty-text="When this customer’s requests are converted into shipments, they’ll appear here." empty-icon="ph-package" hint-size="100%,360px"></dc-import></sc-if>
+        <sc-if value="{{ tabQuote }}"><dc-import name="DataTable" compact="{{ true }}" columns="{{ quoteCols }}" rows="{{ quoteRows }}" page-size="{{ 6 }}" noun="quotes" empty-title="No quotes" empty-text="Quotes created for this customer will appear here." empty-icon="ph-receipt" hint-size="100%,360px"></dc-import></sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, tab: 'req' };
+  componentDidMount() { const b = () => (window.ABRIA_M ? this.setState({ ready: true }) : setTimeout(b, 30)); b(); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { isList: true, stats: [], info: [], activity: [], tabs: [] };
+    const id = M.param('id'), D = M.DATA;
+    if (!id) return { isList: true, cols: M.COLS.customers, rows: M.ROWS.customers(D.customers), simulate: M.param('state') || 'none', filters: [{ key: 'status', label: 'Status', options: ['Active', 'Inactive'] }, { key: 'region', label: 'Region', options: M.uniq(D.customers, 'region') }] };
+    const c = M.IDX.cust[id];
+    if (!c) return { notFound: true, stats: [], info: [], activity: [], tabs: [] };
+    const reqs = D.requests.filter(r => r.cust === id), ships = D.shipments.filter(s => s.cust === id), qs = D.quotes.filter(q => q.cust === id);
+    const spend = qs.filter(q => q.status === 'Accepted').reduce((a, q) => a + q.amount, 0);
+    const tab = this.state.tab;
+    const tabs = [['req', 'Transport requests', reqs.length], ['ship', 'Shipments', ships.length], ['quote', 'Quotes', qs.length]].map(t => ({ label: t[1], n: t[2], on: tab === t[0], pick: () => this.setState({ tab: t[0] }), bg: tab === t[0] ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent', fg: tab === t[0] ? 'var(--color-accent-800)' : 'var(--color-text)' }));
+    const act = [].concat(
+      reqs.map(r => ({ at: r.created, icon: 'ph-duotone ph-clipboard-text', text: 'Requested ' + r.pickup + ' → ' + r.dest + ' (' + r.id + ')' })),
+      qs.filter(q => q.status === 'Accepted').map(q => ({ at: q.created + 'T16:00', icon: 'ph-duotone ph-check-circle', text: 'Accepted ' + q.id + ' · ' + M.tzs(q.amount) })),
+      ships.filter(s => s.status === 'Delivered').map(s => ({ at: s.delivered + 'T17:00', icon: 'ph-duotone ph-seal-check', text: s.id + ' delivered to ' + s.dest }))
+    ).sort((a, b) => (a.at < b.at ? 1 : -1)).slice(0, 6);
+    return {
+      isDetail: true, c, st: M.badge(c.status), ini: c.name.split(' ').map(p => p[0]).join(''), since: M.d(c.since),
+      waHref: 'https://wa.me/' + c.phone.replace(/\D/g, ''), tel: 'tel:' + c.phone.replace(/\s/g, ''),
+      stats: [{ k: 'Transport requests', v: reqs.length }, { k: 'Shipments', v: ships.length }, { k: 'Accepted quotes', v: qs.filter(q => q.status === 'Accepted').length }, { k: 'Accepted value', v: spend ? M.tzs(spend) : '—' }],
+      info: [{ k: 'Customer ID', v: c.id }, { k: 'Phone', v: c.phone }, { k: 'Email', v: c.email }, { k: 'Region', v: c.region }, { k: 'Last activity', v: M.rel(c.last) }],
+      activity: act.map(a => ({ icon: a.icon, text: a.text, when: M.rel(a.at) })),
+      tabs, tabReq: tab === 'req', tabShip: tab === 'ship', tabQuote: tab === 'quote',
+      reqCols: M.COLS.requestsShort.filter(x => x.key !== 'customer'), reqRows: M.ROWS.requests(reqs),
+      shipCols: M.COLS.shipmentsShort.filter(x => x.key !== 'cust'), shipRows: M.ROWS.shipments(ships),
+      quoteCols: M.COLS.quotes.filter(x => x.key !== 'cust'), quoteRows: M.ROWS.quotes(qs)
+    };
+  }
+}
+</script>
+</body>
+</html>

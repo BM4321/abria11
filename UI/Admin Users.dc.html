@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Users | ABRIA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="{{ active }}" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:40px;color:var(--color-accent-2-700)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Permission denied</h1><p style="margin:0;color:var(--app-muted)">Managing users is limited to administrators.</p><a class="btn btn-secondary" href="Admin%20Users.dc.html?role=admin" style="margin-top:16px;min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div>
+  </sc-if>
+  <sc-if value="{{ allowed }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px">
+      <div style="margin-right:auto"><nav aria-label="Breadcrumb" style="font-size:13px;color:var(--app-muted)">Users</nav><h1 style="margin:2px 0 0;font-size:28px;font-weight:600;letter-spacing:-0.01em">{{ title }}</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">{{ sub }}</p></div>
+      <sc-if value="{{ isRoles }}"><button type="button" class="btn btn-primary" onClick="{{ saveRoles }}" disabled="{{ rolesClean }}" style="min-height:40px;border-radius:10px">Save permissions</button></sc-if>
+    </div>
+    <nav aria-label="Users sections" style="display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--app-card);box-shadow:var(--shadow-sm);width:fit-content">
+      <sc-for list="{{ tabs }}" as="t"><a href="{{ t.href }}" aria-current="{{ t.aria }}" style="display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border-radius:9px;text-decoration:none;font-size:14px;font-weight:500;background:{{ t.bg }};color:{{ t.fg }}"><i class="{{ t.icon }}" aria-hidden="true"></i>{{ t.label }}</a></sc-for>
+    </nav>
+    <sc-if value="{{ isUsers }}"><dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" search="Search by name or email" primary="{{ primary }}" noun="users" page-size="{{ 10 }}" hint-size="100%,480px"></dc-import></sc-if>
+    <sc-if value="{{ isRoles }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px">
+        <sc-for list="{{ roleCards }}" as="r"><div style="display:flex;gap:14px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><span style="width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;background:{{ r.bg }};color:{{ r.fg }}"><i class="{{ r.icon }}" aria-hidden="true" style="font-size:22px"></i></span><div><div style="font-size:16px;font-weight:600">{{ r.name }} <span style="font-weight:400;font-size:13px;color:var(--app-muted)">· {{ r.n }} users</span></div><div style="margin-top:2px;font-size:13.5px;color:var(--app-muted)">{{ r.desc }}</div></div></div></sc-for>
+      </div>
+      <section aria-label="Permission matrix" style="border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:460px">
+          <thead><tr><th scope="col" style="text-align:left;padding:14px 18px;font-size:12px;font-weight:500;color:var(--app-muted);border-bottom:1px solid var(--app-line)">Permission</th><th scope="col" style="width:120px;padding:14px;font-size:12px;font-weight:500;color:var(--app-muted);border-bottom:1px solid var(--app-line)">Manager</th><th scope="col" style="width:120px;padding:14px;font-size:12px;font-weight:500;color:var(--app-muted);border-bottom:1px solid var(--app-line)">Admin</th></tr></thead>
+          <tbody>
+            <sc-for list="{{ perms }}" as="p">
+              <sc-if value="{{ p.isHead }}"><tr><th scope="rowgroup" colspan="3" style="text-align:left;padding:16px 18px 6px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--app-muted)">{{ p.label }}</th></tr></sc-if>
+              <sc-if value="{{ p.isRow }}"><tr style="background:{{ p.bg }}"><th scope="row" style="text-align:left;padding:12px 18px;font-weight:400;border-bottom:1px solid var(--app-line)">{{ p.label }}</th>
+                <td style="text-align:center;padding:8px;border-bottom:1px solid var(--app-line)"><button type="button" role="checkbox" aria-checked="{{ p.mgr }}" aria-label="{{ p.mgrLabel }}" onClick="{{ p.toggle }}" style="width:28px;height:28px;border-radius:8px;cursor:pointer;display:inline-grid;place-items:center;border:{{ p.mgrBorder }};background:{{ p.mgrBg }};color:var(--color-bg)"><sc-if value="{{ p.mgr }}"><i class="ph-bold ph-check" aria-hidden="true"></i></sc-if></button></td>
+                <td style="text-align:center;padding:8px;border-bottom:1px solid var(--app-line)"><span title="Admins always have every permission" aria-label="Admin: allowed" style="width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 40%,var(--app-card));color:var(--color-bg)"><i class="ph-bold ph-check" aria-hidden="true"></i></span></td></tr></sc-if>
+            </sc-for>
+          </tbody>
+        </table>
+      </section>
+      <p style="margin:0;font-size:12.5px;color:var(--app-muted)">Admins always hold every permission. Authorization is enforced server-side when the backend is connected.</p>
+    </sc-if>
+  </sc-if>
+</div>
+</main>
+<sc-if value="{{ dlg }}" hint-placeholder-val="{{ false }}">
+  <div class="dialog-backdrop" onClick="{{ closeBg }}" style="z-index:2400;animation:abria-fade .16s ease">
+    <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="ud-h" onSubmit="{{ submitDlg }}" style="width:min(460px,100%);background:var(--app-card);border-radius:16px;padding:24px;animation:abria-in .2s cubic-bezier(.2,.7,.2,1);font-family:Roboto,system-ui,sans-serif;display:flex;flex-direction:column;gap:14px">
+      <h2 id="ud-h" style="margin:0;font-size:18px;font-weight:600">{{ dlgTitle }}</h2>
+      <sc-if value="{{ isInvite }}">
+        <div style="display:flex;flex-direction:column;gap:6px"><label for="iv-n" style="font-size:13px;font-weight:500">Full name</label><input id="iv-n" class="input" value="{{ inv.name }}" onChange="{{ onInvName }}" style="min-height:42px;border-radius:10px;background:var(--app-page)"></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><label for="iv-e" style="font-size:13px;font-weight:500">Email</label><input id="iv-e" class="input" type="email" value="{{ inv.email }}" onChange="{{ onInvEmail }}" aria-invalid="{{ invBad }}" style="min-height:42px;border-radius:10px;background:var(--app-page);border-color:{{ invBorder }}"><sc-if value="{{ hasInvErr }}"><span style="font-size:12.5px;color:var(--color-accent-2-700)">{{ invErr }}</span></sc-if></div>
+      </sc-if>
+      <sc-if value="{{ isRoleEdit }}"><p style="margin:0;font-size:14px;color:var(--app-muted)">{{ dlgUser }}</p></sc-if>
+      <fieldset style="border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><legend style="font-size:13px;font-weight:500;margin-bottom:6px;padding:0">Role</legend>
+        <sc-for list="{{ roleOpts }}" as="o"><label style="display:flex;gap:12px;padding:12px;border-radius:12px;cursor:pointer;background:{{ o.bg }};outline:{{ o.outline }}"><input type="radio" name="role" checked="{{ o.on }}" onChange="{{ o.pick }}" style="accent-color:var(--color-accent);width:18px;height:18px;margin-top:1px"><span><span style="display:block;font-weight:600;font-size:14px">{{ o.name }}</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ o.desc }}</span></span></label></sc-for>
+      </fieldset>
+      <div class="dialog-actions"><button type="button" onClick="{{ closeDlg }}" class="btn btn-secondary" style="min-height:40px;border-radius:10px">Cancel</button><button type="submit" class="btn btn-primary" style="min-height:40px;border-radius:10px">{{ dlgCta }}</button></div>
+    </form>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, tick: 0, dlg: null, role: 'Manager', inv: { name: '', email: '' }, invErr: '', perms: null, dirty: false };
+  componentDidMount() { const b = () => { if (!window.ABRIA_M) return setTimeout(b, 30); this.setState({ ready: true, dlg: window.ABRIA_M.param('invite') ? { kind: 'invite' } : null }); }; b(); }
+  renderVals() {
+    const M = window.ABRIA_M, E = { tabs: [], roleCards: [], perms: [], roleOpts: [], inv: {} };
+    if (!M) return Object.assign({ allowed: true, active: 'users:all' }, E);
+    const s = M.param('s'), roles = s === 'roles', D = M.DATA, active = roles ? 'users:roles' : 'users:all';
+    if (M.role() !== 'admin') return Object.assign({}, E, { denied: true, active });
+    const bump = () => this.setState(x => ({ tick: x.tick + 1 }));
+    const now = () => M.TODAY + 'T' + new Date().toTimeString().slice(0, 5);
+    const audit = (action, desc) => D.audit.unshift({ at: now(), user: M.me().name, action, resource: 'User', desc });
+    const RD = { Manager: 'Runs operations: requests, quotes, shipments, customers, carriers and reports.', Admin: 'Everything a manager can do, plus website content, forms, users and settings.' };
+    const tabs = [['', 'Users', 'ph-users-three'], ['roles', 'Roles & Permissions', 'ph-shield-check']].map(t => ({ label: t[1], icon: 'ph ' + t[2], href: t[0] ? M.link('users', { s: t[0] }) : 'Admin%20Users.dc.html', aria: (s || '') === t[0] ? 'page' : undefined, bg: (s || '') === t[0] ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent', fg: (s || '') === t[0] ? 'var(--color-accent-800)' : 'var(--color-text)' }));
+    const out = Object.assign({}, E, { allowed: true, active, tabs, isUsers: !roles, isRoles: roles, title: roles ? 'Roles & Permissions' : 'Users', sub: roles ? 'What each role can see and do in the ABRIA console.' : D.users.length + ' people with console access' });
+    if (!roles) {
+      out.cols = [{ key: 'user', label: 'User' }, { key: 'email', label: 'Email' }, { key: 'role', label: 'Role' }, { key: 'status', label: 'Status' }, { key: 'last', label: 'Last active' }, { key: 'created', label: 'Created' }];
+      out.filters = [{ key: 'role', label: 'Role', options: ['Manager', 'Admin'] }, { key: 'status', label: 'Status', options: ['Active', 'Invited', 'Disabled'] }];
+      out.primary = { label: 'Invite user', onClick: () => this.setState({ dlg: { kind: 'invite' }, role: 'Manager', inv: { name: '', email: '' }, invErr: '' }) };
+      out.rows = D.users.map(u => {
+        const self = u.id === M.me().id, acts = [{ label: 'Edit role', icon: 'ph-user-gear', onClick: () => self ? M.toast('You can’t change your own role', { tone: 'bad' }) : this.setState({ dlg: { kind: 'role', id: u.id }, role: u.role }) }];
+        if (u.status === 'Disabled') acts.push({ label: 'Reactivate', icon: 'ph-arrow-counter-clockwise', onClick: async () => { if (await M.confirm({ title: 'Reactivate ' + u.name + '?', body: 'They can sign in again with their existing role (' + u.role + ').', confirm: 'Reactivate' })) { u.status = 'Active'; audit('Reactivated', 'Reactivated ' + u.name); M.toast(u.name + ' reactivated'); bump(); } } });
+        else if (!self) acts.push({ label: 'Disable', icon: 'ph-prohibit', danger: true, onClick: async () => { if (await M.confirm({ title: 'Disable ' + u.name + '?', body: 'They are signed out immediately and can’t sign in until reactivated. Their activity history is kept.', confirm: 'Disable user', danger: true })) { u.status = 'Disabled'; audit('Disabled', 'Disabled ' + u.name); M.toast(u.name + ' disabled'); bump(); } } });
+        if (u.status === 'Invited') acts.push({ label: 'Resend invite', icon: 'ph-paper-plane-tilt', onClick: () => M.toast('Invite resent to ' + u.email) });
+        return { id: u.id, search: u.name + ' ' + u.email, f: { role: u.role, status: u.status }, s: { last: u.last || '', created: u.created },
+          cells: { user: M.C.t(u.name + (self ? ' (you)' : ''), u.id), email: M.C.t(u.email), role: M.C.t(u.role), status: M.C.b(u.status), last: M.C.t(u.last ? M.rel(u.last) : 'Never'), created: M.C.t(M.dShort(u.created)) }, actions: acts };
+      });
+    } else {
+      const P = this.state.perms || { 'View Shipments': 1, 'Edit Shipments': 1, 'Manage Requests': 1, 'Manage Quotes': 1, 'View Customers': 1, 'Manage Carriers': 1, 'View Reports': 1, 'Export Reports': 1, 'Edit Website': 0, 'Manage Forms': 0, 'Manage Media': 0, 'Manage Users': 0, 'Manage Settings': 0, 'View Audit Logs': 0 };
+      const groups = [['Operations', ['View Shipments', 'Edit Shipments', 'Manage Requests', 'Manage Quotes', 'View Customers', 'Manage Carriers', 'View Reports', 'Export Reports']], ['Website & system', ['Edit Website', 'Manage Forms', 'Manage Media', 'Manage Users', 'Manage Settings', 'View Audit Logs']]];
+      const perms = [];
+      groups.forEach(g => { perms.push({ isHead: true, label: g[0] }); g[1].forEach(p => { const on = !!P[p]; perms.push({ isRow: true, label: p, mgr: on, mgrLabel: 'Manager: ' + p + (on ? ', allowed' : ', not allowed'), mgrBorder: on ? '0' : '1.5px solid color-mix(in srgb,var(--color-text) 30%,transparent)', mgrBg: on ? 'var(--color-accent)' : 'transparent', bg: 'transparent', toggle: () => this.setState({ perms: Object.assign({}, P, { [p]: on ? 0 : 1 }), dirty: true }) }); }); });
+      out.perms = perms;
+      out.roleCards = [{ name: 'Manager', n: D.users.filter(u => u.role === 'Manager').length, desc: RD.Manager, icon: 'ph-duotone ph-user-gear', bg: M.TONES.info.bg, fg: M.TONES.info.fg }, { name: 'Admin', n: D.users.filter(u => u.role === 'Admin').length, desc: RD.Admin, icon: 'ph-duotone ph-shield-check', bg: M.TONES.bad.bg, fg: 'var(--color-accent-2-700)' }];
+      out.rolesClean = !this.state.dirty;
+      out.saveRoles = async () => { if (await M.confirm({ title: 'Save permission changes?', body: 'Every manager’s access changes the next time they load a page.', confirm: 'Save permissions', icon: 'ph-shield-check' })) { D.audit.unshift({ at: now(), user: M.me().name, action: 'Updated', resource: 'Roles', desc: 'Changed Manager permissions' }); this.setState({ dirty: false }); M.toast('Permissions saved'); } };
+    }
+    const dlg = this.state.dlg;
+    if (dlg) {
+      const u = dlg.id ? D.users.find(x => x.id === dlg.id) : null, r = this.state.role;
+      Object.assign(out, {
+        dlg: true, isInvite: dlg.kind === 'invite', isRoleEdit: dlg.kind === 'role', dlgTitle: dlg.kind === 'invite' ? 'Invite a user' : 'Change role', dlgUser: u ? u.name + ' · currently ' + u.role : '', dlgCta: dlg.kind === 'invite' ? 'Send invite' : 'Change role',
+        inv: this.state.inv, invErr: this.state.invErr, hasInvErr: !!this.state.invErr, invBad: this.state.invErr ? 'true' : 'false', invBorder: this.state.invErr ? 'var(--color-accent-2)' : 'var(--color-divider)',
+        onInvName: e => this.setState({ inv: Object.assign({}, this.state.inv, { name: e.target.value }) }), onInvEmail: e => this.setState({ inv: Object.assign({}, this.state.inv, { email: e.target.value }), invErr: '' }),
+        roleOpts: ['Manager', 'Admin'].map(n => ({ name: n, desc: RD[n], on: r === n, pick: () => this.setState({ role: n }), bg: r === n ? 'color-mix(in srgb,var(--color-accent) 10%,transparent)' : 'var(--app-page)', outline: r === n ? '2px solid var(--color-accent)' : 'none' })),
+        closeDlg: () => this.setState({ dlg: null }), closeBg: e => { if (e.target === e.currentTarget) this.setState({ dlg: null }); },
+        submitDlg: async e => {
+          e.preventDefault();
+          if (dlg.kind === 'invite') {
+            const iv = this.state.inv;
+            if (!iv.name.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(iv.email)) return this.setState({ invErr: 'Enter a name and a valid email address.' });
+            if (D.users.some(x => x.email === iv.email.trim())) return this.setState({ invErr: 'Someone with this email already has access.' });
+            D.users.push({ id: 'USR-0' + (D.users.length + 1), name: iv.name.trim(), email: iv.email.trim(), role: r, status: 'Invited', last: null, created: M.TODAY });
+            audit('Invited', 'Invited ' + iv.name.trim() + ' as ' + r); this.setState({ dlg: null }); M.toast('Invite sent to ' + iv.email.trim()); return bump();
+          }
+          if (r === u.role) return this.setState({ dlg: null });
+          this.setState({ dlg: null });
+          if (await M.confirm({ title: 'Change ' + u.name + '’s role?', body: 'They become ' + (r === 'Admin' ? 'an Admin, with access to website content, forms, users and settings.' : 'a Manager and lose access to website, forms, users and settings.'), confirm: 'Change role', danger: r === 'Manager' })) { u.role = r; audit('Role change', 'Changed ' + u.name + ' role to ' + r); M.toast(u.name + ' is now ' + r); bump(); }
+        }
+      });
+    }
+    return out;
+  }
+}
+</script>
+</body>
+</html>

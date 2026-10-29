@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Cargo Transport for Businesses in Tanzania | ABRIA Logistics</title>
+<meta name="description" content="Request transport, receive a written quotation and move your goods with a verified carrier. ABRIA for businesses and cargo owners in Tanzania.">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}.cmyk .print:not(:has(image-slot[data-filled])){filter:none}.cmyk:not(:has(image-slot[data-filled]))::after{display:none}body{margin:0;text-wrap:pretty}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@media (prefers-reduced-motion:reduce){*{transition:none!important}}</style>
+</helmet>
+<dc-import name="Nav" current="shippers" hint-size="100%,72px" style="position:sticky;top:0;z-index:50"></dc-import>
+<main>
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(48px,8vw,112px) clamp(20px,5vw,72px) 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:56px clamp(32px,5vw,88px);align-items:center">
+    <div>
+      <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">For businesses and cargo owners</p>
+      <h1 style="font-size:clamp(44px,6vw,80px);line-height:1.04;letter-spacing:-0.02em;margin:0 0 0 -0.035em">Move your goods with confidence.</h1>
+      <p style="font-size:19px;line-height:30px;max-width:32em;margin:28px 0 0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">Submit one request with your cargo and route. ABRIA reviews it, sends you a written quotation, and assigns a verified carrier once you approve. You keep one reference number from request to delivery.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:34px">
+        <a class="btn btn-primary" href="Request%20Quote.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">Request a Quote</a>
+        <a class="btn btn-ghost" href="{{ waHref }}" target="_blank" rel="noopener" style="font-size:16px;min-height:50px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:20px"></i>Ask on WhatsApp</a>
+      </div>
+    </div>
+    <figure data-reveal="1" class="cmyk" style="margin:0;overflow:visible">
+      <div class="print" style="aspect-ratio:5/4"><x-import component-from-global-scope="image-slot" from="./image-slot.js" id="shippers-hero" shape="rounded" radius="16" placeholder="Approved photograph: goods being loaded at a warehouse" hint-size="100%,100%"></x-import></div>
+    </figure>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(80px,10vw,144px) clamp(20px,5vw,72px) 0">
+    <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">What ABRIA does for you</p>
+    <h2 style="margin:0;font-size:clamp(30px,3.6vw,44px);line-height:1.1;letter-spacing:-0.02em;max-width:17em">One request instead of a round of phone calls.</h2>
+    <dl data-stagger="1" style="margin:48px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px">
+      <sc-for list="{{ benefits }}" as="b" hint-placeholder-count="6">
+        <div style="padding:28px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:var(--shadow-sm);transition:box-shadow .22s ease, transform .22s ease" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+          <dt style="display:flex;align-items:center;gap:12px;font-size:21px;font-weight:600;line-height:1.25"><i class="{{ b.icon }}" aria-hidden="true" style="font-size:28px;color:var(--color-accent);flex:none"></i>{{ b.title }}</dt>
+          <dd style="margin:10px 0 0;font-size:16px;line-height:25px;color:color-mix(in srgb,var(--color-text) 78%,transparent)">{{ b.text }}</dd>
+        </div>
+      </sc-for>
+    </dl>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(80px,10vw,144px) clamp(20px,5vw,72px) 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:48px clamp(40px,7vw,120px);align-items:start">
+    <div>
+      <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Your shipment, stage by stage</p>
+      <h2 style="margin:0;font-size:clamp(28px,3.2vw,40px);line-height:1.1;letter-spacing:-0.02em">Every request moves through the same stages.</h2>
+      <p style="margin:20px 0 0;font-size:17px;line-height:28px;max-width:30em;color:color-mix(in srgb,var(--color-text) 80%,transparent)">These are the statuses ABRIA records against your ABR reference. You always know which stage your shipment is in, and who to ask.</p>
+    </div>
+    <ol data-stagger="1" style="list-style:none;margin:0;padding:0;position:relative">
+      <sc-for list="{{ stages }}" as="s" hint-placeholder-count="9">
+        <li style="display:grid;grid-template-columns:28px minmax(0,1fr);gap:14px;padding-bottom:18px;position:relative">
+          <span aria-hidden="true" style="position:relative;display:flex;justify-content:center"><span style="position:absolute;top:14px;bottom:-18px;width:1px;background:{{ s.line }}"></span><span style="position:relative;margin-top:7px;width:11px;height:11px;border-radius:50%;background:{{ s.dot }};box-shadow:0 0 0 3px var(--color-bg)"></span></span>
+          <span><span style="display:block;font-size:18px;font-weight:600;line-height:26px">{{ s.title }}</span><span style="display:block;font-size:15px;line-height:23px;color:color-mix(in srgb,var(--color-text) 75%,transparent)">{{ s.text }}</span></span>
+        </li>
+      </sc-for>
+    </ol>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(80px,10vw,144px) clamp(20px,5vw,72px) 0">
+    <hr style="height:5px;border:0;margin:0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:32px 64px;padding:28px 0 32px">
+      <div>
+        <p style="margin:0 0 14px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Cargo we handle</p>
+        <p style="margin:0;font-size:22px;line-height:1.5;font-weight:600">General cargo<br>Refrigerated<br>Hazardous<br>Fragile<br>Heavy machinery</p>
+      </div>
+      <div>
+        <p style="margin:0 0 14px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">What to have ready</p>
+        <p style="margin:0;font-size:17px;line-height:28px;color:color-mix(in srgb,var(--color-text) 82%,transparent)">Pickup and delivery locations, the cargo type, an approximate weight, and the date you need it moved. Dimensions, number of packages and cargo value help us quote accurately.</p>
+      </div>
+    </div>
+    <hr style="height:0;border:0;border-top:1px solid var(--color-text);margin:0">
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(88px,11vw,160px) clamp(20px,5vw,72px) 0">
+    <h2 style="margin:0;font-size:clamp(32px,4.4vw,56px);line-height:1.06;letter-spacing:-0.02em;max-width:14em">Tell us what you need to move.</h2>
+    <p style="margin:18px 0 0;font-size:18px;line-height:28px;max-width:34em;color:color-mix(in srgb,var(--color-text) 80%,transparent)">It takes a few minutes. You'll receive your ABR reference immediately.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:30px">
+      <a class="btn btn-primary" href="Request%20Quote.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">Request a Quote</a>
+      <a class="btn btn-secondary" href="Solutions.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">Explore solutions</a>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,520px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { const b = () => (window.ABRIA ? this.forceUpdate() : setTimeout(b, 40)); b(); }
+  renderVals() {
+    const A = window.ABRIA;
+    const stages = [
+      ['Request received', 'You submit the request and receive your ABR ID.'],
+      ['Under review', 'The ABRIA team checks cargo, route and dates.'],
+      ['Quotation sent', 'You receive a written price for the job.'],
+      ['Approved', 'You accept the quotation.'],
+      ['Booked', 'The job is confirmed on the schedule.'],
+      ['Vehicle and driver assigned', 'You see the carrier, truck type and registration.'],
+      ['Picked up · In transit', 'Your cargo is collected and on the road.'],
+      ['Delivered', 'The cargo arrives at the delivery location.'],
+      ['Proof of delivery', 'Delivery is confirmed and the job is closed.']
+    ];
+    return {
+      stages: stages.map((s, i) => ({ title: s[0], text: s[1], dot: i === 0 || i === stages.length - 1 ? 'var(--color-accent)' : 'var(--color-text)', line: i === stages.length - 1 ? 'transparent' : 'color-mix(in srgb,var(--color-text) 30%,transparent)' })),
+      benefits: [
+        { icon: 'ph-duotone ph-clipboard-text', title: 'Request transportation', text: 'Pickup, delivery, cargo and dates in one online form, or by WhatsApp.' },
+        { icon: 'ph-duotone ph-receipt', title: 'A written quotation', text: 'ABRIA reviews the request and sends a price before anything is booked.' },
+        { icon: 'ph-duotone ph-arrows-left-right', title: 'Carrier matching', text: 'Your load goes to a verified truck of the right type and capacity. See AB Match.' },
+        { icon: 'ph-duotone ph-hash', title: 'One reference number', text: 'Your ABR ID ties every call, message and document to the same shipment.' },
+        { icon: 'ph-duotone ph-seal-check', title: 'Delivery confirmation', text: 'Each job closes with proof of delivery.' },
+        { icon: 'ph-duotone ph-buildings', title: 'Support for regular shipping', text: 'Recurring routes and volumes are handled through AB Business.' }
+      ],
+      waHref: A ? A.wa('Hello ABRIA, I would like to move goods.') : '#'
+    };
+  }
+}
+</script>
+</body>
+</html>

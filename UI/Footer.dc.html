@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}</style>
+</helmet>
+<footer style="max-width:1200px;margin:0 auto;padding:96px clamp(20px,5vw,72px) 40px">
+  <hr style="height:5px;border:0;margin:0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)">
+  <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:24px 48px;padding:36px 0 8px">
+    <div>
+      <p style="margin:0;font-weight:600;font-size:30px;letter-spacing:0.08em;line-height:1">ABRIA</p>
+      <p style="margin:12px 0 0;font-size:17px;font-style:italic">{{ t.tagline }}</p>
+    </div>
+    <a class="btn btn-secondary" href="{{ waHref }}" target="_blank" rel="noopener" onClick="{{ waClick }}" style="min-height:44px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:20px;color:var(--color-accent)"></i>{{ t.wa }}</a>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:36px 32px;padding:40px 0 48px">
+    <sc-for list="{{ cols }}" as="c" hint-placeholder-count="5">
+      <div>
+        <h2 style="margin:0 0 12px;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:400;color:color-mix(in srgb,var(--color-text) 70%,transparent)">{{ c.title }}</h2>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px">
+          <sc-for list="{{ c.items }}" as="i">
+            <li><a href="{{ i.href }}" style="display:inline-block;padding:5px 0;font-size:15px;color:var(--color-text);text-decoration:none" style-hover="color:var(--color-accent-700);text-decoration:underline">{{ i.label }}</a></li>
+          </sc-for>
+        </ul>
+      </div>
+    </sc-for>
+  </div>
+  <p style="margin:0;font-size:13px;color:color-mix(in srgb,var(--color-text) 70%,transparent)">© 2026 ABRIA Logistics. {{ t.rights }}</p>
+</footer>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;520px&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'en', ready: false };
+  componentDidMount() {
+    const boot = () => { if (!window.ABRIA) return setTimeout(boot, 40); this.setState({ ready: true, lang: window.ABRIA.getLang() }); };
+    boot();
+    this._l = e => this.setState({ lang: e.detail });
+    window.addEventListener('abria-lang', this._l);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-lang', this._l); }
+  renderVals() {
+    const A = window.ABRIA, sw = this.state.lang === 'sw', T = (e, s) => (sw ? s : e);
+    const P = A ? A.pages : {};
+    const i = (href, en, s) => ({ href, label: T(en, s) });
+    return {
+      t: {
+        tagline: T('Connected Logistics. Better Movement.', 'Usafirishaji Uliounganishwa. Mwendo Bora.'),
+        wa: T('Chat with us on WhatsApp', 'Tuandikie WhatsApp'),
+        rights: T('All rights reserved.', 'Haki zote zimehifadhiwa.')
+      },
+      cols: [
+        { title: T('Solutions', 'Huduma'), items: (A ? A.solutions : []).map(s => ({ href: s.href, label: s.name })) },
+        { title: T('Company', 'Kampuni'), items: [i(P.about, 'About', 'Kuhusu Sisi'), i(P.how, 'How It Works', 'Jinsi Inavyofanya Kazi'), i(P.tech, 'Technology', 'Teknolojia'), i(P.contact, 'Contact', 'Wasiliana Nasi'), i(P.faq, 'FAQ', 'Maswali'), i('Sign%20In.dc.html', 'Staff sign in', 'Kuingia kwa wafanyakazi')] },
+        { title: T('Get started', 'Anza'), items: [i(P.quote, 'Request a Quote', 'Omba Bei'), i(P.truck, 'Register Your Truck', 'Sajili Lori Lako'), i(P.track, 'Track Shipment', 'Fuatilia Mzigo')] },
+        { title: T('Contact', 'Mawasiliano'), items: A ? [{ href: 'mailto:' + A.email, label: A.email }, { href: A.phoneHref, label: A.phone }, { href: A.wa(), label: 'WhatsApp' }] : [] },
+        { title: T('Legal', 'Kisheria'), items: [i(P.notfound, 'Privacy Policy', 'Sera ya Faragha'), i(P.notfound, 'Terms & Conditions', 'Vigezo na Masharti')] }
+      ],
+      waHref: A ? A.wa(T('Hello ABRIA, I have a question.', 'Habari ABRIA, nina swali.')) : '#',
+      waClick: () => A && A.track('whatsapp_click', { from: 'footer' })
+    };
+  }
+}
+</script>
+</body>
+</html>

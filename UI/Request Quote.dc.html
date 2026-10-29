@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Request a Transport Quote | ABRIA Logistics Tanzania</title>
+<meta name="description" content="Request a cargo transport quotation from ABRIA. Tell us the pickup, delivery, cargo and date; receive your ABR reference immediately.">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;text-wrap:pretty}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@keyframes abria-spin{to{transform:rotate(360deg)}}@keyframes abria-drive{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px) translateY(-1px)}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}</style>
+</helmet>
+<dc-import name="Nav" current="quote" translated="{{ true }}" hint-size="100%,72px" style="position:sticky;top:0;z-index:50"></dc-import>
+<main style="max-width:1200px;margin:0 auto;padding:clamp(40px,6vw,88px) clamp(20px,5vw,72px) 0">
+  <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;gap:56px clamp(40px,6vw,96px);align-items:flex-start">
+      <div style="flex:1 1 300px;max-width:420px">
+        <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.kicker }}</p>
+        <h1 style="font-size:clamp(40px,5vw,64px);line-height:1.04;letter-spacing:-0.02em;margin:0 0 0 -0.035em">{{ t.h1 }}</h1>
+        <p style="font-size:18px;line-height:28px;margin:24px 0 0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ t.sub }}</p>
+        <p style="margin:40px 0 14px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.nextK }}</p>
+        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ next }}" as="n" hint-placeholder-count="4">
+            <li style="display:grid;grid-template-columns:32px minmax(0,1fr);font-size:16px;line-height:25px"><span style="font-size:13px;line-height:25px;color:var(--color-accent-700)">{{ n.n }}</span><span>{{ n.text }}</span></li>
+          </sc-for>
+        </ol>
+        <p style="margin:36px 0 0;font-size:15px;line-height:24px;color:color-mix(in srgb,var(--color-text) 78%,transparent)">{{ t.prefer }} <a href="{{ waHref }}" target="_blank" rel="noopener">WhatsApp +255 723 999 039</a></p>
+      </div>
+      <form noValidate="{{ true }}" onSubmit="{{ submit }}" aria-labelledby="quote-title" style="flex:3 1 520px;min-width:0">
+        <h2 id="quote-title" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ t.h1 }}</h2>
+        <sc-if value="{{ hasInvalid }}" hint-placeholder-val="{{ false }}">
+          <p role="alert" style="margin:0 0 32px;padding:14px 16px;background:var(--color-accent-2-100);color:var(--color-accent-2-800);font-size:15px;border-radius:var(--radius-md);display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-warning-circle" aria-hidden="true" style="font-size:22px"></i>{{ invalidText }}</p>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:56px">
+          <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+            <fieldset style="border:0;margin:0;padding:0;min-width:0">
+              <legend style="display:flex;align-items:baseline;gap:14px;padding:0;margin:0 0 24px;font-size:24px;font-weight:600"><span style="font-size:13px;font-weight:400;color:var(--color-accent-700)">{{ sec.n }}</span>{{ sec.title }}</legend>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:22px 24px">
+                <sc-for list="{{ sec.fields }}" as="f">
+                  <div style="grid-column:{{ f.span }};display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <label for="{{ f.id }}" style="font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">{{ f.label }}<sc-if value="{{ f.req }}"><span aria-hidden="true" style="color:var(--color-accent-2-700)">*</span></sc-if><sc-if value="{{ f.dev }}"><span class="tag tag-accent-2">{{ f.devText }}</span></sc-if></label>
+                    <sc-if value="{{ f.isInput }}"><input class="input" id="{{ f.id }}" name="{{ f.key }}" type="{{ f.type }}" inputMode="{{ f.inputMode }}" autoComplete="{{ f.autoComplete }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-required="{{ f.req }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:46px;font-size:16px;border-color:{{ f.border }}"></sc-if>
+                    <sc-if value="{{ f.isSelect }}"><select class="input" id="{{ f.id }}" name="{{ f.key }}" value="{{ f.value }}" onChange="{{ f.onChange }}" aria-required="{{ f.req }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:46px;font-size:16px;border-color:{{ f.border }}"><option value="">{{ f.ph }}</option><sc-for list="{{ f.options }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></sc-if>
+                    <sc-if value="{{ f.isArea }}"><textarea class="input" id="{{ f.id }}" name="{{ f.key }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:120px;font-size:16px;border-color:{{ f.border }}"></textarea></sc-if>
+                    <sc-if value="{{ f.hasError }}"><p id="{{ f.errId }}" style="margin:0;font-size:13px;line-height:18px;color:var(--color-accent-2-700);display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-warning-circle" aria-hidden="true" style="font-size:16px;flex:none"></i>{{ f.error }}</p></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </fieldset>
+          </sc-for>
+        </div>
+        <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+          <div role="alert" style="margin:40px 0 0;padding:16px;background:var(--color-accent-2-100);color:var(--color-accent-2-800);border-radius:var(--radius-md);font-size:15px;line-height:23px">
+            <p style="margin:0;font-weight:600">{{ t.errH }}</p>
+            <p style="margin:4px 0 0">{{ t.errP }} <a href="{{ waHref }}" target="_blank" rel="noopener" style="color:var(--color-accent-2-800)">WhatsApp</a>.</p>
+          </div>
+        </sc-if>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;margin-top:40px">
+          <button type="submit" class="btn btn-primary" disabled="{{ loading }}" style="font-size:17px;padding:16px 28px;min-height:54px">
+            <sc-if value="{{ loading }}"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:22px;animation:abria-drive 0.7s ease-in-out infinite"></i></sc-if>{{ submitLabel }}
+          </button>
+          <p style="margin:0;font-size:13px;line-height:20px;max-width:30em;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.privacy }}</p>
+        </div>
+      </form>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
+    <section aria-live="polite" style="max-width:760px;padding-bottom:24px">
+      <i class="ph-duotone ph-seal-check" aria-hidden="true" style="font-size:56px;color:var(--color-accent)"></i>
+      <h1 style="font-size:clamp(40px,5vw,64px);line-height:1.04;letter-spacing:-0.02em;margin:24px 0 0 -0.035em">{{ t.okH }}</h1>
+      <p style="font-size:18px;line-height:28px;margin:20px 0 0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ t.okP }}</p>
+      <hr style="height:5px;border:0;margin:40px 0 0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 32px;padding:18px 0">
+        <span style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.refK }}</span>
+        <span style="font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:0.02em;font-feature-settings:'tnum' 1">{{ refId }}</span>
+      </div>
+      <hr style="height:0;border:0;border-top:1px solid var(--color-text);margin:0">
+      <dl style="margin:20px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px 32px">
+        <sc-for list="{{ summary }}" as="r" hint-placeholder-count="3">
+          <div><dt style="font-size:13px;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ r.k }}</dt><dd style="margin:4px 0 0;font-size:17px">{{ r.v }}</dd></div>
+        </sc-for>
+      </dl>
+      <sc-if value="{{ devNotes }}" hint-placeholder-val="{{ true }}"><p style="margin:20px 0 0"><span class="tag tag-accent-2">Prototype: sample reference. Live site returns the real ABR ID from /api/requests.</span></p></sc-if>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:40px">
+        <a class="btn btn-primary" href="{{ waDone }}" target="_blank" rel="noopener" onClick="{{ waClick }}" style="font-size:16px;padding:14px 24px;min-height:52px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:22px"></i>{{ t.waCont }}</a>
+        <button type="button" class="btn btn-secondary" onClick="{{ reset }}" style="font-size:16px;padding:14px 24px;min-height:52px">{{ t.another }}</button>
+        <a class="btn btn-ghost" href="Home.dc.html" style="font-size:16px;min-height:52px">{{ t.home }}</a>
+      </div>
+      <p style="margin:16px 0 0;font-size:14px;line-height:22px;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.waNote }}</p>
+    </section>
+  </sc-if>
+</main>
+<dc-import name="Footer" hint-size="100%,520px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;simulateError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype states&quot;},&quot;devNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype states&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'en', form: { transportType: 'Road' }, errors: {}, tried: false, status: 'idle', refId: '' };
+  componentDidMount() {
+    const b = () => { if (!window.ABRIA) return setTimeout(b, 40); this.setState({ lang: window.ABRIA.getLang() }); };
+    b();
+    this._l = e => this.setState({ lang: e.detail, errors: this.state.tried ? window.ABRIA.validate(this.defs(), this.state.form, e.detail === 'sw') : {} });
+    window.addEventListener('abria-lang', this._l);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-lang', this._l); clearTimeout(this._t); }
+  defs() {
+    const cargo = [['General Cargo', 'Mizigo ya kawaida'], ['Refrigerated', 'Inayohitaji jokofu'], ['Hazardous', 'Hatari'], ['Fragile', 'Inayovunjika'], ['Heavy Machinery', 'Mitambo mizito'], ['Other', 'Nyingine']];
+    return [
+      { sec: 0, key: 'contactPerson', en: 'Contact person', sw: 'Jina la mhusika', kind: 'text', required: true, auto: 'name', ph: 'Full name', phSw: 'Jina kamili' },
+      { sec: 0, key: 'companyName', en: 'Company', sw: 'Kampuni', kind: 'text', auto: 'organization', ph: 'Optional', phSw: 'Si lazima' },
+      { sec: 0, key: 'phone', en: 'Phone', sw: 'Simu', kind: 'tel', required: true, auto: 'tel', ph: '+255 7XX XXX XXX' },
+      { sec: 0, key: 'email', en: 'Email', sw: 'Barua pepe', kind: 'email', auto: 'email', ph: 'you@company.co.tz' },
+      { sec: 1, key: 'pickupLocation', en: 'Pickup location', sw: 'Mahali pa kuchukua', kind: 'text', required: true, ph: 'Town, area or address', phSw: 'Mji, eneo au anwani' },
+      { sec: 1, key: 'deliveryLocation', en: 'Delivery location', sw: 'Mahali pa kufikisha', kind: 'text', required: true, ph: 'Town, area or address', phSw: 'Mji, eneo au anwani' },
+      { sec: 1, key: 'cargoType', en: 'Cargo type', sw: 'Aina ya mzigo', kind: 'select', required: true, ph: 'Select cargo type', phSw: 'Chagua aina ya mzigo', options: cargo },
+      { sec: 1, key: 'transportType', en: 'Transport type', sw: 'Njia ya usafiri', kind: 'select', required: true, ph: 'Select', phSw: 'Chagua', options: [['Road', 'Barabara'], ['Rail', 'Reli'], ['Sea', 'Bahari'], ['Air', 'Anga']] },
+      { sec: 1, key: 'cargoDescription', en: 'Cargo description', sw: 'Maelezo ya mzigo', kind: 'text', full: true, ph: 'e.g. 200 bags of cement on pallets', phSw: 'mf. mifuko 200 ya saruji kwenye paleti' },
+      { sec: 1, key: 'weight', en: 'Approximate weight (kg)', sw: 'Uzito wa makadirio (kg)', kind: 'number', ph: '0' },
+      { sec: 1, key: 'numberOfPackages', en: 'Number of items / packages', sw: 'Idadi ya vifurushi', kind: 'number', ph: '0' },
+      { sec: 1, key: 'dimensions', en: 'Dimensions', sw: 'Vipimo', kind: 'text', ph: 'e.g. 2m × 1m × 1m', phSw: 'mf. 2m × 1m × 1m' },
+      { sec: 1, key: 'cargoValue', en: 'Cargo value (TZS)', sw: 'Thamani ya mzigo (TZS)', kind: 'number', ph: '0' },
+      { sec: 1, key: 'transportDate', en: 'Date of transport', sw: 'Tarehe ya usafiri', kind: 'date', required: true, future: true },
+      { sec: 1, key: 'requiredDeliveryDate', en: 'Delivery deadline', sw: 'Tarehe ya mwisho ya kufikisha', kind: 'date', after: 'transportDate' },
+      { sec: 2, key: 'specialHandling', en: 'Special handling', sw: 'Utunzaji maalum', kind: 'text', full: true, ph: 'e.g. keep upright, 2–8 °C, forklift needed at delivery', phSw: 'mf. isimame wima, 2–8 °C, forklift inahitajika' },
+      { sec: 2, key: 'additionalInstructions', en: 'Additional notes', sw: 'Maelezo mengine', kind: 'textarea', full: true, ph: 'Anything else we should know', phSw: 'Chochote kingine tunachopaswa kujua' }
+    ];
+  }
+  onField(k, v) {
+    this.setState(s => {
+      const form = Object.assign({}, s.form, { [k]: v });
+      return { form, errors: s.tried ? window.ABRIA.validate(this.defs(), form, s.lang === 'sw') : s.errors };
+    });
+  }
+  submit(e) {
+    e.preventDefault();
+    const A = window.ABRIA; if (!A || this.state.status === 'loading') return;
+    const defs = this.defs(), errors = A.validate(defs, this.state.form, this.state.lang === 'sw');
+    const bad = defs.filter(d => errors[d.key]);
+    if (bad.length) {
+      this.setState({ errors, tried: true, status: 'idle' });
+      setTimeout(() => { const el = document.getElementById('f-' + bad[0].key); el && el.focus(); }, 30);
+      return;
+    }
+    this.setState({ errors: {}, status: 'loading' });
+    // Live: POST /api/requests (server validates + returns requestId), then forward to Netlify Forms.
+    this._t = setTimeout(() => {
+      if (this.props.simulateError) return this.setState({ status: 'error' });
+      const refId = 'ABR-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+      A.track('quote_submit', { cargoType: this.state.form.cargoType });
+      this.setState({ status: 'success', refId });
+      window.scrollTo(0, 0);
+    }, 1100);
+  }
+  renderVals() {
+    const A = window.ABRIA, sw = this.state.lang === 'sw', T = (e, s) => (sw ? s : e);
+    const f = this.state.form, st = this.state.status;
+    const rows = A ? A.fields(this.defs(), f, this.state.errors, sw, (k, v) => this.onField(k, v), false) : [];
+    const secTitles = [T('Your details', 'Taarifa zako'), T('Shipment', 'Mzigo'), T('Anything else', 'Mengineyo')];
+    const nErr = Object.keys(this.state.errors).length;
+    const route = (f.pickupLocation || '') + ' → ' + (f.deliveryLocation || '');
+    const waMsg = T(
+      'Hello ABRIA, I have just submitted a transport request.\nReference: ' + this.state.refId + '\nRoute: ' + route + '\nCargo: ' + (f.cargoType || '') + (f.weight ? ', ' + f.weight + ' kg' : '') + '\nDate: ' + (f.transportDate || '') + '\nName: ' + (f.contactPerson || ''),
+      'Habari ABRIA, nimewasilisha ombi la usafiri.\nNamba: ' + this.state.refId + '\nNjia: ' + route + '\nMzigo: ' + (f.cargoType || '') + (f.weight ? ', ' + f.weight + ' kg' : '') + '\nTarehe: ' + (f.transportDate || '') + '\nJina: ' + (f.contactPerson || '')
+    );
+    return {
+      t: {
+        kicker: T('Request a quote', 'Omba bei'),
+        h1: T('Tell us what you need to move.', 'Tuambie unachohitaji kusafirisha.'),
+        sub: T('Fields marked * are required. The more detail you give, the more accurate the quotation.', 'Sehemu zenye * ni lazima. Ukitoa maelezo zaidi, bei itakuwa sahihi zaidi.'),
+        nextK: T('What happens next', 'Kinachofuata'),
+        prefer: T('Prefer to talk?', 'Unapendelea kuongea?'),
+        privacy: T('We use these details only to prepare your quotation and arrange transport.', 'Tunatumia taarifa hizi kuandaa bei na kupanga usafiri tu.'),
+        errH: T('Your request did not go through.', 'Ombi lako halikutumwa.'),
+        errP: T('Nothing was lost; your answers are still here. Try again, or send the details on', 'Hakuna kilichopotea; majibu yako bado yapo. Jaribu tena, au tuma maelezo kwa'),
+        okH: T('Request received.', 'Ombi limepokelewa.'),
+        okP: T('The ABRIA team will review your request and contact you with a quotation. Keep your reference number for every conversation about this shipment.', 'Timu ya ABRIA itapitia ombi lako na kukupigia na bei. Hifadhi namba yako ya kumbukumbu kwa mawasiliano yote kuhusu mzigo huu.'),
+        refK: T('Your ABRIA reference', 'Namba yako ya ABRIA'),
+        waCont: T('Continue on WhatsApp', 'Endelea WhatsApp'),
+        waNote: T('Opens WhatsApp with your reference and shipment details filled in, so the team can pick it up straight away.', 'Inafungua WhatsApp ikiwa na namba yako na maelezo ya mzigo, ili timu ianze mara moja.'),
+        another: T('Request another', 'Omba tena'), home: T('Back to home', 'Rudi mwanzo')
+      },
+      next: [T('You receive an ABR reference as soon as you submit.', 'Unapata namba ya ABR mara tu unapowasilisha.'), T('The ABRIA team reviews the cargo, route and dates.', 'Timu ya ABRIA inapitia mzigo, njia na tarehe.'), T('You receive a written quotation.', 'Unapokea bei kwa maandishi.'), T('On approval, a verified carrier is assigned.', 'Ukikubali, msafirishaji aliyehakikiwa anapangwa.')].map((text, i) => ({ n: '0' + (i + 1), text })),
+      sections: secTitles.map((title, i) => ({ n: '0' + (i + 1), title, fields: rows.filter((r, j) => this.defs()[j].sec === i) })),
+      isForm: st !== 'success', isSuccess: st === 'success', isError: st === 'error', loading: st === 'loading',
+      hasInvalid: nErr > 0,
+      invalidText: T('Please check ' + nErr + (nErr === 1 ? ' highlighted field.' : ' highlighted fields.'), 'Tafadhali angalia sehemu ' + nErr + ' zilizowekwa alama.'),
+      submitLabel: st === 'loading' ? T('Sending…', 'Inatuma…') : T('Request Transport Quote', 'Omba Bei ya Usafiri'),
+      submit: e => this.submit(e),
+      refId: this.state.refId,
+      summary: [{ k: T('Route', 'Njia'), v: route }, { k: T('Cargo', 'Mzigo'), v: (f.cargoType || '—') + (f.weight ? ' · ' + f.weight + ' kg' : '') }, { k: T('Date', 'Tarehe'), v: f.transportDate || '—' }],
+      devNotes: this.props.devNotes ?? true,
+      waHref: A ? A.wa(T('Hello ABRIA, I would like a transport quote.', 'Habari ABRIA, ningependa bei ya usafiri.')) : '#',
+      waDone: A ? A.wa(waMsg) : '#',
+      waClick: () => A && A.track('whatsapp_click', { from: 'quote_success' }),
+      reset: () => { this.setState({ form: { transportType: 'Road' }, errors: {}, tried: false, status: 'idle', refId: '' }); window.scrollTo(0, 0); }
+    };
+  }
+}
+</script>
+</body>
+</html>

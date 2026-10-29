@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>ABRIA Forms</title>
+  </head>
+  <body>
+    <!--
+      Deploy-time Netlify Forms detection. This page is never shown to users.
+      It lets Netlify discover each form and its fields during the build so
+      submissions can be accepted and stored. The live React forms also carry
+      data-netlify markers; this static mirror keeps detection reliable.
+    -->
+    <form name="transport-request" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="transport-request" />
+      <input name="bot-field" type="text" />
+      <input name="companyName" type="text" />
+      <input name="contactPerson" type="text" />
+      <input name="phone" type="text" />
+      <input name="email" type="text" />
+      <input name="pickupLocation" type="text" />
+      <input name="deliveryLocation" type="text" />
+      <input name="cargoType" type="text" />
+      <input name="transportType" type="text" />
+      <input name="cargoDescription" type="text" />
+      <input name="quantity" type="text" />
+      <input name="weight" type="text" />
+      <input name="dimensions" type="text" />
+      <input name="numberOfPackages" type="text" />
+      <input name="cargoValue" type="text" />
+      <input name="transportDate" type="text" />
+      <input name="preferredPickupDate" type="text" />
+      <input name="requiredDeliveryDate" type="text" />
+      <input name="specialHandling" type="text" />
+      <input name="additionalInstructions" type="text" />
+    </form>
+
+    <form name="truck-registration" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="truck-registration" />
+      <input name="bot-field" type="text" />
+      <input name="companyName" type="text" />
+      <input name="contactPerson" type="text" />
+      <input name="phone" type="text" />
+      <input name="email" type="text" />
+      <input name="truckType" type="text" />
+      <input name="truckCapacity" type="text" />
+      <input name="registrationNumber" type="text" />
+      <input name="makeModel" type="text" />
+      <input name="currentLocation" type="text" />
+      <input name="routesCovered" type="text" />
+      <input name="additionalInfo" type="text" />
+    </form>
+
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input name="bot-field" type="text" />
+      <input name="topic" type="text" />
+      <input name="name" type="text" />
+      <input name="company" type="text" />
+      <input name="phone" type="text" />
+      <input name="email" type="text" />
+      <textarea name="message"></textarea>
+    </form>
+  </body>
+</html>

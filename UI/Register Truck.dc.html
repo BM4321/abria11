@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Register Your Truck | Join the ABRIA Carrier Network</title>
+<meta name="description" content="Truck owners and transport providers in Tanzania: register your truck with ABRIA and receive transport jobs on your routes.">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}.cmyk .print:not(:has(image-slot[data-filled])){filter:none}.cmyk:not(:has(image-slot[data-filled]))::after{display:none}body{margin:0;text-wrap:pretty}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@keyframes abria-spin{to{transform:rotate(360deg)}}@keyframes abria-drive{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px) translateY(-1px)}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}</style>
+</helmet>
+<dc-import name="Nav" current="carriers" translated="{{ true }}" hint-size="100%,72px" style="position:sticky;top:0;z-index:50"></dc-import>
+<main style="max-width:1200px;margin:0 auto;padding:clamp(40px,6vw,88px) clamp(20px,5vw,72px) 0">
+  <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+    <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:40px clamp(32px,5vw,88px);align-items:end">
+      <div>
+        <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.kicker }}</p>
+        <h1 style="font-size:clamp(44px,6.4vw,88px);line-height:1;letter-spacing:-0.025em;margin:0 0 0 -0.035em">{{ t.h1 }}</h1>
+        <p style="font-size:19px;line-height:30px;max-width:30em;margin:24px 0 0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ t.sub }}</p>
+      </div>
+      <figure data-reveal="1" class="cmyk" style="margin:0;overflow:visible">
+        <div class="print" style="aspect-ratio:16/10"><x-import component-from-global-scope="image-slot" from="./image-slot.js" id="truck-hero" shape="rounded" radius="16" placeholder="Approved photograph: truck owner with vehicle" hint-size="100%,100%"></x-import></div>
+      </figure>
+    </section>
+    <div style="position:relative"><span data-drive="1" aria-hidden="true" style="position:absolute;left:0;bottom:100%;margin-bottom:1px;display:flex;color:var(--color-accent)"><i class="ph-duotone ph-truck" style="font-size:34px"></i></span><hr style="height:5px;border:0;margin:clamp(48px,6vw,80px) 0 0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)"></div>
+    <ol style="list-style:none;margin:0;padding:14px 0;display:flex;flex-wrap:wrap;gap:8px 32px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">
+      <sc-for list="{{ rail }}" as="r" hint-placeholder-count="4"><li>{{ r }}</li></sc-for>
+    </ol>
+    <hr style="height:0;border:0;border-top:1px solid var(--color-text);margin:0">
+
+    <form noValidate="{{ true }}" onSubmit="{{ submit }}" aria-label="{{ t.h1 }}" style="max-width:860px;margin-top:clamp(48px,6vw,80px)">
+      <sc-if value="{{ hasInvalid }}" hint-placeholder-val="{{ false }}">
+        <p role="alert" style="margin:0 0 32px;padding:14px 16px;background:var(--color-accent-2-100);color:var(--color-accent-2-800);font-size:15px;border-radius:var(--radius-md);display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-warning-circle" aria-hidden="true" style="font-size:22px"></i>{{ invalidText }}</p>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:56px">
+        <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+          <fieldset style="border:0;margin:0;padding:0;min-width:0">
+            <legend style="display:flex;align-items:baseline;gap:14px;padding:0;margin:0 0 24px;font-size:24px;font-weight:600"><span style="font-size:13px;font-weight:400;color:var(--color-accent-700)">{{ sec.n }}</span>{{ sec.title }}</legend>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:22px 24px">
+              <sc-for list="{{ sec.fields }}" as="f">
+                <div style="grid-column:{{ f.span }};display:flex;flex-direction:column;gap:6px;min-width:0">
+                  <label for="{{ f.id }}" style="font-size:14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">{{ f.label }}<sc-if value="{{ f.req }}"><span aria-hidden="true" style="color:var(--color-accent-2-700)">*</span></sc-if><sc-if value="{{ f.dev }}"><span class="tag tag-accent-2">{{ f.devText }}</span></sc-if></label>
+                  <sc-if value="{{ f.isInput }}"><input class="input" id="{{ f.id }}" name="{{ f.key }}" type="{{ f.type }}" inputMode="{{ f.inputMode }}" autoComplete="{{ f.autoComplete }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-required="{{ f.req }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:46px;font-size:16px;border-color:{{ f.border }}"></sc-if>
+                  <sc-if value="{{ f.isSelect }}"><select class="input" id="{{ f.id }}" name="{{ f.key }}" value="{{ f.value }}" onChange="{{ f.onChange }}" aria-required="{{ f.req }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:46px;font-size:16px;border-color:{{ f.border }}"><option value="">{{ f.ph }}</option><sc-for list="{{ f.options }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></sc-if>
+                  <sc-if value="{{ f.isArea }}"><textarea class="input" id="{{ f.id }}" name="{{ f.key }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:110px;font-size:16px;border-color:{{ f.border }}"></textarea></sc-if>
+                  <sc-if value="{{ f.hasError }}"><p id="{{ f.errId }}" style="margin:0;font-size:13px;line-height:18px;color:var(--color-accent-2-700);display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-warning-circle" aria-hidden="true" style="font-size:16px;flex:none"></i>{{ f.error }}</p></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </fieldset>
+        </sc-for>
+      </div>
+      <p style="margin:32px 0 0;font-size:14px;line-height:22px;color:color-mix(in srgb,var(--color-text) 75%,transparent)">{{ t.docs }}</p>
+      <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="margin:32px 0 0;padding:16px;background:var(--color-accent-2-100);color:var(--color-accent-2-800);border-radius:var(--radius-md);font-size:15px;line-height:23px">
+          <p style="margin:0;font-weight:600">{{ t.errH }}</p>
+          <p style="margin:4px 0 0">{{ t.errP }} <a href="{{ waHref }}" target="_blank" rel="noopener" style="color:var(--color-accent-2-800)">WhatsApp</a>.</p>
+        </div>
+      </sc-if>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;margin-top:36px">
+        <button type="submit" class="btn btn-primary" disabled="{{ loading }}" style="font-size:17px;padding:16px 28px;min-height:54px">
+          <sc-if value="{{ loading }}"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:22px;animation:abria-drive 0.7s ease-in-out infinite"></i></sc-if>{{ submitLabel }}
+        </button>
+        <a href="{{ waHref }}" target="_blank" rel="noopener" style="font-size:15px">{{ t.orWa }}</a>
+      </div>
+    </form>
+  </sc-if>
+
+  <sc-if value="{{ isSuccess }}" hint-placeholder-val="{{ false }}">
+    <section aria-live="polite" style="max-width:760px">
+      <i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:56px;color:var(--color-accent)"></i>
+      <h1 style="font-size:clamp(40px,5vw,64px);line-height:1.04;letter-spacing:-0.02em;margin:24px 0 0 -0.035em">{{ t.okH }}</h1>
+      <p style="font-size:18px;line-height:28px;margin:20px 0 0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ t.okP }}</p>
+      <hr style="height:5px;border:0;margin:40px 0 0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 32px;padding:18px 0">
+        <span style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.refK }}</span>
+        <span style="font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:0.02em">{{ refId }}</span>
+      </div>
+      <hr style="height:0;border:0;border-top:1px solid var(--color-text);margin:0">
+      <sc-if value="{{ devNotes }}" hint-placeholder-val="{{ true }}"><p style="margin:20px 0 0"><span class="tag tag-accent-2">Prototype: sample ID. Live site returns the real partner ID from /api/partners.</span></p></sc-if>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:40px">
+        <a class="btn btn-primary" href="{{ waDone }}" target="_blank" rel="noopener" onClick="{{ waClick }}" style="font-size:16px;padding:14px 24px;min-height:52px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:22px"></i>{{ t.waCont }}</a>
+        <button type="button" class="btn btn-secondary" onClick="{{ reset }}" style="font-size:16px;padding:14px 24px;min-height:52px">{{ t.another }}</button>
+        <a class="btn btn-ghost" href="For%20Carriers.dc.html" style="font-size:16px;min-height:52px">{{ t.more }}</a>
+      </div>
+      <p style="margin:16px 0 0;font-size:14px;line-height:22px;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.waNote }}</p>
+    </section>
+  </sc-if>
+</main>
+<dc-import name="Footer" hint-size="100%,520px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;simulateError&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype states&quot;},&quot;devNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype states&quot;}}">
+class Component extends DCLogic {
+  state = { lang: 'en', form: {}, errors: {}, tried: false, status: 'idle', refId: '' };
+  componentDidMount() {
+    const b = () => { if (!window.ABRIA) return setTimeout(b, 40); this.setState({ lang: window.ABRIA.getLang() }); };
+    b();
+    this._l = e => this.setState({ lang: e.detail, errors: this.state.tried ? window.ABRIA.validate(this.defs(), this.state.form, e.detail === 'sw') : {} });
+    window.addEventListener('abria-lang', this._l);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-lang', this._l); clearTimeout(this._t); }
+  defs() {
+    const trucks = [['Flatbed'], ['Curtainsider'], ['Box Truck', 'Lori la boksi'], ['Refrigerated', 'Jokofu'], ['Container Truck', 'Lori la kontena'], ['Tipper', 'Tipa'], ['Lowbed'], ['Pickup'], ['Other', 'Nyingine']];
+    return [
+      { sec: 0, key: 'contactPerson', en: 'Full name', sw: 'Jina kamili', kind: 'text', required: true, auto: 'name' },
+      { sec: 0, key: 'companyName', en: 'Company name', sw: 'Jina la kampuni', kind: 'text', auto: 'organization', ph: 'Optional', phSw: 'Si lazima' },
+      { sec: 0, key: 'phone', en: 'Phone', sw: 'Simu', kind: 'tel', required: true, auto: 'tel', ph: '+255 7XX XXX XXX' },
+      { sec: 0, key: 'email', en: 'Email', sw: 'Barua pepe', kind: 'email', auto: 'email' },
+      { sec: 1, key: 'truckType', en: 'Truck type', sw: 'Aina ya lori', kind: 'select', required: true, ph: 'Select truck type', phSw: 'Chagua aina ya lori', options: trucks },
+      { sec: 1, key: 'registrationNumber', en: 'Registration number', sw: 'Namba ya usajili', kind: 'text', required: true, ph: 'e.g. T 123 ABC', phSw: 'mf. T 123 ABC' },
+      { sec: 1, key: 'truckCapacity', en: 'Capacity', sw: 'Uwezo wa kubeba', kind: 'text', ph: 'e.g. 20 tonnes', phSw: 'mf. tani 20' },
+      { sec: 1, key: 'makeModel', en: 'Make / model', sw: 'Aina / modeli', kind: 'text', ph: 'e.g. Isuzu FVR', phSw: 'mf. Isuzu FVR' },
+      { sec: 1, key: 'numberOfVehicles', en: 'Number of vehicles', sw: 'Idadi ya magari', kind: 'number', ph: '1', dev: 'New field: add to Partner table' },
+      { sec: 2, key: 'currentLocation', en: 'Current location', sw: 'Mahali ulipo sasa', kind: 'text', ph: 'Town or region', phSw: 'Mji au mkoa' },
+      { sec: 2, key: 'routesCovered', en: 'Routes / regions you operate', sw: 'Njia / mikoa unayohudumia', kind: 'text', ph: 'e.g. Dar es Salaam – Mwanza', phSw: 'mf. Dar es Salaam – Mwanza' },
+      { sec: 2, key: 'additionalInfo', en: 'Additional information', sw: 'Taarifa za ziada', kind: 'textarea', full: true, dev: 'New field: add to Partner table' }
+    ];
+  }
+  onField(k, v) {
+    this.setState(s => {
+      const form = Object.assign({}, s.form, { [k]: v });
+      return { form, errors: s.tried ? window.ABRIA.validate(this.defs(), form, s.lang === 'sw') : s.errors };
+    });
+  }
+  submit(e) {
+    e.preventDefault();
+    const A = window.ABRIA; if (!A || this.state.status === 'loading') return;
+    const defs = this.defs(), errors = A.validate(defs, this.state.form, this.state.lang === 'sw');
+    const bad = defs.filter(d => errors[d.key]);
+    if (bad.length) {
+      this.setState({ errors, tried: true, status: 'idle' });
+      setTimeout(() => { const el = document.getElementById('f-' + bad[0].key); el && el.focus(); }, 30);
+      return;
+    }
+    this.setState({ errors: {}, status: 'loading' });
+    // Live: POST /api/partners (server validates + returns partnerId), then forward to Netlify Forms.
+    this._t = setTimeout(() => {
+      if (this.props.simulateError) return this.setState({ status: 'error' });
+      const refId = 'ABP-' + String(Math.floor(Math.random() * 99999)).padStart(5, '0');
+      A.track('truck_registration_submit', { truckType: this.state.form.truckType });
+      this.setState({ status: 'success', refId });
+      window.scrollTo(0, 0);
+    }, 1100);
+  }
+  renderVals() {
+    const A = window.ABRIA, sw = this.state.lang === 'sw', T = (e, s) => (sw ? s : e);
+    const f = this.state.form, st = this.state.status, devNotes = this.props.devNotes ?? true;
+    const defs = this.defs();
+    const rows = A ? A.fields(defs, f, this.state.errors, sw, (k, v) => this.onField(k, v), devNotes) : [];
+    const titles = [T('About you', 'Kuhusu wewe'), T('Your truck', 'Lori lako'), T('Where you operate', 'Unakofanya kazi')];
+    const nErr = Object.keys(this.state.errors).length;
+    const waMsg = T(
+      'Hello ABRIA, I have just registered my truck.\nPartner ID: ' + this.state.refId + '\nTruck: ' + (f.truckType || '') + ' ' + (f.registrationNumber || '') + '\nRoutes: ' + (f.routesCovered || '') + '\nName: ' + (f.contactPerson || ''),
+      'Habari ABRIA, nimesajili lori langu.\nNamba ya mshirika: ' + this.state.refId + '\nLori: ' + (f.truckType || '') + ' ' + (f.registrationNumber || '') + '\nNjia: ' + (f.routesCovered || '') + '\nJina: ' + (f.contactPerson || '')
+    );
+    return {
+      t: {
+        kicker: T('Register your truck', 'Sajili lori lako'),
+        h1: T('Join the ABRIA carrier network.', 'Jiunge na mtandao wa wasafirishaji wa ABRIA.'),
+        sub: T('Register once. After the ABRIA team verifies your vehicle, you receive transport jobs that fit your truck and the routes you already drive.', 'Jisajili mara moja. Timu ya ABRIA ikishahakiki gari lako, utapokea kazi za usafiri zinazolingana na lori lako na njia unazotumia.'),
+        docs: T('You do not need to upload documents here. If verification needs your vehicle papers, the team will ask for them directly.', 'Huhitaji kupakia nyaraka hapa. Ikiwa uhakiki utahitaji nyaraka za gari, timu itakuomba moja kwa moja.'),
+        orWa: T('Or register on WhatsApp', 'Au jisajili kwa WhatsApp'),
+        errH: T('Your registration did not go through.', 'Usajili wako haukutumwa.'),
+        errP: T('Your answers are still here. Try again, or send your details on', 'Majibu yako bado yapo. Jaribu tena, au tuma taarifa zako kwa'),
+        okH: T('Registration received.', 'Usajili umepokelewa.'),
+        okP: T('The ABRIA team will review your details, verify your vehicle and contact you. Once verified, jobs that fit your truck will be assigned to you.', 'Timu ya ABRIA itapitia taarifa zako, kuhakiki gari lako na kuwasiliana nawe. Ukishahakikiwa, kazi zinazolingana na lori lako zitapewa kwako.'),
+        refK: T('Your ABRIA partner ID', 'Namba yako ya mshirika wa ABRIA'),
+        waCont: T('Continue on WhatsApp', 'Endelea WhatsApp'),
+        waNote: T('Opens WhatsApp with your partner ID and truck details filled in.', 'Inafungua WhatsApp ikiwa na namba yako na maelezo ya lori.'),
+        another: T('Register another truck', 'Sajili lori jingine'), more: T('About carrying with ABRIA', 'Kuhusu kusafirisha na ABRIA')
+      },
+      rail: sw ? ['01 Jisajili', '02 Hakikiwa', '03 Pokea kazi', '04 Safirisha'] : ['01 Register', '02 Get verified', '03 Receive jobs', '04 Transport'],
+      sections: titles.map((title, i) => ({ n: '0' + (i + 1), title, fields: rows.filter((r, j) => defs[j].sec === i) })),
+      isForm: st !== 'success', isSuccess: st === 'success', isError: st === 'error', loading: st === 'loading',
+      hasInvalid: nErr > 0,
+      invalidText: T('Please check ' + nErr + (nErr === 1 ? ' highlighted field.' : ' highlighted fields.'), 'Tafadhali angalia sehemu ' + nErr + ' zilizowekwa alama.'),
+      submitLabel: st === 'loading' ? T('Sending…', 'Inatuma…') : T('Register Your Truck', 'Sajili Lori Lako'),
+      submit: e => this.submit(e),
+      refId: this.state.refId, devNotes,
+      waHref: A ? A.wa(T('Hello ABRIA, I have a truck and would like to register.', 'Habari ABRIA, nina lori na ningependa kujisajili.')) : '#',
+      waDone: A ? A.wa(waMsg) : '#',
+      waClick: () => A && A.track('whatsapp_click', { from: 'truck_success' }),
+      reset: () => { this.setState({ form: {}, errors: {}, tried: false, status: 'idle', refId: '' }); window.scrollTo(0, 0); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Logistics Solutions | ABRIA Logistics Tanzania</title>
+<meta name="description" content="AB Pickup, AB Cargo, AB Match, AB Business, AB Express and AB Track: ABRIA's cargo transport services for businesses and carriers in Tanzania.">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;text-wrap:pretty}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@media (prefers-reduced-motion:reduce){*{transition:none!important}}</style>
+</helmet>
+<dc-import name="Nav" current="solutions" hint-size="100%,72px" style="position:sticky;top:0;z-index:50"></dc-import>
+<main>
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(48px,8vw,112px) clamp(20px,5vw,72px) 0">
+    <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Solutions</p>
+    <h1 style="font-size:clamp(40px,5.6vw,72px);line-height:1.05;letter-spacing:-0.02em;margin:0 0 0 -0.035em;max-width:13em">Six services for moving goods by road.</h1>
+    <p style="font-size:19px;line-height:30px;max-width:34em;margin:28px 0 0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">Each ABRIA service covers one part of a shipment: getting it collected, moving it, matching it to the right truck, and knowing where it is. Most shipments use more than one.</p>
+  </section>
+
+  <section aria-label="How the services fit together" style="max-width:1200px;margin:0 auto;padding:clamp(56px,7vw,96px) clamp(20px,5vw,72px) 0">
+    <hr style="height:5px;border:0;margin:0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:32px 48px;padding:28px 0 32px">
+      <div>
+        <p style="margin:0 0 12px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Shippers request</p>
+        <p style="margin:0;font-size:22px;line-height:1.5;font-weight:600">AB Pickup<br>AB Cargo<br>AB Express<br>AB Business</p>
+      </div>
+      <div>
+        <p style="margin:0 0 12px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700)">ABRIA connects</p>
+        <p style="margin:0;font-size:22px;line-height:1.5;font-weight:600">AB Match<br>AB Track <span class="tag tag-accent" style="vertical-align:middle">Coming soon</span></p>
+        <p style="margin:12px 0 0;font-size:15px;line-height:24px;color:color-mix(in srgb,var(--color-text) 78%,transparent)">Matching and visibility sit underneath every shipment.</p>
+      </div>
+      <div>
+        <p style="margin:0 0 12px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Carriers deliver</p>
+        <p style="margin:0;font-size:22px;line-height:1.5;font-weight:600">Registered, verified trucks</p>
+        <p style="margin:12px 0 0;font-size:15px;line-height:24px;color:color-mix(in srgb,var(--color-text) 78%,transparent)">Carriers join once and receive jobs that fit their vehicles and routes. <a href="For%20Carriers.dc.html">For carriers →</a></p>
+      </div>
+    </div>
+    <hr style="height:0;border:0;border-top:1px solid var(--color-text);margin:0">
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(56px,7vw,96px) clamp(20px,5vw,72px) 0;display:flex;flex-direction:column;gap:clamp(48px,6vw,80px)">
+    <sc-for list="{{ solutions }}" as="s" hint-placeholder-count="6">
+      <article data-reveal="1" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px clamp(32px,6vw,96px);align-items:start">
+        <div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <i class="{{ s.iconClass }}" aria-hidden="true" style="font-size:36px;color:var(--color-accent)"></i>
+            <span style="font-size:13px;color:color-mix(in srgb,var(--color-text) 60%,transparent);font-feature-settings:'tnum' 1">{{ s.n }}</span>
+            <sc-if value="{{ s.soon }}"><span class="tag tag-accent">Coming soon</span></sc-if>
+          </div>
+          <h2 style="margin:16px 0 0;font-size:clamp(28px,3vw,38px);letter-spacing:-0.015em">{{ s.name }}</h2>
+          <p style="margin:10px 0 0;font-size:18px;line-height:28px;font-style:italic">{{ s.line }}</p>
+        </div>
+        <div>
+          <p style="margin:0;font-size:16px;line-height:26px;color:color-mix(in srgb,var(--color-text) 80%,transparent)">{{ s.problem }}</p>
+          <p style="margin:14px 0 0;font-size:14px;line-height:22px;color:color-mix(in srgb,var(--color-text) 72%,transparent)"><span style="letter-spacing:0.06em;text-transform:uppercase;font-size:12px">For</span> — {{ s.audience }}</p>
+          <p style="margin:18px 0 0"><a href="{{ s.href }}" style="font-size:15px">How {{ s.name }} works →</a></p>
+        </div>
+      </article>
+    </sc-for>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(88px,11vw,160px) clamp(20px,5vw,72px) 0">
+    <h2 style="margin:0;font-size:clamp(30px,4vw,48px);line-height:1.08;letter-spacing:-0.02em;max-width:15em">Not sure which service you need?</h2>
+    <p style="margin:18px 0 0;font-size:18px;line-height:28px;max-width:34em;color:color-mix(in srgb,var(--color-text) 80%,transparent)">Describe the shipment. The ABRIA team will choose the right combination and send you a quotation.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:30px">
+      <a class="btn btn-primary" href="Request%20Quote.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">Request a Quote</a>
+      <a class="btn btn-secondary" href="Contact.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">Talk to the team</a>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,520px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { const b = () => (window.ABRIA ? this.forceUpdate() : setTimeout(b, 40)); b(); }
+  renderVals() { return { solutions: window.ABRIA ? window.ABRIA.solutions : [] }; }
+}
+</script>
+</body>
+</html>

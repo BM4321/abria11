@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Shipments | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@keyframes abria-pulse{0%{transform:scale(1);opacity:.55}100%{transform:scale(2.6);opacity:0}}</style>
+</helmet>
+<dc-import name="Shell" active="shipments" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <div><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Shipments</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Every booked job from carrier assignment to proof of delivery.</p></div>
+    <dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" initial="{{ initial }}" search="Search by shipment, customer, truck or driver" date-filter="{{ true }}" noun="shipments" page-size="{{ 10 }}" simulate="{{ simulate }}" bulk="{{ true }}" bulk-actions="{{ bulkActions }}" empty-title="No shipments yet" empty-text="When new transport requests are converted into shipments, they'll appear here." empty-icon="ph-package" hint-size="100%,640px"></dc-import>
+  </sc-if>
+  <sc-if value="{{ isErr }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><span style="width:60px;height:60px;margin:0 auto;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent-2) 12%,transparent);color:var(--color-accent-2-700)"><i class="ph-duotone ph-cloud-warning" aria-hidden="true" style="font-size:30px"></i></span><h1 style="margin:16px 0 6px;font-size:22px;font-weight:600">{{ errTitle }}</h1><p style="margin:0;color:var(--app-muted)">{{ errText }}</p><a class="btn btn-primary" href="{{ errHref }}" style="margin-top:18px;min-height:40px;border-radius:10px">{{ errCta }}</a></div>
+  </sc-if>
+  <sc-if value="{{ isSkel }}" hint-placeholder-val="{{ false }}">
+    <div aria-busy="true" style="display:flex;flex-direction:column;gap:20px"><span class="abria-skel" style="height:30px;width:280px"></span><div style="display:flex;flex-wrap:wrap;gap:20px"><div class="abria-skel" style="flex:2 1 520px;height:340px;border-radius:16px"></div><div class="abria-skel" style="flex:1 1 300px;height:340px;border-radius:16px"></div></div><div style="display:flex;flex-wrap:wrap;gap:20px"><div class="abria-skel" style="flex:1 1 300px;height:200px;border-radius:16px"></div><div class="abria-skel" style="flex:1 1 300px;height:200px;border-radius:16px"></div></div></div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Breadcrumb" style="display:flex;gap:8px;font-size:13px;color:var(--app-muted)"><a href="Shipments.dc.html" style="text-decoration:none">Shipments</a><span aria-hidden="true">/</span><span aria-current="page">{{ s.id }}</span></nav>
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px 24px;margin-top:-8px">
+      <div style="margin-right:auto">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Shipment #{{ s.id }}</h1><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border-radius:999px;font-size:13px;font-weight:500;background:{{ st.bg }};color:{{ st.fg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ st.dot }}"></span>{{ st.label }}</span></div>
+        <p style="margin:6px 0 0;font-size:14px;color:var(--app-muted)">{{ s.pickup }} → {{ s.dest }} · {{ cust.company }} · ETA {{ eta }}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+        <sc-if value="{{ canAdvance }}">
+          <label for="st-next" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">New status</label>
+          <select id="st-next" class="input" value="{{ nextSel }}" onChange="{{ onNext }}" style="width:auto;min-height:40px;border-radius:10px;background:var(--app-card)"><sc-for list="{{ nextOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
+          <button type="button" class="btn btn-primary" onClick="{{ advance }}" style="min-height:40px;border-radius:10px"><i class="ph ph-arrow-right" aria-hidden="true"></i>Update status</button>
+        </sc-if>
+        <a class="btn btn-secondary" href="{{ driverTel }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-phone" aria-hidden="true"></i>Call driver</a>
+        <button type="button" class="btn btn-secondary" onClick="{{ share }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-share-network" aria-hidden="true"></i>Share update</button>
+      </div>
+    </div>
+    <sc-if value="{{ late }}"><div role="status" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--color-accent-2) 11%,transparent);color:var(--color-accent-2-800)"><i class="ph-duotone ph-clock-countdown" aria-hidden="true" style="font-size:22px"></i><span style="flex:1;min-width:200px"><strong style="font-weight:600">Past ETA by {{ lateDays }}.</strong> {{ s.delayNote }}</span><button type="button" onClick="{{ notifyCust }}" class="btn btn-secondary" style="min-height:36px;border-radius:10px;background:var(--app-card)">Notify customer</button></div></sc-if>
+
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:stretch">
+      <section aria-labelledby="map-h" style="flex:2 1 560px;min-width:0;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:16px 18px 0"><h2 id="map-h" style="margin:0;font-size:16px;font-weight:600">Route</h2><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 10px;border-radius:999px;background:var(--app-page);color:var(--app-muted)"><i class="ph ph-map-trifold" aria-hidden="true"></i>Map integration placeholder</span></div>
+        <div role="img" aria-label="{{ mapLabel }}" style="position:relative;margin:12px 18px 0;border-radius:12px;overflow:hidden;background:var(--app-page);background-image:radial-gradient(circle,var(--app-line) 1px,transparent 1.4px);background-size:18px 18px;aspect-ratio:600/260">
+          <svg viewBox="0 0 600 260" width="100%" height="100%" style="position:absolute;inset:0" aria-hidden="true">
+            <path d="M70 196 C 200 210, 250 60, 360 110 S 480 60, 530 64" fill="none" stroke="color-mix(in srgb,var(--color-text) 22%,transparent)" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10"></path>
+            <path d="M70 196 C 200 210, 250 60, 360 110 S 480 60, 530 64" fill="none" stroke="var(--color-accent)" stroke-width="5" stroke-linecap="round" pathLength="100" stroke-dasharray="{{ dash }}" style="transition:stroke-dasharray .8s cubic-bezier(.2,.7,.2,1)"></path>
+            <circle cx="70" cy="196" r="8" fill="var(--app-card)" stroke="var(--color-text)" stroke-width="3"></circle>
+            <circle cx="530" cy="64" r="9" fill="var(--color-accent-2)" stroke="var(--app-card)" stroke-width="3"></circle>
+          </svg>
+          <span style="position:absolute;left:{{ pos.l }};top:{{ pos.t }};transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg);box-shadow:var(--shadow-md);transition:left .8s cubic-bezier(.2,.7,.2,1), top .8s cubic-bezier(.2,.7,.2,1)"><span aria-hidden="true" style="position:absolute;inset:0;border-radius:50%;background:var(--color-accent);animation:abria-pulse 1.8s ease-out infinite"></span><i class="ph-fill ph-truck" aria-hidden="true" style="font-size:18px;position:relative"></i></span>
+          <span style="position:absolute;left:11.7%;top:75%;transform:translate(-10%,18px);font-size:12px;font-weight:600;padding:3px 8px;border-radius:8px;background:var(--app-card);box-shadow:var(--shadow-sm);white-space:nowrap">{{ s.pickup }}</span>
+          <span style="position:absolute;right:4%;top:24.6%;transform:translateY(-44px);font-size:12px;font-weight:600;padding:3px 8px;border-radius:8px;background:var(--app-card);box-shadow:var(--shadow-sm);white-space:nowrap">{{ s.dest }}</span>
+        </div>
+        <dl style="margin:0;padding:16px 18px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:14px">
+          <sc-for list="{{ routeStats }}" as="k"><div><dt style="font-size:12px;color:var(--app-muted)">{{ k.k }}</dt><dd style="margin:2px 0 0;font-size:16px;font-weight:600">{{ k.v }}</dd></div></sc-for>
+        </dl>
+      </section>
+      <section aria-labelledby="tl-h" style="flex:1 1 300px;min-width:0;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <h2 id="tl-h" style="margin:0 0 16px;font-size:16px;font-weight:600">Shipment timeline</h2>
+        <ol style="list-style:none;margin:0;padding:0">
+          <sc-for list="{{ timeline }}" as="t">
+            <li style="display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px">
+              <span style="position:relative;display:flex;justify-content:center"><span aria-hidden="true" style="position:absolute;top:30px;bottom:-2px;width:2px;background:{{ t.line }}"></span><span style="position:relative;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:{{ t.bg }};color:{{ t.fg }};box-shadow:{{ t.ring }}"><i class="{{ t.icon }}" aria-hidden="true" style="font-size:14px"></i></span></span>
+              <div style="padding:3px 0 18px"><div style="font-size:14px;font-weight:{{ t.fw }};color:{{ t.tc }}">{{ t.label }}</div><div style="font-size:12px;color:var(--app-muted)">{{ t.when }}</div></div>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px">
+      <section aria-labelledby="ov-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <h2 id="ov-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Shipment overview</h2>
+        <dl style="margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px"><sc-for list="{{ overview }}" as="k"><div style="min-width:0"><dt style="font-size:12px;color:var(--app-muted)">{{ k.k }}</dt><dd style="margin:2px 0 0;font-size:14.5px;font-weight:500">{{ k.v }}</dd></div></sc-for></dl>
+      </section>
+      <section aria-labelledby="tr-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <h2 id="tr-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Transport</h2>
+        <dl style="margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px"><sc-for list="{{ transport }}" as="k"><div style="min-width:0"><dt style="font-size:12px;color:var(--app-muted)">{{ k.k }}</dt><dd style="margin:2px 0 0;font-size:14.5px;font-weight:500">{{ k.v }}</dd></div></sc-for></dl>
+        <a href="{{ carrierHref }}" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:14px;font-weight:500;text-decoration:none">View carrier profile<i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+      </section>
+      <section aria-labelledby="doc-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <h2 id="doc-h" style="margin:0 0 12px;font-size:16px;font-weight:600">Documents</h2>
+        <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ docs }}" as="d">
+            <li style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:var(--app-page);outline:{{ d.outline }}">
+              <i class="{{ d.icon }}" aria-hidden="true" style="font-size:24px;color:{{ d.ic }};flex:none"></i>
+              <span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500">{{ d.name }}</span><span style="display:block;font-size:12px;color:{{ d.subc }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.sub }}</span></span>
+              <sc-if value="{{ d.has }}"><button type="button" onClick="{{ d.view }}" aria-label="{{ d.viewLabel }}" style="width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--app-muted);cursor:pointer"><i class="ph ph-eye" aria-hidden="true" style="font-size:18px"></i></button></sc-if>
+              <label style="display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 12px;border-radius:10px;background:var(--app-card);font-size:13px;font-weight:500;cursor:pointer;box-shadow:var(--shadow-sm)"><i class="ph ph-upload-simple" aria-hidden="true"></i>{{ d.cta }}<input type="file" onChange="{{ d.upload }}" style="position:absolute;width:1px;height:1px;opacity:0"></label>
+            </li>
+          </sc-for>
+        </ul>
+        <p style="margin:10px 0 0;font-size:12px;color:var(--app-muted)">PDF or image, up to 5 MB. Storage connects in a later phase.</p>
+      </section>
+    </div>
+    <section aria-labelledby="in-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><h2 id="in-h" style="margin:0;font-size:16px;font-weight:600">Internal notes</h2><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--app-muted)"><i class="ph ph-lock-simple" aria-hidden="true"></i>Managers only</span></div>
+      <ul style="list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:8px"><sc-for list="{{ notes }}" as="n"><li style="padding:10px 12px;border-radius:12px;background:var(--app-page);font-size:14px;line-height:1.5"><span style="font-size:12px;color:var(--app-muted)"><strong style="font-weight:600;color:var(--color-text)">{{ n.by }}</strong> · {{ n.when }}</span><br>{{ n.text }}</li></sc-for></ul>
+      <form onSubmit="{{ addNote }}" style="display:flex;flex-wrap:wrap;gap:8px"><label for="sn" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Add note</label><input id="sn" class="input" value="{{ draft }}" onChange="{{ onDraft }}" placeholder="Add a note…" style="flex:1 1 240px;min-height:42px;border-radius:10px;background:var(--app-page)"><button type="submit" class="btn btn-primary" disabled="{{ noDraft }}" style="min-height:42px;border-radius:10px">Add note</button></form>
+    </section>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, loading: true, tick: 0, next: '', draft: '', files: {} };
+  componentDidMount() {
+    const b = () => { if (!window.ABRIA_M) return setTimeout(b, 30); this.setState({ ready: true }); setTimeout(() => this.setState({ loading: false }), 500); };
+    b();
+    this._d = () => this.setState(s => ({ tick: s.tick + 1 })); window.addEventListener('abria-data', this._d);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-data', this._d); }
+  renderVals() {
+    const M = window.ABRIA_M, E = { timeline: [], overview: [], transport: [], docs: [], notes: [], routeStats: [], nextOpts: [], pos: {} };
+    if (!M) return Object.assign({ isList: true }, E);
+    const id = M.param('id');
+    if (!id) {
+      const init = {}; ['status', 'delay', 'carrier'].forEach(k => { const v = M.param(k); if (v) init[k] = v; });
+      const D = M.DATA.shipments;
+      return Object.assign({}, E, { isList: true, cols: M.COLS.shipments, rows: M.ROWS.shipments(D), initial: init, simulate: M.param('state') || 'none',
+        filters: [{ key: 'status', label: 'Status', options: ['Assigned', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'] }, { key: 'carrier', label: 'Carrier', options: M.uniq(D, s => M.IDX.car[s.carrier].company) }, { key: 'region', label: 'Region', all: 'All destinations', options: M.uniq(D, 'dest') }, { key: 'delay', label: 'Timing', all: 'Any timing', options: ['On time', 'Delayed'] }],
+        bulkActions: [{ label: 'Share status update', onClick: ids => M.toast('Status update sent to ' + ids.length + ' customer(s)') }] });
+    }
+    if (M.param('state') === 'error') return Object.assign({}, E, { isErr: true, errTitle: 'Something went wrong', errText: 'We couldn’t load this shipment.', errCta: 'Try again', errHref: M.link('shipments', { id }) });
+    if (this.state.loading) return Object.assign({}, E, { isSkel: true });
+    const s = M.IDX.ship[id];
+    if (!s) return Object.assign({}, E, { isErr: true, errTitle: 'Shipment not found', errText: 'We couldn’t find ' + id + '.', errCta: 'Back to shipments', errHref: 'Shipments.dc.html' });
+    const c = M.IDX.cust[s.cust], k = M.IDX.car[s.carrier], t = M.IDX.truck[s.truck] || {};
+    const cur = M.STAGE_OF[s.status];
+    const late = s.delayed && s.status !== 'Delivered';
+    const addH = (iso, h) => { const d = new Date(iso + 'T06:00'); d.setHours(d.getHours() + h); return d.toISOString().slice(0, 16); };
+    const offs = [-30, -8, 0, 5, 7, 30, 34];
+    const timeline = M.STAGES.map((label, i) => {
+      const done = i < cur || (s.status === 'Delivered' && i === cur), now = i === cur && s.status !== 'Delivered';
+      return { label, fw: now ? 600 : done ? 500 : 400, tc: done || now ? 'var(--color-text)' : 'var(--app-muted)',
+        when: done ? M.rel(addH(s.created, offs[i])) : now ? (late ? 'Delayed · since ' + M.dShort(s.eta) : 'Current · updated ' + M.rel(M.TODAY + 'T09:42')) : (i === 6 ? 'Expected ' + M.dShort(s.eta) : 'Pending'),
+        bg: done ? 'var(--color-accent)' : now ? (late ? 'var(--color-accent-2)' : 'var(--app-card)') : 'var(--app-page)',
+        fg: done ? 'var(--color-bg)' : now ? (late ? '#fff' : 'var(--color-accent)') : 'var(--app-muted)',
+        ring: now && !late ? 'inset 0 0 0 2px var(--color-accent)' : done ? 'none' : 'inset 0 0 0 1.5px var(--app-line)',
+        icon: done ? 'ph-bold ph-check' : now ? 'ph-fill ph-circle' : 'ph ph-circle',
+        line: i === M.STAGES.length - 1 ? 'transparent' : (i < cur ? 'var(--color-accent)' : 'var(--app-line)') };
+    });
+    // cubic path sample for truck marker
+    const P = [[70, 196], [200, 210], [250, 60], [360, 110], [470, 160], [480, 60], [530, 64]];
+    const bez = (a, b, c2, d, u) => [0, 1].map(j => (1 - u) ** 3 * a[j] + 3 * (1 - u) ** 2 * u * b[j] + 3 * (1 - u) * u * u * c2[j] + u ** 3 * d[j]);
+    const p = s.progress, pt = p <= 0.5 ? bez(P[0], P[1], P[2], P[3], p * 2) : bez(P[3], [2 * P[3][0] - 250, 2 * P[3][1] - 60], P[5], P[6], (p - 0.5) * 2);
+    const km = { 'Arusha': 640, 'Dodoma': 450, 'Mbeya': 830, 'Mwanza': 1150, 'Dar es Salaam Port': 640, 'Dar es Salaam': 640, 'Tanga': 300, 'Shinyanga': 160 }[s.dest] || 500;
+    const order = ['Assigned', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'];
+    const nextOpts = order.slice(order.indexOf(s.status) + 1);
+    const nextSel = nextOpts.indexOf(this.state.next) > -1 ? this.state.next : nextOpts[0];
+    const f = this.state.files;
+    const docDef = [
+      ['note', 'Delivery note', 'DN-' + s.id.slice(4) + '.pdf', true],
+      ['pod', 'Proof of delivery', 'POD-' + s.id.slice(4) + '.pdf', s.status === 'Delivered'],
+      ['cargo', 'Cargo documents', 'packing-list-' + s.id.slice(4) + '.pdf', true]
+    ];
+    const bump = () => window.dispatchEvent(new Event('abria-data'));
+    const docs = docDef.map(d => {
+      const st = f[d[0]], has = st ? st.ok : d[3], err = st && !st.ok;
+      return { name: d[1], has, cta: has ? 'Replace' : 'Upload', icon: err ? 'ph-duotone ph-file-x' : has ? 'ph-duotone ph-file-pdf' : 'ph-duotone ph-file-dashed',
+        ic: err ? 'var(--color-accent-2)' : has ? 'var(--color-accent)' : 'var(--app-muted)',
+        sub: err ? st.msg : st && st.ok ? st.name + ' · uploaded just now' : has ? d[2] + ' · uploaded ' + M.dShort(s.created) : (d[0] === 'pod' ? 'Awaiting delivery' : 'Not uploaded'),
+        subc: err ? 'var(--color-accent-2-700)' : 'var(--app-muted)', outline: err ? '1.5px solid var(--color-accent-2)' : 'none',
+        viewLabel: 'Preview ' + d[1], view: () => M.toast('Preview opens once document storage is connected', { icon: 'ph-eye' }),
+        upload: e => { const file = e.target.files && e.target.files[0]; if (!file) return; const ok = file.size <= 5 * 1024 * 1024; this.setState({ files: Object.assign({}, f, { [d[0]]: ok ? { ok, name: file.name } : { ok, msg: 'Upload failed: ' + file.name + ' is larger than 5 MB' } }) }); ok ? M.toast(d[1] + ' uploaded') : M.toast('Upload failed: file is larger than 5 MB', { tone: 'bad' }); } };
+    });
+    const notes = (s.notes || [{ by: 'Godfrey Mushi', at: s.created + 'T14:10', text: 'Driver confirmed tarpaulin and straps on board. Customer wants a call 1 hour before arrival.' }]);
+    return Object.assign({}, E, {
+      isDetail: true, s, st: M.badge(s.status), cust: c, eta: M.d(s.eta), late, lateDays: (-M.daysFrom(s.eta)) + (M.daysFrom(s.eta) === -1 ? ' day' : ' days'),
+      dash: (p * 100).toFixed(1) + ' 100', pos: { l: (pt[0] / 6).toFixed(2) + '%', t: (pt[1] / 2.6).toFixed(2) + '%' },
+      mapLabel: 'Route from ' + s.pickup + ' to ' + s.dest + ', ' + Math.round(p * 100) + '% complete',
+      routeStats: [{ k: 'Distance', v: '≈ ' + km + ' km' }, { k: 'Progress', v: Math.round(p * 100) + '%' }, { k: 'Remaining', v: '≈ ' + Math.round(km * (1 - p)) + ' km' }, { k: 'ETA', v: M.dShort(s.eta) }],
+      timeline,
+      overview: [{ k: 'Customer', v: c.company }, { k: 'Contact', v: c.name }, { k: 'Cargo', v: s.cargo }, { k: 'Weight', v: M.kg(s.weight) }, { k: 'Quantity', v: s.qty + ' items' }, { k: 'Request', v: s.req || '—' }, { k: 'Origin', v: s.pickup }, { k: 'Destination', v: s.dest }],
+      transport: [{ k: 'Carrier', v: k.company }, { k: 'Truck', v: (t.type || '') + ' · ' + (t.cap || '') }, { k: 'Driver', v: s.driver }, { k: 'Driver phone', v: s.driverPhone }, { k: 'Registration', v: s.truck }, { k: 'Make', v: t.make || '—' }],
+      carrierHref: M.link('carriers', { id: k.id }), driverTel: 'tel:' + s.driverPhone.replace(/\s/g, ''),
+      docs,
+      notes: notes.map(n => ({ by: n.by, when: M.rel(n.at), text: n.text })),
+      draft: this.state.draft, noDraft: !this.state.draft.trim(), onDraft: e => this.setState({ draft: e.target.value }),
+      addNote: e => { e.preventDefault(); const tx = this.state.draft.trim(); if (!tx) return; s.notes = notes.concat([{ by: M.me().name, at: M.TODAY + 'T' + new Date().toTimeString().slice(0, 5), text: tx }]); this.setState({ draft: '' }); M.toast('Note added'); },
+      canAdvance: nextOpts.length > 0, nextOpts, nextSel, onNext: e => this.setState({ next: e.target.value }),
+      advance: async () => {
+        const to = nextSel;
+        if (to === 'Delivered') { const ok = await M.confirm({ title: 'Mark ' + s.id + ' as delivered?', body: 'The customer is notified and the job closes. Upload the proof of delivery when you have it.', confirm: 'Mark delivered', icon: 'ph-seal-check' }); if (!ok) return; }
+        s.status = to; s.progress = { 'Picked Up': 0.1, 'In Transit': Math.max(s.progress, 0.45), 'Out for Delivery': 0.92, 'Delivered': 1 }[to];
+        if (to === 'Delivered') { s.delivered = M.TODAY; s.delayed = false; }
+        this.setState({ next: '' }); M.toast(s.id + ' updated to ' + to); bump();
+      },
+      share: () => M.toast('Status update sent to ' + c.name + ' on WhatsApp'),
+      notifyCust: () => M.toast(c.name + ' notified about the delay')
+    });
+  }
+}
+</script>
+</body>
+</html>

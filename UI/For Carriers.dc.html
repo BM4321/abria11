@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Register Your Truck | Transport Jobs for Carriers in Tanzania | ABRIA</title>
+<meta name="description" content="Truck owners and transport providers: register with ABRIA, get verified and receive transport jobs that fit your vehicles and routes.">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}.cmyk .print:not(:has(image-slot[data-filled])){filter:none}.cmyk:not(:has(image-slot[data-filled]))::after{display:none}body{margin:0;text-wrap:pretty}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@media (prefers-reduced-motion:reduce){*{transition:none!important}}</style>
+</helmet>
+<dc-import name="Nav" current="carriers" translated="{{ true }}" hint-size="100%,72px" style="position:sticky;top:0;z-index:50"></dc-import>
+<main>
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(48px,8vw,112px) clamp(20px,5vw,72px) 0">
+    <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.kicker }}</p>
+    <h1 style="font-size:clamp(48px,7.6vw,104px);line-height:1;letter-spacing:-0.025em;margin:0 0 0 -0.035em;max-width:9em">{{ t.h1 }}</h1>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:32px clamp(40px,7vw,120px);margin-top:36px;align-items:end">
+      <p style="font-size:19px;line-height:30px;max-width:30em;margin:0;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ t.sub }}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px">
+        <a class="btn btn-primary" href="Register%20Truck.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">{{ t.cta }}</a>
+        <a class="btn btn-ghost" href="{{ waHref }}" target="_blank" rel="noopener" style="font-size:16px;min-height:50px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:20px"></i>WhatsApp</a>
+      </div>
+    </div>
+  </section>
+  <figure data-reveal="1" class="cmyk" style="max-width:1200px;margin:clamp(48px,6vw,80px) auto 0;padding:0 clamp(20px,5vw,72px);overflow:visible">
+    <div class="print" style="aspect-ratio:21/9"><x-import component-from-global-scope="image-slot" from="./image-slot.js" id="carriers-hero" shape="rounded" radius="16" placeholder="Approved photograph: carrier's truck and driver" hint-size="100%,100%"></x-import></div>
+  </figure>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(80px,10vw,144px) clamp(20px,5vw,72px) 0">
+    <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.whyK }}</p>
+    <h2 style="margin:0;font-size:clamp(30px,3.6vw,44px);line-height:1.1;letter-spacing:-0.02em;max-width:17em">{{ t.whyH }}</h2>
+    <dl data-stagger="1" style="margin:48px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px">
+      <sc-for list="{{ benefits }}" as="b" hint-placeholder-count="6">
+        <div style="padding:28px;border-radius:var(--radius-lg);background:var(--color-surface);box-shadow:var(--shadow-sm);transition:box-shadow .22s ease, transform .22s ease" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+          <dt style="display:flex;align-items:center;gap:12px;font-size:21px;font-weight:600;line-height:1.25"><i class="{{ b.icon }}" aria-hidden="true" style="font-size:28px;color:var(--color-accent);flex:none"></i>{{ b.title }}</dt>
+          <dd style="margin:10px 0 0;font-size:16px;line-height:25px;color:color-mix(in srgb,var(--color-text) 78%,transparent)">{{ b.text }}</dd>
+        </div>
+      </sc-for>
+    </dl>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(80px,10vw,144px) clamp(20px,5vw,72px) 0">
+    <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.joinK }}</p>
+    <h2 style="margin:0;font-size:clamp(30px,3.6vw,44px);line-height:1.1;letter-spacing:-0.02em;max-width:17em">{{ t.joinH }}</h2>
+    <ol data-stagger="1" style="list-style:none;margin:56px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:48px 36px">
+      <sc-for list="{{ steps }}" as="st" hint-placeholder-count="5">
+        <li>
+          <div class="cmyk-num" style="font-size:56px;font-weight:600"><span class="paper">{{ st.n }}</span><span class="plate plate-c" aria-hidden="true">{{ st.n }}</span><span class="plate plate-m" aria-hidden="true">{{ st.n }}</span><span class="plate plate-y" aria-hidden="true">{{ st.n }}</span></div>
+          <h3 style="margin:24px 0 8px;font-size:22px;line-height:1.2">{{ st.title }}</h3>
+          <p style="margin:0;font-size:16px;line-height:25px;color:color-mix(in srgb,var(--color-text) 78%,transparent)">{{ st.text }}</p>
+        </li>
+      </sc-for>
+    </ol>
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(80px,10vw,144px) clamp(20px,5vw,72px) 0">
+    <hr style="height:5px;border:0;margin:0;border-top:2px solid var(--color-text);border-bottom:1px solid var(--color-text)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:32px 64px;padding:28px 0 32px">
+      <div>
+        <p style="margin:0 0 14px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.typesK }}</p>
+        <p style="margin:0;font-size:20px;line-height:1.55;font-weight:600">{{ t.types }}</p>
+      </div>
+      <div>
+        <p style="margin:0 0 14px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ t.needK }}</p>
+        <p style="margin:0;font-size:17px;line-height:28px;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ t.need }}</p>
+      </div>
+    </div>
+    <hr style="height:0;border:0;border-top:1px solid var(--color-text);margin:0">
+  </section>
+
+  <section style="max-width:1200px;margin:0 auto;padding:clamp(88px,11vw,160px) clamp(20px,5vw,72px) 0">
+    <h2 style="margin:0;font-size:clamp(32px,4.4vw,56px);line-height:1.06;letter-spacing:-0.02em;max-width:14em">{{ t.closeH }}</h2>
+    <p style="margin:18px 0 0;font-size:18px;line-height:28px;max-width:34em;color:color-mix(in srgb,var(--color-text) 80%,transparent)">{{ t.closeP }}</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:30px">
+      <a class="btn btn-primary" href="Register%20Truck.dc.html" style="font-size:16px;padding:14px 24px;min-height:50px">{{ t.cta }}</a>
+      <a class="btn btn-secondary" href="Contact.dc.html#faq" style="font-size:16px;padding:14px 24px;min-height:50px">{{ t.faq }}</a>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,520px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'en' };
+  componentDidMount() {
+    const b = () => { if (!window.ABRIA) return setTimeout(b, 40); this.setState({ lang: window.ABRIA.getLang() }); };
+    b();
+    this._l = e => this.setState({ lang: e.detail });
+    window.addEventListener('abria-lang', this._l);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-lang', this._l); }
+  renderVals() {
+    const A = window.ABRIA, sw = this.state.lang === 'sw', T = (e, s) => (sw ? s : e);
+    const steps = sw
+      ? [['Jisajili', 'Jaza fomu ya usajili na taarifa za lori na njia zako.'], ['Hakikiwa', 'Timu ya ABRIA inapitia taarifa zako na kuhakiki gari.'], ['Pokea kazi', 'Kazi zinazolingana na lori na njia zako zinapewa kwako.'], ['Safirisha', 'Chukua mzigo na usafirishe kwa ratiba iliyokubaliwa.'], ['Thibitisha', 'Thibitisha mzigo umefika na kazi inafungwa.']]
+      : [['Register', 'Fill in the registration form with your truck and the routes you cover.'], ['Get verified', 'The ABRIA team reviews your details and verifies your vehicle.'], ['Receive jobs', 'Jobs that fit your truck type, capacity and routes are assigned to you.'], ['Transport', 'Collect the cargo and move it on the agreed schedule.'], ['Confirm delivery', 'Confirm the cargo has arrived and the job is closed.']];
+    return {
+      t: {
+        kicker: T('For truck owners and transport providers', 'Kwa wamiliki wa malori na watoa huduma za usafiri'),
+        h1: T('Keep your trucks moving.', 'Malori yako yaendelee kufanya kazi.'),
+        sub: T('Register your trucks with ABRIA once. After verification, you receive transport jobs from businesses that need your type of vehicle on the routes you already drive.', 'Sajili malori yako na ABRIA mara moja. Baada ya kuhakikiwa, utapokea kazi za usafiri kutoka kwa biashara zinazohitaji aina ya gari lako kwenye njia unazotumia tayari.'),
+        cta: T('Register Your Truck', 'Sajili Lori Lako'),
+        whyK: T('Why carriers join', 'Kwa nini wasafirishaji wanajiunga'),
+        whyH: T('More loads for the trucks you already run.', 'Mizigo zaidi kwa malori unayoendesha tayari.'),
+        joinK: T('How joining works', 'Jinsi ya kujiunga'),
+        joinH: T('From registration to your first job.', 'Kutoka usajili hadi kazi yako ya kwanza.'),
+        typesK: T('Trucks we accept', 'Malori tunayopokea'),
+        types: T('Flatbed · Curtainsider · Box truck · Refrigerated · Container truck · Tipper · Lowbed · Pickup · Other', 'Flatbed · Curtainsider · Lori la boksi · Jokofu · Lori la kontena · Tipa · Lowbed · Pikipiki ya mizigo (Pickup) · Nyingine'),
+        needK: T('What you need to register', 'Unachohitaji kujisajili'),
+        need: T('Your name and phone number, the truck type and its registration number. Capacity, make and model, current location and the routes you cover help us match you faster.', 'Jina lako na namba ya simu, aina ya lori na namba yake ya usajili. Uwezo wa kubeba, aina ya gari, mahali lilipo sasa na njia unazohudumia hutusaidia kukuunganisha haraka.'),
+        closeH: T('Register your truck today.', 'Sajili lori lako leo.'),
+        closeP: T('It takes a few minutes. You receive your ABRIA partner ID as soon as you submit.', 'Inachukua dakika chache. Utapokea namba yako ya mshirika wa ABRIA mara tu unapowasilisha.'),
+        faq: T('Carrier questions', 'Maswali ya wasafirishaji')
+      },
+      benefits: sw
+        ? [
+            { icon: 'ph-duotone ph-truck', title: 'Sajili magari yako', text: 'Lori moja au kundi zima, kila moja na aina, uwezo na namba ya usajili.' },
+            { icon: 'ph-duotone ph-identification-card', title: 'Wasifu wa msafirishaji', text: 'Mahali ulipo na njia unazohudumia zinahifadhiwa kwenye wasifu wako.' },
+            { icon: 'ph-duotone ph-package', title: 'Pokea kazi za usafiri', text: 'Kazi zinazolingana na lori lako zinapewa kwako na timu ya ABRIA.' },
+            { icon: 'ph-duotone ph-users-three', title: 'Wateja zaidi', text: 'Fikia biashara na wamiliki wa mizigo bila kutafuta mmoja mmoja.' },
+            { icon: 'ph-duotone ph-gauge', title: 'Safari tupu chache', text: 'Mizigo kwenye njia zako inamaanisha kilomita chache bila mzigo.' },
+            { icon: 'ph-duotone ph-whatsapp-logo', title: 'Mawasiliano ya moja kwa moja', text: 'Ongea na timu ya ABRIA kwa WhatsApp au simu.' }
+          ]
+        : [
+            { icon: 'ph-duotone ph-truck', title: 'Register your vehicles', text: 'One truck or a whole fleet, each with its type, capacity and registration.' },
+            { icon: 'ph-duotone ph-identification-card', title: 'A carrier profile', text: 'Your location and the routes you cover are kept on your profile.' },
+            { icon: 'ph-duotone ph-package', title: 'Receive transport jobs', text: 'Jobs that fit your truck are assigned to you by the ABRIA team.' },
+            { icon: 'ph-duotone ph-users-three', title: 'Reach more customers', text: 'Get in front of businesses and cargo owners without chasing each one.' },
+            { icon: 'ph-duotone ph-gauge', title: 'Fewer empty trips', text: 'Loads on your routes mean fewer kilometres run empty.' },
+            { icon: 'ph-duotone ph-whatsapp-logo', title: 'A direct line', text: 'Talk to the ABRIA team on WhatsApp or by phone.' }
+          ],
+      steps: steps.map((s, i) => ({ n: String(i + 1).padStart(2, '0'), title: s[0], text: s[1] })),
+      waHref: A ? A.wa(T('Hello ABRIA, I have a truck and would like to join.', 'Habari ABRIA, nina lori na ningependa kujiunga.')) : '#'
+    };
+  }
+}
+</script>
+</body>
+</html>

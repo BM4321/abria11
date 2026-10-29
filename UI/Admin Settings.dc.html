@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Settings | ABRIA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="{{ active }}" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px">
+    <div style="margin-right:auto"><nav aria-label="Breadcrumb" style="font-size:13px;color:var(--app-muted)">Settings</nav><h1 style="margin:2px 0 0;font-size:28px;font-weight:600;letter-spacing:-0.01em">{{ title }}</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">{{ sub }}</p></div>
+    <sc-if value="{{ showSave }}"><span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--app-muted)"><span style="width:8px;height:8px;border-radius:50%;background:{{ saveDot }}"></span>{{ saveText }}</span><button type="button" class="btn btn-primary" onClick="{{ save }}" disabled="{{ clean }}" style="min-height:40px;border-radius:10px">{{ saveLabel }}</button></sc-if>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+    <nav aria-label="Settings" style="flex:0 1 240px;min-width:200px;padding:8px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ nav }}" as="n"><a href="{{ n.href }}" aria-current="{{ n.aria }}" style="display:flex;align-items:center;gap:12px;min-height:42px;padding:0 12px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:{{ n.fw }};background:{{ n.bg }};color:{{ n.fg }};opacity:{{ n.op }}" style-hover="background:var(--app-hover)"><i class="{{ n.icon }}" aria-hidden="true" style="font-size:19px"></i><span style="flex:1">{{ n.label }}</span><sc-if value="{{ n.locked }}"><i class="ph ph-lock-simple" aria-label="Admins only" style="font-size:14px"></i></sc-if></a></sc-for>
+    </nav>
+    <div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:16px">
+      <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="padding:56px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:40px;color:var(--color-accent-2-700)"></i><h2 style="margin:14px 0 6px;font-size:20px;font-weight:600">Permission denied</h2><p style="margin:0 auto;max-width:42ch;color:var(--app-muted)">Only administrators can change {{ secName }} settings. You can manage your own notification preferences.</p><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px"><a class="btn btn-primary" href="Admin%20Settings.dc.html?s=notifications" style="min-height:40px;border-radius:10px">Notification preferences</a><a class="btn btn-secondary" href="{{ switchHref }}" style="min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div></div>
+      </sc-if>
+      <sc-if value="{{ saveFailed }}"><div role="alert" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--color-accent-2) 11%,transparent);color:var(--color-accent-2-800)"><i class="ph-duotone ph-cloud-warning" aria-hidden="true" style="font-size:22px"></i><span style="flex:1;min-width:200px"><strong style="font-weight:600">Settings weren’t saved.</strong> Something went wrong on our side. Your changes are still here.</span><button type="button" onClick="{{ retry }}" class="btn btn-secondary" style="min-height:36px;border-radius:10px;background:var(--app-card)">Try again</button></div></sc-if>
+
+      <sc-if value="{{ hasFields }}">
+        <section aria-label="{{ title }}" style="padding:22px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px 20px">
+          <sc-for list="{{ fields }}" as="f">
+            <div style="grid-column:{{ f.span }};display:flex;flex-direction:column;gap:6px;min-width:0">
+              <sc-if value="{{ f.isSwitch }}"><div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 14px;border-radius:12px;background:var(--app-page)"><span><span style="display:block;font-size:14px;font-weight:500">{{ f.label }}</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ f.help }}</span></span><button type="button" role="switch" aria-checked="{{ f.on }}" aria-label="{{ f.label }}" onClick="{{ f.toggle }}" style="position:relative;width:40px;height:24px;border-radius:999px;border:0;cursor:pointer;flex:none;background:{{ f.track }};transition:background .2s ease"><span style="position:absolute;top:3px;left:{{ f.knob }};width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s ease"></span></button></div></sc-if>
+              <sc-if value="{{ f.isLabelled }}"><label for="{{ f.id }}" style="font-size:13px;font-weight:500">{{ f.label }}</label></sc-if>
+              <sc-if value="{{ f.isInput }}"><input id="{{ f.id }}" class="input" type="{{ f.type }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-invalid="{{ f.invalid }}" style="min-height:42px;border-radius:10px;background:var(--app-page);border-color:{{ f.border }}"></sc-if>
+              <sc-if value="{{ f.isArea }}"><textarea id="{{ f.id }}" class="input" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" style="min-height:84px;border-radius:10px;background:var(--app-page);border-color:{{ f.border }}"></textarea></sc-if>
+              <sc-if value="{{ f.isSelect }}"><select id="{{ f.id }}" class="input" value="{{ f.value }}" onChange="{{ f.onChange }}" style="min-height:42px;border-radius:10px;background:var(--app-page)"><sc-for list="{{ f.options }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></sc-if>
+              <sc-if value="{{ f.isFile }}"><label style="display:flex;align-items:center;gap:14px;padding:12px;border-radius:12px;border:1.5px dashed {{ f.border }};background:var(--app-page);cursor:pointer"><span style="width:{{ f.thumbW }};height:56px;border-radius:10px;flex:none;display:grid;place-items:center;background:var(--app-card);font-weight:700;letter-spacing:.08em;font-size:15px;color:var(--color-text)">{{ f.thumb }}</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:500">{{ f.value }}</span><span style="display:block;font-size:12px;color:var(--app-muted)">Click to replace · {{ f.ph }}</span></span><i class="ph ph-upload-simple" aria-hidden="true" style="font-size:20px;color:var(--color-accent)"></i><input id="{{ f.id }}" type="file" accept="{{ f.accept }}" onChange="{{ f.onFile }}" style="position:absolute;width:1px;height:1px;opacity:0"></label></sc-if>
+              <sc-if value="{{ f.isSwatch }}"><div role="radiogroup" aria-labelledby="{{ f.id }}" style="display:flex;flex-wrap:wrap;gap:10px"><sc-for list="{{ f.swatches }}" as="w"><button type="button" role="radio" aria-checked="{{ w.on }}" aria-label="{{ w.label }}" onClick="{{ w.pick }}" style="width:44px;height:44px;border-radius:12px;border:0;cursor:pointer;background:{{ w.c }};box-shadow:{{ w.ring }};display:grid;place-items:center;color:#fff"><sc-if value="{{ w.on }}"><i class="ph-bold ph-check" aria-hidden="true"></i></sc-if></button></sc-for></div></sc-if>
+              <sc-if value="{{ f.hasHelp }}"><span style="font-size:12px;color:{{ f.helpColor }}">{{ f.helpText }}</span></sc-if>
+            </div>
+          </sc-for>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isSeo }}">
+        <section aria-labelledby="gp-h" style="padding:22px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="gp-h" style="margin:0 0 14px;font-size:15px;font-weight:600">Search result preview</h2>
+          <div style="max-width:600px;padding:16px;border-radius:12px;background:var(--app-page);font-family:Arial,system-ui,sans-serif"><div style="font-size:12px;color:var(--app-muted)">abrialogistics.co.tz</div><div style="margin-top:2px;font-size:19px;line-height:1.3;color:#1a0dab">{{ seoTitle }}</div><div style="margin-top:4px;font-size:13.5px;line-height:1.5;color:var(--color-text)">{{ seoDesc }}</div></div>
+          <h2 style="margin:22px 0 14px;font-size:15px;font-weight:600">Social share preview</h2>
+          <div style="max-width:440px;border-radius:12px;overflow:hidden;background:var(--app-page)"><div style="aspect-ratio:1200/630;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,var(--app-card));color:var(--color-accent-700)"><span style="display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px"><i class="ph-duotone ph-image" aria-hidden="true" style="font-size:30px"></i>{{ seoImage }}</span></div><div style="padding:12px 14px"><div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--app-muted)">abrialogistics.co.tz</div><div style="margin-top:2px;font-size:15px;font-weight:600">{{ seoTitle }}</div><div style="font-size:13px;color:var(--app-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ seoDesc }}</div></div></div>
+        </section>
+      </sc-if>
+
+      <sc-if value="{{ isNotif }}">
+        <section aria-label="Notification events" style="border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:520px">
+            <thead><tr><th scope="col" style="text-align:left;padding:14px 18px;font-size:12px;font-weight:500;color:var(--app-muted);border-bottom:1px solid var(--app-line)">Event</th><sc-for list="{{ channels }}" as="c"><th scope="col" style="width:100px;padding:14px 8px;font-size:12px;font-weight:500;color:var(--app-muted);border-bottom:1px solid var(--app-line)">{{ c }}</th></sc-for></tr></thead>
+            <tbody><sc-for list="{{ events }}" as="e"><tr><th scope="row" style="text-align:left;padding:12px 18px;font-weight:400;border-bottom:1px solid var(--app-line)"><span style="display:block;font-weight:500">{{ e.label }}</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ e.desc }}</span></th><sc-for list="{{ e.cells }}" as="c"><td style="text-align:center;padding:8px;border-bottom:1px solid var(--app-line)"><button type="button" role="switch" aria-checked="{{ c.on }}" aria-label="{{ c.label }}" onClick="{{ c.toggle }}" disabled="{{ c.dis }}" style="position:relative;width:40px;height:24px;border-radius:999px;border:0;cursor:pointer;background:{{ c.track }};opacity:{{ c.op }};transition:background .2s ease"><span style="position:absolute;top:3px;left:{{ c.knob }};width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s ease"></span></button></td></sc-for></tr></sc-for></tbody>
+          </table>
+        </section>
+        <p style="margin:0;font-size:12.5px;color:var(--app-muted)">Email is unavailable until an email provider is connected in Integrations.</p>
+      </sc-if>
+
+      <sc-if value="{{ isInteg }}">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px">
+          <sc-for list="{{ integrations }}" as="i"><section style="display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);outline:{{ i.outline }}"><div style="display:flex;align-items:center;gap:12px"><span style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--app-page);color:var(--color-accent-700)"><i class="{{ i.icon }}" aria-hidden="true" style="font-size:22px"></i></span><div style="flex:1;min-width:0"><h2 style="margin:0;font-size:15px;font-weight:600">{{ i.name }}</h2><div style="font-size:12.5px;color:var(--app-muted)">{{ i.kind }}</div></div><span style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ i.b.bg }};color:{{ i.b.fg }};white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:{{ i.b.dot }}"></span>{{ i.b.label }}</span></div><p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--app-muted)">{{ i.desc }}</p><button type="button" onClick="{{ i.act }}" class="btn btn-secondary" style="align-self:flex-start;min-height:36px;border-radius:10px;background:var(--app-card)">{{ i.cta }}</button></section></sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, v: {}, dirty: false, saved: false, failed: false, retried: false, saving: false, errs: {}, notif: null, tick: 0 };
+  componentDidMount() { const b = () => (window.ABRIA_M ? this.setState({ ready: true }) : setTimeout(b, 30)); b(); }
+  defaults() {
+    return {
+      company: 'ABRIA Logistics', email: 'info@abrialogistics.co.tz', phone: '+255 723 999 039', wa: '+255 723 999 039', address: '', currency: 'TZS · Tanzanian shilling', tz: 'Africa/Dar_es_Salaam (EAT, UTC+3)',
+      logo: 'abria-wordmark.svg', favicon: 'favicon-32.png', primary: '#0088b0', secondary: '#d6006c', og: 'og-default.png',
+      seoTitle: 'ABRIA Logistics | Connected Logistics. Better Movement.', seoDesc: 'ABRIA connects businesses and cargo owners with verified transport providers in Tanzania. Request transport and receive a written quotation.', seoImage: 'og-default.png', gsc: '', index: true,
+      twofa: true, timeout: '8 hours', minpw: '12', domain: 'abrialogistics.co.tz', ipAllow: false
+    };
+  }
+  renderVals() {
+    const M = window.ABRIA_M, E = { nav: [], fields: [], channels: [], events: [], integrations: [] };
+    if (!M) return Object.assign({ active: 'settings:general', title: 'Settings' }, E);
+    const s = M.param('s') || 'general', admin = M.role() === 'admin';
+    const S = [['general', 'General', 'ph-gear', 'Company details used across the site, quotes and emails.'], ['branding', 'Branding', 'ph-palette', 'Logo, favicon, brand colours and the default social image.'], ['seo', 'SEO', 'ph-magnifying-glass', 'Default title, description and search settings.'], ['forms', 'Forms', 'ph-clipboard-text', 'Configure public forms in the form builder.'], ['notifications', 'Notifications', 'ph-bell-ringing', 'Choose which events notify you, and how.'], ['integrations', 'Integrations', 'ph-plugs', 'Services ABRIA connects to.'], ['security', 'Security', 'ph-lock-key', 'Sign-in and session rules for the console.']];
+    const cur = S.find(x => x[0] === s) || S[0];
+    const nav = S.map(x => ({ label: x[1], icon: 'ph-duotone ' + x[2], href: x[0] === 'forms' ? M.R.forms : M.link('settings', { s: x[0] }), aria: x[0] === s ? 'page' : undefined, fw: x[0] === s ? 600 : 400, bg: x[0] === s ? 'color-mix(in srgb,var(--color-accent) 14%,transparent)' : 'transparent', fg: x[0] === s ? 'var(--color-accent-800)' : 'var(--color-text)', locked: !admin && x[0] !== 'notifications', op: !admin && x[0] !== 'notifications' ? 0.6 : 1 }));
+    const active = 'settings:' + s;
+    const base = Object.assign({}, E, { active, nav, title: cur[1], sub: cur[3] });
+    if (!admin && s !== 'notifications') return Object.assign(base, { denied: true, secName: cur[1].toLowerCase(), switchHref: M.link('settings', { s, role: 'admin' }) });
+    const v = Object.assign(this.defaults(), this.state.v), errs = this.state.errs;
+    const set = (k, val) => this.setState({ v: Object.assign({}, this.state.v, { [k]: val }), dirty: true, saved: false, failed: false, errs: Object.assign({}, errs, { [k]: '' }) });
+    const sw = on => ({ track: on ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 25%,transparent)', knob: on ? '19px' : '3px' });
+    const fld = (k, label, kind, o) => {
+      o = o || {};
+      const f = { id: 'st-' + k, label, value: v[k], ph: o.ph || '', span: o.full ? '1 / -1' : 'auto', type: kind === 'input' ? (o.type || 'text') : 'text', options: o.options || [], accept: o.accept || 'image/*',
+        isInput: kind === 'input', isArea: kind === 'area', isSelect: kind === 'select', isFile: kind === 'file', isSwitch: kind === 'switch', isSwatch: kind === 'swatch', isLabelled: kind !== 'switch',
+        border: errs[k] ? 'var(--color-accent-2)' : 'var(--color-divider)', invalid: errs[k] ? 'true' : 'false',
+        hasHelp: !!(errs[k] || (o.help && kind !== 'switch')), helpText: errs[k] || o.help, helpColor: errs[k] ? 'var(--color-accent-2-700)' : 'var(--app-muted)', help: o.help,
+        onChange: e => set(k, e.target.value), thumb: o.thumb || '', thumbW: o.thumbW || '56px',
+        onFile: e => { const file = e.target.files[0]; if (!file) return; if (file.size > (o.max || 2) * 1048576) { this.setState({ errs: Object.assign({}, errs, { [k]: 'Upload failed: ' + file.name + ' is larger than ' + (o.max || 2) + ' MB.' }) }); M.toast('Upload failed: file too large', { tone: 'bad' }); return; } set(k, file.name); } };
+      if (kind === 'switch') Object.assign(f, sw(!!v[k]), { on: !!v[k], toggle: () => set(k, !v[k]) });
+      if (kind === 'swatch') f.swatches = o.options.map(c => ({ c: c[0], label: c[1], on: v[k] === c[0], pick: () => set(k, c[0]), ring: v[k] === c[0] ? '0 0 0 3px var(--app-card), 0 0 0 5px ' + c[0] : 'var(--shadow-sm)' }));
+      return f;
+    };
+    let fields = [];
+    if (s === 'general') fields = [fld('company', 'Company name', 'input'), fld('email', 'Email', 'input', { type: 'email' }), fld('phone', 'Phone', 'input', { type: 'tel' }), fld('wa', 'WhatsApp', 'input', { type: 'tel', help: 'Used for every “Chat on WhatsApp” button.' }), fld('address', 'Address', 'area', { full: true, ph: '[Verified office address]', help: 'Leave empty until the address is confirmed. It is hidden on the site when empty.' }), fld('currency', 'Currency', 'select', { options: ['TZS · Tanzanian shilling', 'USD · US dollar', 'KES · Kenyan shilling'] }), fld('tz', 'Timezone', 'select', { options: ['Africa/Dar_es_Salaam (EAT, UTC+3)', 'Africa/Nairobi (EAT, UTC+3)', 'UTC'] })];
+    if (s === 'branding') {
+      const P = [['#0088b0', 'Process cyan'], ['#006786', 'Deep cyan'], ['#1e5f8a', 'Harbour blue'], ['#2d6a4f', 'Kilimanjaro green']], Q = [['#d6006c', 'Process magenta'], ['#aa0b56', 'Deep magenta'], ['#c2410c', 'Laterite orange'], ['#edbb00', 'Press yellow']];
+      fields = [fld('logo', 'Logo', 'file', { full: true, ph: 'SVG or PNG, up to 2 MB', thumb: 'ABRIA', thumbW: '120px' }), fld('favicon', 'Favicon', 'file', { ph: 'PNG, 32 × 32 or larger', thumb: 'A', max: 1 }), fld('og', 'Default social image', 'file', { ph: 'PNG or JPG, 1200 × 630', thumb: 'OG', max: 3 }), fld('primary', 'Primary colour', 'swatch', { options: P, help: 'Buttons, links and highlights.' }), fld('secondary', 'Secondary colour', 'swatch', { options: Q, help: 'Used sparingly for alerts and accents.' })];
+      fields.push({ id: 'st-note', isLabelled: false, span: '1 / -1', hasHelp: true, helpText: 'Colours are limited to accessible options. Custom CSS isn’t supported.', helpColor: 'var(--app-muted)' });
+    }
+    if (s === 'seo') fields = [fld('seoTitle', 'Default site title', 'input', { full: true, help: v.seoTitle.length + '/60 characters' }), fld('seoDesc', 'Default description', 'area', { full: true, help: v.seoDesc.length + '/160 characters' + (v.seoDesc.length > 160 ? ' · too long, search engines will cut it off' : '') }), fld('seoImage', 'Default social image', 'select', { options: M.DATA.media.map(m => m.file) }), fld('gsc', 'Google Search Console verification', 'input', { ph: 'google-site-verification=…', help: 'Optional. Added to every page’s head.' }), fld('index', 'Allow search engines to index the site', 'switch', { full: true, help: 'Turn off only while the site is in staging.' })];
+    if (s === 'security') fields = [fld('twofa', 'Require two-factor authentication', 'switch', { full: true, help: 'Managers and admins must set up an authenticator app.' }), fld('timeout', 'Session timeout', 'select', { options: ['1 hour', '8 hours', '24 hours', '7 days'] }), fld('minpw', 'Minimum password length', 'select', { options: ['10', '12', '14', '16'] }), fld('domain', 'Allowed email domain for invites', 'input', { help: 'Only people with this email domain can be invited.' }), fld('ipAllow', 'Restrict console to office network', 'switch', { full: true, help: 'Requires a fixed office IP. Not recommended for field teams.' })];
+    const out = Object.assign(base, { fields, hasFields: fields.length > 0, isSeo: s === 'seo', isNotif: s === 'notifications', isInteg: s === 'integrations', showSave: s !== 'integrations' && s !== 'forms' });
+    if (s === 'seo') Object.assign(out, { seoTitle: v.seoTitle, seoDesc: v.seoDesc.length > 160 ? v.seoDesc.slice(0, 157) + '…' : v.seoDesc, seoImage: v.seoImage });
+    if (s === 'notifications') {
+      const EV = [['New Quote Request', 'A business submits the Request Quote form'], ['New Truck Registration', 'A carrier registers a vehicle'], ['New Contact Message', 'Someone uses the contact form'], ['New Partner Application', 'A company applies to partner'], ['Shipment Issue', 'A shipment passes its ETA or is flagged'], ['System Alert', 'Integrations fail or need attention']];
+      const CH = ['In-app', 'WhatsApp', 'Email'];
+      const N = this.state.notif || EV.map((e, i) => ({ 'In-app': true, WhatsApp: i === 0 || i === 1 || i === 4, Email: false }));
+      out.channels = CH;
+      out.events = EV.map((e, i) => ({ label: e[0], desc: e[1], cells: CH.map(c => { const on = !!N[i][c], dis = c === 'Email'; return Object.assign({ on, dis, op: dis ? 0.4 : 1, label: e[0] + ' by ' + c, toggle: () => { const n = N.map(x => Object.assign({}, x)); n[i][c] = !on; this.setState({ notif: n, dirty: true, saved: false }); } }, sw(on)); }) }));
+    }
+    if (s === 'integrations') {
+      const I = [['Supabase', 'Database and authentication', 'ph-duotone ph-database', 'Not connected', 'Stores requests, carriers and users. Connects when the backend phase starts.', 'Connect'], ['Email (Resend)', 'Transactional email', 'ph-duotone ph-envelope-simple', 'Error', 'The API key is missing, so notification emails are not sent. WhatsApp links still work.', 'Add API key'], ['WhatsApp links', 'Customer messaging', 'ph-duotone ph-whatsapp-logo', 'Connected', 'Opens chats with +255 723 999 039 with details filled in. No API needed.', 'Test link'], ['Maps', 'Route maps for AB Track', 'ph-duotone ph-map-trifold', 'Not connected', 'Replaces the route placeholder on shipment pages with a live map.', 'Connect'], ['Analytics', 'Conversion tracking', 'ph-duotone ph-chart-line-up', 'Not connected', 'Tracks quote, truck registration and WhatsApp clicks. Events are already defined.', 'Connect']];
+      out.integrations = I.map(x => ({ name: x[0], kind: x[1], icon: x[2], b: M.badge(x[3]), desc: x[4], cta: x[5], outline: x[3] === 'Error' ? '1.5px solid var(--color-accent-2)' : 'none', act: () => x[5] === 'Test link' ? window.open('https://wa.me/255723999039', '_blank') : M.toast(x[0] + ' setup arrives in the backend phase', { icon: 'ph-plugs' }) }));
+    }
+    const failSim = M.param('state') === 'savefail' && !this.state.retried;
+    Object.assign(out, {
+      clean: !this.state.dirty || this.state.saving, saveFailed: this.state.failed, saveLabel: this.state.saving ? 'Saving…' : 'Save changes',
+      saveText: this.state.failed ? 'Not saved' : this.state.dirty ? 'Unsaved changes' : this.state.saved ? 'Saved just now' : 'All changes saved',
+      saveDot: this.state.failed ? M.TONES.bad.dot : this.state.dirty ? M.TONES.warn.dot : M.TONES.ok.dot,
+      save: () => {
+        if (s === 'general') { const bad = {}; if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) bad.email = 'Enter a valid email address.'; if (!/^\+?[0-9][0-9\s-]{8,16}$/.test(v.phone)) bad.phone = 'Enter a valid phone number.'; if (Object.keys(bad).length) return this.setState({ errs: bad }); }
+        this.setState({ saving: true });
+        setTimeout(() => {
+          if (failSim) { this.setState({ saving: false, failed: true }); M.toast('Settings weren’t saved', { tone: 'bad' }); return; }
+          M.DATA.audit.unshift({ at: M.TODAY + 'T' + new Date().toTimeString().slice(0, 5), user: M.me().name, action: 'Updated', resource: 'Settings', desc: 'Updated ' + cur[1] + ' settings' });
+          this.setState({ saving: false, dirty: false, saved: true, failed: false }); M.toast(cur[1] + ' settings saved');
+        }, 700);
+      },
+      retry: () => this.setState({ retried: true, failed: false })
+    });
+    return out;
+  }
+}
+</script>
+</body>
+</html>

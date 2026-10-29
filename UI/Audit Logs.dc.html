@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Audit logs | ABRIA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="audit" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:40px;color:var(--color-accent-2-700)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Permission denied</h1><p style="margin:0;color:var(--app-muted)">Audit logs are visible to administrators only.</p><a class="btn btn-secondary" href="Audit%20Logs.dc.html?role=admin" style="margin-top:16px;min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div>
+  </sc-if>
+  <sc-if value="{{ allowed }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px"><div style="margin-right:auto"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Audit logs</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Every change made in the console, who made it and when. Entries can’t be edited or deleted.</p></div><button type="button" class="btn btn-secondary" onClick="{{ exportLog }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-download-simple" aria-hidden="true"></i>Export CSV</button></div>
+    <dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" search="Search descriptions" date-filter="{{ true }}" noun="audit logs" page-size="{{ 12 }}" simulate="{{ simulate }}" empty-title="No activity recorded" empty-text="Changes made by managers and admins will appear here." empty-icon="ph-scroll" hint-size="100%,640px"></dc-import>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { const b = () => (window.ABRIA_M ? this.forceUpdate() : setTimeout(b, 30)); b(); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { allowed: true };
+    if (M.role() !== 'admin') return { denied: true, allowed: false };
+    const A = M.DATA.audit, icon = { Updated: 'ph-pencil-simple', Published: 'ph-rocket-launch', Invited: 'ph-user-plus', Disabled: 'ph-prohibit', Uploaded: 'ph-upload-simple', Verified: 'ph-seal-check', Rejected: 'ph-x-circle', 'Status change': 'ph-arrows-clockwise', 'Role change': 'ph-user-gear', Reactivated: 'ph-arrow-counter-clockwise' };
+    return {
+      allowed: true, simulate: M.param('state') || 'none',
+      cols: [{ key: 'at', label: 'Date' }, { key: 'user', label: 'User' }, { key: 'action', label: 'Action' }, { key: 'resource', label: 'Resource' }, { key: 'desc', label: 'Description', wrap: true }],
+      filters: [{ key: 'user', label: 'User', all: 'All users', options: M.uniq(A, 'user') }, { key: 'action', label: 'Action', all: 'All actions', options: M.uniq(A, 'action') }, { key: 'resource', label: 'Resource', all: 'All resources', options: M.uniq(A, 'resource') }],
+      rows: A.map((a, i) => ({ id: 'AL' + i, date: a.at, search: a.desc + ' ' + a.user + ' ' + a.resource, f: { user: a.user, action: a.action, resource: a.resource }, s: { at: a.at },
+        cells: { at: M.C.t(M.d(a.at), M.time(a.at)), user: M.C.t(a.user), action: { t: a.action }, resource: M.C.t(a.resource), desc: M.C.t(a.desc) } })),
+      exportLog: () => M.toast('Exported ' + A.length + ' entries to audit-log.csv', { icon: 'ph-download-simple' })
+    };
+  }
+}
+</script>
+</body>
+</html>

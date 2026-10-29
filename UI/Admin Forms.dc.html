@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Forms | ABRIA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@keyframes abria-drawer{from{transform:translateX(100%)}to{transform:none}}</style>
+</helmet>
+<dc-import name="Shell" active="{{ active }}" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:40px;color:var(--color-accent-2-700)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Permission denied</h1><p style="margin:0;color:var(--app-muted)">Managing forms is limited to administrators.</p><a class="btn btn-secondary" href="Admin%20Forms.dc.html?role=admin" style="margin-top:16px;min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div>
+  </sc-if>
+
+  <sc-if value="{{ isIndex }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px"><div style="margin-right:auto"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Forms</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Configure the public forms and review what people submit.</p></div><a class="btn btn-secondary" href="Admin%20Forms.dc.html?s=submissions" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-tray" aria-hidden="true"></i>Submissions</a></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:16px">
+      <sc-for list="{{ forms }}" as="f" hint-placeholder-count="4">
+        <a href="{{ f.href }}" data-ripple="1" style="display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);text-decoration:none;color:var(--color-text);transition:box-shadow .2s ease, transform .2s ease" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+          <span style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,transparent);color:var(--color-accent-700)"><i class="{{ f.icon }}" aria-hidden="true" style="font-size:22px"></i></span><span style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ f.b.bg }};color:{{ f.b.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ f.b.dot }}"></span>{{ f.b.label }}</span></span>
+          <span><span style="display:block;font-size:17px;font-weight:600">{{ f.name }}</span><span style="display:block;margin-top:2px;font-size:13px;color:var(--app-muted)">{{ f.desc }}</span></span>
+          <span style="display:flex;gap:16px;font-size:12.5px;color:var(--app-muted)"><span>{{ f.fields }} fields</span><span>{{ f.subs }} submissions</span><span>Updated {{ f.updated }}</span></span>
+        </a>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isSubs }}" hint-placeholder-val="{{ false }}">
+    <div><nav aria-label="Breadcrumb" style="font-size:13px"><a href="Admin%20Forms.dc.html" style="text-decoration:none">Forms</a></nav><h1 style="margin:2px 0 0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Submissions</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Everything submitted through the public forms. Assign each one to a manager.</p></div>
+    <dc-import name="DataTable" columns="{{ subCols }}" rows="{{ subRows }}" filters="{{ subFilters }}" search="Search by ID, name or company" date-filter="{{ true }}" bulk="{{ true }}" bulk-actions="{{ subBulk }}" noun="submissions" page-size="{{ 10 }}" empty-title="No submissions yet" empty-text="Submissions from the website forms will appear here." empty-icon="ph-tray" hint-size="100%,560px"></dc-import>
+  </sc-if>
+
+  <sc-if value="{{ isBuilder }}" hint-placeholder-val="{{ false }}">
+    <div style="position:sticky;top:64px;z-index:20;margin:0 -8px;padding:10px 8px;background:color-mix(in srgb,var(--app-page) 90%,transparent);backdrop-filter:blur(10px);display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px">
+      <div style="margin-right:auto;min-width:0"><nav aria-label="Breadcrumb" style="font-size:13px"><a href="Admin%20Forms.dc.html" style="text-decoration:none">Forms</a></nav><h1 style="margin:2px 0 0;font-size:24px;font-weight:600">{{ form.name }} form</h1></div>
+      <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--app-muted)"><span style="width:8px;height:8px;border-radius:50%;background:{{ saveDot }}"></span>{{ saveText }}</span>
+      <button type="button" class="btn btn-secondary" onClick="{{ openPreview }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-eye" aria-hidden="true"></i>Preview form</button>
+      <button type="button" class="btn btn-primary" onClick="{{ publish }}" disabled="{{ clean }}" style="min-height:40px;border-radius:10px"><i class="ph ph-rocket-launch" aria-hidden="true"></i>Publish changes</button>
+    </div>
+    <sc-if value="{{ saveFailed }}"><div role="alert" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--color-accent-2) 11%,transparent);color:var(--color-accent-2-800)"><i class="ph-duotone ph-cloud-warning" aria-hidden="true" style="font-size:22px"></i><span style="flex:1;min-width:200px"><strong style="font-weight:600">Changes weren’t published.</strong> The server didn’t respond. Your edits are kept here.</span><button type="button" onClick="{{ retry }}" class="btn btn-secondary" style="min-height:36px;border-radius:10px;background:var(--app-card)">Try again</button></div></sc-if>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <section aria-labelledby="fl-h" style="flex:3 1 520px;min-width:0;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px"><h2 id="fl-h" style="margin:0;font-size:16px;font-weight:600">Fields <span style="font-weight:400;color:var(--app-muted)">{{ fieldCount }}</span></h2><button type="button" class="btn btn-primary" onClick="{{ openAdd }}" style="min-height:36px;border-radius:10px"><i class="ph ph-plus" aria-hidden="true"></i>Add field</button></div>
+        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ fields }}" as="f">
+            <li draggable="true" onDragStart="{{ f.dragStart }}" onDragOver="{{ f.dragOver }}" onDrop="{{ f.drop }}" onDragEnd="{{ f.dragEnd }}" onClick="{{ f.select }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;background:{{ f.bg }};outline:{{ f.outline }};opacity:{{ f.op }}">
+              <i class="ph ph-dots-six-vertical" aria-hidden="true" style="font-size:20px;color:var(--app-muted);cursor:grab"></i>
+              <span style="width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--app-card);color:var(--color-accent-700);flex:none"><i class="{{ f.icon }}" aria-hidden="true" style="font-size:17px"></i></span>
+              <span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.label }}</span><span style="display:block;font-size:12px;color:var(--app-muted)">{{ f.typeLabel }} · {{ f.reqLabel }}</span></span>
+              <button type="button" onClick="{{ f.up }}" aria-label="{{ f.upLabel }}" style="width:30px;height:30px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--app-muted)"><i class="ph ph-arrow-up" aria-hidden="true"></i></button>
+              <button type="button" onClick="{{ f.down }}" aria-label="{{ f.downLabel }}" style="width:30px;height:30px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--app-muted)"><i class="ph ph-arrow-down" aria-hidden="true"></i></button>
+              <button type="button" role="switch" aria-checked="{{ f.enabled }}" aria-label="{{ f.switchLabel }}" onClick="{{ f.toggle }}" style="position:relative;width:40px;height:24px;border-radius:999px;border:0;cursor:pointer;flex:none;background:{{ f.track }};transition:background .2s ease"><span style="position:absolute;top:3px;left:{{ f.knob }};width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s ease"></span></button>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+      <aside aria-labelledby="ed-h" style="flex:2 1 320px;min-width:0;position:sticky;top:140px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <sc-if value="{{ hasSel }}">
+          <h2 id="ed-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Edit field</h2>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;flex-direction:column;gap:6px"><label for="fe-l" style="font-size:13px;font-weight:500">Label</label><input id="fe-l" class="input" value="{{ sel.label }}" onChange="{{ ed.label }}" style="min-height:40px;border-radius:10px;background:var(--app-page)"></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label for="fe-t" style="font-size:13px;font-weight:500">Type</label><select id="fe-t" class="input" value="{{ sel.type }}" onChange="{{ ed.type }}" style="min-height:40px;border-radius:10px;background:var(--app-page)"><sc-for list="{{ typeOpts }}" as="o"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label for="fe-p" style="font-size:13px;font-weight:500">Placeholder</label><input id="fe-p" class="input" value="{{ sel.placeholder }}" onChange="{{ ed.placeholder }}" style="min-height:40px;border-radius:10px;background:var(--app-page)"></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label for="fe-h" style="font-size:13px;font-weight:500">Description</label><textarea id="fe-h" class="input" value="{{ sel.help }}" onChange="{{ ed.help }}" placeholder="Shown under the field" style="min-height:64px;border-radius:10px;background:var(--app-page)"></textarea></div>
+            <sc-if value="{{ hasOptions }}"><div style="display:flex;flex-direction:column;gap:6px"><label for="fe-o" style="font-size:13px;font-weight:500">Options (one per line)</label><textarea id="fe-o" class="input" value="{{ optText }}" onChange="{{ ed.options }}" style="min-height:96px;border-radius:10px;background:var(--app-page)"></textarea></div></sc-if>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--app-page)"><span style="font-size:14px">Required</span><button type="button" role="switch" aria-checked="{{ sel.required }}" aria-label="Required" onClick="{{ ed.required }}" style="position:relative;width:40px;height:24px;border-radius:999px;border:0;cursor:pointer;background:{{ reqTrack }}"><span style="position:absolute;top:3px;left:{{ reqKnob }};width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s ease"></span></button></div>
+            <button type="button" onClick="{{ removeField }}" class="btn btn-ghost" style="align-self:flex-start;color:var(--color-accent-2-700);min-height:36px"><i class="ph ph-trash" aria-hidden="true"></i>Remove field</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noSel }}"><div style="padding:24px 8px;text-align:center;color:var(--app-muted)"><i class="ph-duotone ph-cursor-click" aria-hidden="true" style="font-size:32px;color:var(--color-accent)"></i><p style="margin:8px 0 0;font-size:14px">Select a field to edit its label, placeholder, description and rules.</p></div></sc-if>
+      </aside>
+    </div>
+  </sc-if>
+</div>
+</main>
+
+<sc-if value="{{ addOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="dialog-backdrop" onClick="{{ closeAddBg }}" style="z-index:2400;animation:abria-fade .16s ease">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="af-h" style="width:min(560px,100%);background:var(--app-card);border-radius:16px;padding:22px;animation:abria-in .2s cubic-bezier(.2,.7,.2,1);font-family:Roboto,system-ui,sans-serif">
+      <h2 id="af-h" style="margin:0 0 14px;font-size:18px;font-weight:600">Add a field</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px">
+        <sc-for list="{{ typeOpts }}" as="o"><button type="button" onClick="{{ o.add }}" data-ripple="1" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 8px;border-radius:12px;border:0;background:var(--app-page);cursor:pointer;font:inherit;font-size:13px;color:var(--color-text)" style-hover="background:var(--app-hover)"><i class="{{ o.icon }}" aria-hidden="true" style="font-size:24px;color:var(--color-accent)"></i>{{ o.l }}</button></sc-for>
+      </div>
+      <div class="dialog-actions" style="margin-top:16px"><button type="button" onClick="{{ closeAdd }}" class="btn btn-secondary" style="min-height:40px;border-radius:10px">Cancel</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ previewOpen }}" hint-placeholder-val="{{ false }}">
+  <div role="dialog" aria-modal="true" aria-label="Form preview" style="position:fixed;inset:0;z-index:2500;background:var(--color-bg);overflow-y:auto;animation:abria-fade .2s ease">
+    <div style="position:sticky;top:0;display:flex;align-items:center;gap:12px;padding:12px clamp(16px,4vw,48px);background:var(--color-text);color:var(--color-bg);font-family:Roboto,system-ui,sans-serif;z-index:2"><i class="ph-duotone ph-eye" aria-hidden="true" style="font-size:20px"></i><span style="flex:1;font-size:14px">Preview · exactly as visitors will see the {{ form.name }} form</span><button type="button" onClick="{{ closePreview }}" class="btn" style="min-height:38px;border-radius:10px;background:var(--color-bg);color:var(--color-text)">Close preview</button></div>
+    <div style="max-width:860px;margin:0 auto;padding:clamp(40px,6vw,80px) clamp(20px,5vw,48px)">
+      <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">{{ form.name }}</p>
+      <h1 style="font-size:clamp(36px,5vw,56px);line-height:1.04;letter-spacing:-0.02em;margin:0">{{ previewTitle }}</h1>
+      <p style="margin:18px 0 0;font-size:17px;line-height:27px;color:color-mix(in srgb,var(--color-text) 80%,transparent)">Fields marked * are required.</p>
+      <form onSubmit="{{ previewSubmit }}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:22px 24px;margin-top:40px">
+        <sc-for list="{{ previewFields }}" as="f">
+          <div style="grid-column:{{ f.span }};display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:14px">{{ f.label }}<sc-if value="{{ f.required }}"><span aria-hidden="true" style="color:var(--color-accent-2-700)"> *</span></sc-if></span>
+            <sc-if value="{{ f.isInput }}"><input class="input" type="{{ f.htmlType }}" placeholder="{{ f.placeholder }}" aria-label="{{ f.label }}" style="min-height:46px;font-size:16px"></sc-if>
+            <sc-if value="{{ f.isArea }}"><textarea class="input" placeholder="{{ f.placeholder }}" aria-label="{{ f.label }}" style="min-height:110px;font-size:16px"></textarea></sc-if>
+            <sc-if value="{{ f.isSelect }}"><select class="input" aria-label="{{ f.label }}" multiple="{{ f.multi }}" style="min-height:46px;font-size:16px"><option value="">{{ f.selPh }}</option><sc-for list="{{ f.options }}" as="o"><option>{{ o }}</option></sc-for></select></sc-if>
+            <sc-if value="{{ f.isChoice }}"><div style="display:flex;flex-wrap:wrap;gap:10px 18px"><sc-for list="{{ f.options }}" as="o"><label style="display:inline-flex;align-items:center;gap:8px;font-size:15px"><input type="{{ f.choiceType }}" name="{{ f.id }}" style="width:18px;height:18px;accent-color:var(--color-accent)">{{ o }}</label></sc-for></div></sc-if>
+            <sc-if value="{{ f.isFile }}"><label style="display:flex;align-items:center;justify-content:center;gap:8px;min-height:64px;border-radius:10px;border:1.5px dashed var(--color-divider);font-size:14px;color:color-mix(in srgb,var(--color-text) 70%,transparent)"><i class="ph-duotone ph-upload-simple" aria-hidden="true"></i>Choose a file<input type="file" style="position:absolute;width:1px;height:1px;opacity:0"></label></sc-if>
+            <sc-if value="{{ f.hasHelp }}"><span style="font-size:13px;color:color-mix(in srgb,var(--color-text) 70%,transparent)">{{ f.help }}</span></sc-if>
+          </div>
+        </sc-for>
+        <div style="grid-column:1/-1"><button type="submit" class="btn btn-primary" style="font-size:17px;padding:16px 28px;min-height:54px">Submit</button></div>
+      </form>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ subOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeSub }}" aria-hidden="true" style="position:fixed;inset:0;z-index:2300;background:color-mix(in srgb,#000 38%,transparent);animation:abria-fade .18s ease"></div>
+  <div role="dialog" aria-modal="true" aria-labelledby="sb-h" style="position:fixed;top:0;right:0;bottom:0;z-index:2301;width:min(480px,100vw);display:flex;flex-direction:column;background:var(--app-card);box-shadow:var(--shadow-lg);animation:abria-drawer .26s cubic-bezier(.2,.7,.2,1);font-family:Roboto,system-ui,sans-serif">
+    <div style="display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--app-line)"><div style="flex:1"><h2 id="sb-h" style="margin:0;font-size:18px;font-weight:600">{{ sub.id }}</h2><div style="font-size:13px;color:var(--app-muted)">{{ sub.formName }} · {{ sub.when }}</div></div><button type="button" onClick="{{ closeSub }}" aria-label="Close" style="width:38px;height:38px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--color-text)"><i class="ph ph-x" aria-hidden="true" style="font-size:20px"></i></button></div>
+    <div style="flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px">
+      <dl style="margin:0;display:flex;flex-direction:column;gap:12px"><sc-for list="{{ sub.kv }}" as="k"><div><dt style="font-size:12px;color:var(--app-muted)">{{ k.k }}</dt><dd style="margin:2px 0 0;font-size:14.5px">{{ k.v }}</dd></div></sc-for></dl>
+      <div style="display:flex;flex-direction:column;gap:6px"><label for="sb-a" style="font-size:13px;font-weight:500">Assigned manager</label><select id="sb-a" class="input" value="{{ sub.assignee }}" onChange="{{ onAssign }}" style="min-height:40px;border-radius:10px;background:var(--app-page)"><option value="">Unassigned</option><sc-for list="{{ managers }}" as="m"><option value="{{ m }}">{{ m }}</option></sc-for></select></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><label for="sb-s" style="font-size:13px;font-weight:500">Status</label><select id="sb-s" class="input" value="{{ sub.status }}" onChange="{{ onStatus }}" style="min-height:40px;border-radius:10px;background:var(--app-page)"><option>Open</option><option>In Review</option><option>Closed</option></select></div>
+      <sc-if value="{{ sub.hasRef }}"><a class="btn btn-secondary" href="{{ sub.refHref }}" style="min-height:40px;border-radius:10px;align-self:flex-start"><i class="ph ph-arrow-square-out" aria-hidden="true"></i>Open {{ sub.ref }}</a></sc-if>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, tick: 0, fields: null, sel: -1, dirty: false, saved: false, failed: false, addOpen: false, preview: false, drag: -1, over: -1, sub: null };
+  componentDidMount() {
+    const b = () => {
+      const M = window.ABRIA_M; if (!M) return setTimeout(b, 30);
+      const f = M.DATA.forms.find(x => x.id === M.param('id'));
+      this.setState({ ready: true, fields: f ? f.fields.map(x => Object.assign({}, x)) : null });
+    };
+    b();
+  }
+  set(p) { this.setState(Object.assign({ dirty: true, saved: false, failed: false }, p)); }
+  move(a, b) { const n = this.state.fields.slice(); const [x] = n.splice(a, 1); n.splice(b, 0, x); this.set({ fields: n, sel: b }); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    const E = { forms: [], fields: [], typeOpts: [], previewFields: [], managers: [], sel: {}, ed: {}, form: {}, sub: { kv: [] } };
+    if (!M) return Object.assign({ isIndex: true, active: 'forms:all' }, E);
+    const id = M.param('id'), s = M.param('s'), D = M.DATA;
+    const active = s === 'submissions' ? 'forms:submissions' : id ? 'forms:' + id : 'forms:all';
+    if (M.role() !== 'admin') return Object.assign({}, E, { denied: true, active });
+    const bump = () => this.setState(x => ({ tick: x.tick + 1 }));
+    const icons = { quote: 'ph-duotone ph-clipboard-text', truck: 'ph-duotone ph-truck', contact: 'ph-duotone ph-chat-text', partner: 'ph-duotone ph-handshake' };
+    const TT = {}; M.FIELD_TYPES.forEach(t => (TT[t[0]] = t));
+    const out = Object.assign({}, E, { active });
+    const openSub = x => this.setState({ sub: x.id });
+    if (s === 'submissions') {
+      out.isSubs = true;
+      out.subCols = [{ key: 'id', label: 'Submission' }, { key: 'form', label: 'Form' }, { key: 'name', label: 'Name' }, { key: 'at', label: 'Date' }, { key: 'status', label: 'Status' }, { key: 'assignee', label: 'Assigned manager' }];
+      out.subFilters = [{ key: 'form', label: 'Form', options: D.forms.map(f => f.name) }, { key: 'status', label: 'Status', options: ['Open', 'In Review', 'Closed'] }, { key: 'assignee', label: 'Manager', all: 'Any manager', options: ['Unassigned', 'Shedrack Maeda', 'Godfrey Mushi'] }];
+      out.subRows = D.submissions.map(x => { const f = D.forms.find(y => y.id === x.form); return { id: x.id, date: x.at, search: x.id + ' ' + x.name + ' ' + x.company, f: { form: f.name, status: x.status, assignee: x.assignee || 'Unassigned' }, s: { at: x.at },
+        cells: { id: { t: x.id, sub: x.ref || '' }, form: M.C.t(f.name), name: M.C.t(x.name, x.company), at: M.C.t(M.rel(x.at)), status: M.C.b(x.status), assignee: M.C.t(x.assignee || 'Unassigned') },
+        actions: [{ label: 'Open', icon: 'ph-arrow-right', onClick: () => openSub(x) }] }; });
+      out.subBulk = [{ label: 'Assign to me', onClick: ids => { ids.forEach(i => { const x = D.submissions.find(y => y.id === i); if (x) x.assignee = M.me().name; }); M.toast(ids.length + ' submission(s) assigned to you'); bump(); } }, { label: 'Close', onClick: ids => { ids.forEach(i => { const x = D.submissions.find(y => y.id === i); if (x) x.status = 'Closed'; }); M.toast(ids.length + ' submission(s) closed'); bump(); } }];
+      const cur = D.submissions.find(y => y.id === this.state.sub);
+      if (cur) {
+        const f = D.forms.find(y => y.id === cur.form);
+        const refHref = cur.ref ? (cur.ref.indexOf('REQ') === 0 ? M.link('requests', { id: cur.ref }) : M.link('carriers', { id: cur.ref })) : '';
+        const rq = cur.ref && M.IDX.req[cur.ref];
+        out.subOpen = true; out.managers = ['Shedrack Maeda', 'Godfrey Mushi'];
+        out.sub = { id: cur.id, formName: f.name, when: M.rel(cur.at), assignee: cur.assignee || '', status: cur.status, hasRef: !!cur.ref, ref: cur.ref, refHref,
+          kv: [{ k: 'Name', v: cur.name }, { k: 'Company', v: cur.company || '—' }].concat(rq ? [{ k: 'Route', v: rq.pickup + ' → ' + rq.dest }, { k: 'Cargo', v: rq.cargo + ' · ' + M.kg(rq.weight) }, { k: 'Date of transport', v: M.d(rq.date) }] : []).concat(cur.message ? [{ k: 'Message', v: cur.message }] : []) };
+        out.onAssign = e => { cur.assignee = e.target.value || null; M.toast(cur.id + (cur.assignee ? ' assigned to ' + cur.assignee : ' unassigned')); bump(); };
+        out.onStatus = e => { cur.status = e.target.value; M.toast(cur.id + ' marked ' + cur.status); bump(); };
+        out.closeSub = () => this.setState({ sub: null });
+      }
+      return out;
+    }
+    const form = D.forms.find(x => x.id === id);
+    if (!form || !this.state.fields) {
+      out.isIndex = true;
+      out.forms = D.forms.map(f => ({ name: f.name, desc: f.desc, icon: icons[f.id], b: M.badge(f.status), fields: f.fields.length, subs: f.subs, updated: M.rel(f.updated), href: M.link('forms', { id: f.id }) }));
+      return out;
+    }
+    const F = this.state.fields, si = this.state.sel;
+    const sw = v => ({ track: v ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 25%,transparent)', knob: v ? '19px' : '3px' });
+    const upd = (i, patch) => { const n = F.slice(); n[i] = Object.assign({}, n[i], patch); this.set({ fields: n }); };
+    const newField = t => { const n = F.concat([{ id: 'f' + Date.now(), label: 'New ' + TT[t][1].toLowerCase() + ' field', type: t, required: false, enabled: true, placeholder: '', help: '', options: ['select', 'multiselect', 'radio', 'checkbox'].indexOf(t) > -1 ? ['Option 1', 'Option 2'] : [] }]); this.set({ fields: n, sel: n.length - 1, addOpen: false }); };
+    const sel = F[si];
+    Object.assign(out, {
+      isBuilder: true, form, fieldCount: F.filter(f => f.enabled).length + ' of ' + F.length + ' enabled',
+      fields: F.map((f, i) => Object.assign({ label: f.label, icon: 'ph-duotone ' + TT[f.type][2], typeLabel: TT[f.type][1], reqLabel: f.required ? 'Required' : 'Optional', enabled: f.enabled,
+        op: f.enabled ? 1 : 0.55, bg: si === i ? 'color-mix(in srgb,var(--color-accent) 10%,transparent)' : 'var(--app-page)',
+        outline: si === i ? '2px solid var(--color-accent)' : (this.state.over === i && this.state.drag !== i ? '2px dashed var(--color-accent)' : 'none'),
+        switchLabel: (f.enabled ? 'Disable ' : 'Enable ') + f.label, upLabel: 'Move ' + f.label + ' up', downLabel: 'Move ' + f.label + ' down',
+        select: e => { if (e.target.closest('button')) return; this.setState({ sel: i }); },
+        toggle: () => upd(i, { enabled: !f.enabled }),
+        up: () => i > 0 && this.move(i, i - 1), down: () => i < F.length - 1 && this.move(i, i + 1),
+        dragStart: e => { e.dataTransfer.effectAllowed = 'move'; this.setState({ drag: i }); }, dragOver: e => { e.preventDefault(); if (this.state.over !== i) this.setState({ over: i }); },
+        drop: e => { e.preventDefault(); const a = this.state.drag; this.setState({ drag: -1, over: -1 }); if (a > -1 && a !== i) this.move(a, i); }, dragEnd: () => this.setState({ drag: -1, over: -1 }) }, sw(f.enabled))),
+      hasSel: !!sel, noSel: !sel, sel: sel || {},
+      hasOptions: !!sel && ['select', 'multiselect', 'radio', 'checkbox'].indexOf(sel.type) > -1, optText: sel ? (sel.options || []).join('\n') : '',
+      reqTrack: sw(sel && sel.required).track, reqKnob: sw(sel && sel.required).knob,
+      ed: sel ? { label: e => upd(si, { label: e.target.value }), type: e => upd(si, { type: e.target.value }), placeholder: e => upd(si, { placeholder: e.target.value }), help: e => upd(si, { help: e.target.value }), options: e => upd(si, { options: e.target.value.split('\n') }), required: () => upd(si, { required: !sel.required }) } : {},
+      removeField: async () => { if (await M.confirm({ title: 'Remove “' + sel.label + '”?', body: 'Existing submissions keep their answers, but the field disappears from the public form after you publish.', confirm: 'Remove field', danger: true })) this.set({ fields: F.filter((_, j) => j !== si), sel: -1 }); },
+      typeOpts: M.FIELD_TYPES.map(t => ({ v: t[0], l: t[1], icon: 'ph-duotone ' + t[2], add: () => newField(t[0]) })),
+      addOpen: this.state.addOpen, openAdd: () => this.setState({ addOpen: true }), closeAdd: () => this.setState({ addOpen: false }), closeAddBg: e => { if (e.target === e.currentTarget) this.setState({ addOpen: false }); },
+      clean: !this.state.dirty, saveFailed: this.state.failed,
+      saveText: this.state.failed ? 'Publish failed' : this.state.dirty ? 'Unpublished changes' : this.state.saved ? 'Published just now' : form.status + ' · updated ' + M.rel(form.updated),
+      saveDot: this.state.failed ? M.TONES.bad.dot : this.state.dirty ? M.TONES.warn.dot : M.TONES.ok.dot,
+      publish: async () => {
+        if (!(await M.confirm({ title: 'Publish changes?', body: 'The ' + form.name + ' form on the website updates immediately. New submissions use the new fields.', confirm: 'Publish', icon: 'ph-rocket-launch' }))) return;
+        if (M.param('state') === 'savefail' && !this.state.retried) { this.setState({ failed: true }); M.toast('Publish failed. Your changes are kept.', { tone: 'bad' }); return; }
+        form.fields = F.map(x => Object.assign({}, x)); form.updated = M.TODAY + 'T' + new Date().toTimeString().slice(0, 5); form.status = 'Published';
+        D.audit.unshift({ at: form.updated, user: M.me().name, action: 'Updated', resource: 'Form', desc: 'Published changes to ' + form.name + ' form' });
+        this.setState({ dirty: false, saved: true, failed: false }); M.toast(form.name + ' form published');
+      },
+      retry: () => { this.state.retried = true; this.setState({ failed: false }); },
+      previewOpen: this.state.preview, openPreview: () => this.setState({ preview: true }), closePreview: () => this.setState({ preview: false }),
+      previewTitle: { quote: 'Tell us what you need to move.', truck: 'Join the ABRIA carrier network.', contact: 'Let’s get your goods moving.', partner: 'Become an ABRIA partner.' }[form.id],
+      previewSubmit: e => { e.preventDefault(); M.toast('Preview only: nothing was submitted', { icon: 'ph-eye' }); },
+      previewFields: F.filter(f => f.enabled).map(f => ({ id: f.id, label: f.label, required: f.required, placeholder: f.placeholder, help: f.help, hasHelp: !!f.help, options: f.options || [],
+        span: f.type === 'textarea' || f.type === 'radio' || f.type === 'checkbox' || f.type === 'file' ? '1 / -1' : 'auto',
+        isInput: ['text', 'email', 'tel', 'number', 'date', 'time', 'location'].indexOf(f.type) > -1, htmlType: f.type === 'location' ? 'text' : f.type,
+        isArea: f.type === 'textarea', isSelect: f.type === 'select' || f.type === 'multiselect', multi: f.type === 'multiselect', selPh: f.placeholder || 'Select',
+        isChoice: f.type === 'radio' || f.type === 'checkbox', choiceType: f.type, isFile: f.type === 'file' }))
+    });
+    return out;
+  }
+}
+</script>
+</body>
+</html>

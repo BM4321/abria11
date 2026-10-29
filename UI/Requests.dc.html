@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Requests | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="requests" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px">
+      <div style="margin-right:auto"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Transport requests</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Review incoming requests, prepare quotes and assign carriers.</p></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <sc-for list="{{ chips }}" as="c"><a href="{{ c.href }}" style="display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px;border-radius:999px;text-decoration:none;font-size:13.5px;font-weight:500;background:{{ c.bg }};color:{{ c.fg }};box-shadow:var(--shadow-sm)">{{ c.label }}<span style="font-weight:600">{{ c.n }}</span></a></sc-for>
+    </div>
+    <dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" initial="{{ initial }}" search="Search by ID, customer, route or cargo" date-filter="{{ true }}" bulk="{{ true }}" bulk-actions="{{ bulkActions }}" primary="{{ primary }}" noun="requests" page-size="{{ 10 }}" simulate="{{ simulate }}" empty-title="No transport requests yet" empty-text="Requests submitted through the website and WhatsApp will appear here." empty-icon="ph-clipboard-text" hint-size="100%,640px"></dc-import>
+  </sc-if>
+
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <i class="ph-duotone ph-magnifying-glass-minus" aria-hidden="true" style="font-size:44px;color:var(--app-muted)"></i>
+      <h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Request not found</h1>
+      <p style="margin:0;color:var(--app-muted)">We couldn’t find {{ id }}. It may have been removed or the link is wrong.</p>
+      <a class="btn btn-primary" href="Requests.dc.html" style="margin-top:18px;min-height:40px;border-radius:10px">Back to requests</a>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Breadcrumb" style="display:flex;gap:8px;font-size:13px;color:var(--app-muted)"><a href="Requests.dc.html" style="text-decoration:none">Requests</a><span aria-hidden="true">/</span><span aria-current="page">{{ r.id }}</span></nav>
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px 24px;margin-top:-8px">
+      <div style="margin-right:auto;min-width:0">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Request #{{ r.id }}</h1><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border-radius:999px;font-size:13px;font-weight:500;background:{{ st.bg }};color:{{ st.fg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ st.dot }}"></span>{{ st.label }}</span></div>
+        <p style="margin:6px 0 0;font-size:14px;color:var(--app-muted)">{{ r.pickup }} → {{ r.dest }} · Created {{ created }} via website form</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <a class="btn btn-primary" href="{{ quoteHref }}" style="min-height:40px;border-radius:10px"><i class="ph ph-receipt" aria-hidden="true"></i>{{ quoteLabel }}</a>
+        <button type="button" class="btn btn-secondary" onClick="{{ openAssign }}" disabled="{{ closed }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-truck" aria-hidden="true"></i>Assign carrier</button>
+        <button type="button" class="btn btn-secondary" onClick="{{ convert }}" disabled="{{ closed }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-arrow-square-out" aria-hidden="true"></i>Convert to shipment</button>
+        <button type="button" class="btn btn-secondary" onClick="{{ reject }}" disabled="{{ closed }}" style="min-height:40px;border-radius:10px;background:var(--app-card);color:var(--color-accent-2-700)"><i class="ph ph-x-circle" aria-hidden="true"></i>Reject</button>
+      </div>
+    </div>
+
+    <ol aria-label="Request progress" style="list-style:none;margin:0;padding:16px 18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);display:flex;flex-wrap:wrap;gap:8px 0">
+      <sc-for list="{{ steps }}" as="s">
+        <li style="flex:1 1 120px;display:flex;align-items:center;gap:10px;min-width:0">
+          <span style="width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:13px;font-weight:600;background:{{ s.bg }};color:{{ s.fg }};box-shadow:{{ s.ring }}"><i class="{{ s.icon }}" aria-hidden="true"></i></span>
+          <span style="font-size:13.5px;font-weight:{{ s.fw }};white-space:nowrap">{{ s.label }}</span>
+          <span aria-hidden="true" style="flex:1;height:2px;min-width:16px;margin:0 8px;border-radius:2px;background:{{ s.line }}"></span>
+        </li>
+      </sc-for>
+    </ol>
+
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <div style="flex:2 1 560px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section aria-labelledby="sr-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="sr-h" style="margin:0 0 16px;font-size:16px;font-weight:600">Shipment request</h2>
+          <dl style="margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:18px 24px">
+            <sc-for list="{{ kv }}" as="k"><div style="min-width:0"><dt style="font-size:12px;color:var(--app-muted)">{{ k.k }}</dt><dd style="margin:3px 0 0;font-size:14.5px;font-weight:500">{{ k.v }}</dd></div></sc-for>
+          </dl>
+          <sc-if value="{{ hasNotes }}"><div style="margin-top:18px;padding:12px 14px;border-radius:12px;background:var(--app-page)"><p style="margin:0;font-size:12px;color:var(--app-muted)">Customer notes</p><p style="margin:4px 0 0;font-size:14px;line-height:1.5">{{ r.notes }}</p></div></sc-if>
+        </section>
+
+        <section aria-labelledby="match-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><i class="ph-duotone ph-arrows-left-right" aria-hidden="true" style="font-size:20px;color:var(--color-accent)"></i><h2 id="match-h" style="margin:0;font-size:16px;font-weight:600">AB Match suggestions</h2></div>
+          <p style="margin:0 0 12px;font-size:13px;color:var(--app-muted)">Verified carriers with an available {{ r.truck }} on or near this route.</p>
+          <sc-if value="{{ hasMatches }}">
+            <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ matches }}" as="m">
+                <li style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--app-page)">
+                  <span style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,transparent);color:var(--color-accent-700);flex:none"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:20px"></i></span>
+                  <span style="flex:1 1 180px;min-width:0"><a href="{{ m.href }}" style="display:block;font-weight:600;text-decoration:none;color:var(--color-text)">{{ m.company }}</a><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ m.truck }} · {{ m.location }} · {{ m.completed }} jobs completed</span></span>
+                  <span style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:{{ m.fitBg }};color:{{ m.fitFg }}">{{ m.fit }}</span>
+                  <button type="button" onClick="{{ m.assign }}" disabled="{{ closed }}" class="btn btn-secondary" style="min-height:36px;border-radius:10px;background:var(--app-card)">Assign</button>
+                </li>
+              </sc-for>
+            </ul>
+          </sc-if>
+          <sc-if value="{{ noMatches }}"><p style="margin:0;padding:16px;border-radius:12px;background:var(--app-page);font-size:14px;color:var(--app-muted)">No verified {{ r.truck }} is available right now. Registered carriers with this truck type will appear here once verified.</p></sc-if>
+        </section>
+
+        <section aria-labelledby="notes-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><h2 id="notes-h" style="margin:0;font-size:16px;font-weight:600">Internal notes</h2><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--app-muted)"><i class="ph ph-lock-simple" aria-hidden="true"></i>Only visible to ABRIA staff</span></div>
+          <ul style="list-style:none;margin:0 0 14px;padding:0;display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ notes }}" as="n"><li style="display:flex;gap:10px"><span style="width:30px;height:30px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--color-accent-2);color:#fff;font-size:11px;font-weight:600">{{ n.ini }}</span><div style="flex:1;padding:10px 12px;border-radius:12px;background:var(--app-page)"><div style="font-size:12px;color:var(--app-muted)"><strong style="font-weight:600;color:var(--color-text)">{{ n.by }}</strong> · {{ n.when }}</div><p style="margin:4px 0 0;font-size:14px;line-height:1.5">{{ n.text }}</p></div></li></sc-for>
+          </ul>
+          <form onSubmit="{{ addNote }}" style="display:flex;flex-direction:column;gap:8px">
+            <label for="note-in" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Add an internal note</label>
+            <textarea id="note-in" class="input" value="{{ draft }}" onChange="{{ onDraft }}" placeholder="Add a note for the team…" style="min-height:76px;border-radius:12px;background:var(--app-page);font-size:14px"></textarea>
+            <div><button type="submit" class="btn btn-primary" disabled="{{ noDraft }}" style="min-height:38px;border-radius:10px">Add note</button></div>
+          </form>
+        </section>
+      </div>
+
+      <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section aria-labelledby="cu-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="cu-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Customer</h2>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 16%,transparent);color:var(--color-accent-800);font-weight:600">{{ cust.ini }}</span><div><a href="{{ cust.href }}" style="font-weight:600;font-size:15px;text-decoration:none;color:var(--color-text)">{{ cust.name }}</a><div style="font-size:13px;color:var(--app-muted)">{{ cust.company }}</div></div></div>
+          <dl style="margin:16px 0 0;display:flex;flex-direction:column;gap:10px;font-size:14px">
+            <div style="display:flex;gap:10px"><dt><i class="ph-duotone ph-phone" aria-label="Phone" style="font-size:18px;color:var(--app-muted)"></i></dt><dd style="margin:0"><a href="{{ cust.tel }}">{{ cust.phone }}</a></dd></div>
+            <div style="display:flex;gap:10px"><dt><i class="ph-duotone ph-envelope-simple" aria-label="Email" style="font-size:18px;color:var(--app-muted)"></i></dt><dd style="margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis"><a href="{{ cust.mail }}">{{ cust.email }}</a></dd></div>
+            <div style="display:flex;gap:10px"><dt><i class="ph-duotone ph-map-pin" aria-label="Region" style="font-size:18px;color:var(--app-muted)"></i></dt><dd style="margin:0">{{ cust.region }}</dd></div>
+          </dl>
+          <a class="btn btn-secondary" href="{{ cust.wa }}" target="_blank" rel="noopener" style="margin-top:16px;width:100%;min-height:40px;border-radius:10px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="color:var(--color-accent)"></i>Message on WhatsApp</a>
+        </section>
+        <section aria-labelledby="ac-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="ac-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Activity</h2>
+          <ol style="list-style:none;margin:0;padding:0">
+            <sc-for list="{{ log }}" as="a"><li style="display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px"><span style="position:relative;display:flex;justify-content:center"><span aria-hidden="true" style="position:absolute;top:18px;bottom:0;width:2px;background:{{ a.line }}"></span><span style="margin-top:4px;width:12px;height:12px;border-radius:50%;background:{{ a.dot }};box-shadow:0 0 0 3px var(--app-card);position:relative"></span></span><div style="padding-bottom:16px"><div style="font-size:14px">{{ a.text }}</div><div style="font-size:12px;color:var(--app-muted)">{{ a.when }} · {{ a.by }}</div></div></li></sc-for>
+          </ol>
+        </section>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</main>
+<sc-if value="{{ assignOpen }}" hint-placeholder-val="{{ false }}">
+  <div class="dialog-backdrop" onClick="{{ closeAssignBg }}" style="z-index:2400;animation:abria-fade .16s ease">
+    <form class="dialog" role="dialog" aria-modal="true" aria-labelledby="as-h" onSubmit="{{ confirmAssign }}" style="width:min(520px,100%);background:var(--app-card);border-radius:16px;padding:24px;animation:abria-in .2s cubic-bezier(.2,.7,.2,1);font-family:Roboto,system-ui,sans-serif">
+      <h2 id="as-h" style="margin:0;font-size:18px;font-weight:600">Assign a carrier to {{ r.id }}</h2>
+      <p style="margin:4px 0 0;font-size:13.5px;color:var(--app-muted)">{{ r.pickup }} → {{ r.dest }} · {{ r.truck }} · {{ weight }}</p>
+      <fieldset style="border:0;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto">
+        <legend style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Carrier and truck</legend>
+        <sc-for list="{{ options }}" as="o">
+          <label style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;cursor:pointer;background:{{ o.bg }};outline:{{ o.outline }}">
+            <input type="radio" name="truck" value="{{ o.reg }}" checked="{{ o.on }}" onChange="{{ o.pick }}" style="accent-color:var(--color-accent);width:18px;height:18px">
+            <span style="flex:1;min-width:0"><span style="display:block;font-weight:600;font-size:14px">{{ o.company }}</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ o.reg }} · {{ o.type }} · {{ o.cap }} · {{ o.region }}</span></span>
+            <span style="font-size:12px;font-weight:500;color:{{ o.fitFg }}">{{ o.fit }}</span>
+          </label>
+        </sc-for>
+      </fieldset>
+      <div class="dialog-actions" style="margin-top:20px"><button type="button" onClick="{{ closeAssign }}" class="btn btn-secondary" style="min-height:40px;border-radius:10px">Cancel</button><button type="submit" class="btn btn-primary" disabled="{{ noPick }}" style="min-height:40px;border-radius:10px">Assign carrier</button></div>
+    </form>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, tick: 0, draft: '', assignOpen: false, pick: '' };
+  componentDidMount() {
+    const b = () => (window.ABRIA_M ? this.setState({ ready: true }) : setTimeout(b, 30)); b();
+    this._d = () => this.setState(s => ({ tick: s.tick + 1 })); window.addEventListener('abria-data', this._d);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-data', this._d); }
+  bump() { window.dispatchEvent(new Event('abria-data')); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { isList: true, chips: [], steps: [], kv: [], matches: [], notes: [], log: [], options: [] };
+    const id = M.param('id');
+    if (!id) {
+      const D = M.DATA.requests.slice().sort((a, b) => (a.created < b.created ? 1 : -1));
+      const cnt = s => D.filter(r => r.status === s).length;
+      const cur = M.param('status') || '';
+      const chips = [['', 'All', D.length], ['New', 'New', cnt('New')], ['Reviewing', 'Reviewing', cnt('Reviewing')], ['Quoted', 'Quoted', cnt('Quoted')], ['Confirmed', 'Confirmed', cnt('Confirmed')], ['Rejected', 'Rejected', cnt('Rejected')]].map(c => ({ label: c[1], n: c[2], href: c[0] ? M.link('requests', { status: c[0] }) : 'Requests.dc.html', bg: cur === c[0] ? 'var(--color-accent)' : 'var(--app-card)', fg: cur === c[0] ? 'var(--color-bg)' : 'var(--color-text)' }));
+      return {
+        isList: true, isDetail: false, notFound: false, chips,
+        cols: M.COLS.requests, rows: M.ROWS.requests(D),
+        filters: [{ key: 'status', label: 'Status', options: ['New', 'Reviewing', 'Quoted', 'Confirmed', 'Rejected'] }, { key: 'cargo', label: 'Cargo', options: M.uniq(D, 'cargo') }],
+        initial: cur ? { status: cur } : {},
+        simulate: M.param('state') || 'none',
+        primary: { label: 'New request', href: 'Request%20Quote.dc.html' },
+        bulkActions: [
+          { label: 'Mark as reviewing', onClick: ids => { ids.forEach(i => { const r = M.IDX.req[i]; if (r && r.status === 'New') r.status = 'Reviewing'; }); M.toast(ids.length + ' request(s) moved to Reviewing'); this.bump(); } },
+          { label: 'Reject', danger: true, confirm: 'Reject selected requests?', body: 'Customers will be told their request cannot be fulfilled.', onClick: ids => { ids.forEach(i => { const r = M.IDX.req[i]; if (r) r.status = 'Rejected'; }); M.toast(ids.length + ' request(s) rejected'); this.bump(); } }
+        ]
+      };
+    }
+    const r = M.IDX.req[id];
+    if (!r) return { isList: false, isDetail: false, notFound: true, id, steps: [], kv: [], matches: [], notes: [], log: [], options: [] };
+    const c = M.IDX.cust[r.cust], T = M.TONES;
+    const flow = ['New', 'Reviewing', 'Quoted', 'Confirmed'];
+    const rejected = r.status === 'Rejected', idx = rejected ? 1 : flow.indexOf(r.status);
+    const steps = (rejected ? ['New', 'Reviewing', 'Rejected'] : flow).map((s, i, arr) => {
+      const done = i < idx || (!rejected && r.status === 'Confirmed'), cur = i === idx && !(r.status === 'Confirmed');
+      const bad = rejected && s === 'Rejected';
+      return { label: s, fw: cur || bad ? 600 : 400,
+        bg: bad ? 'var(--color-accent-2)' : done ? 'var(--color-accent)' : cur ? 'var(--app-card)' : 'var(--app-page)',
+        fg: bad || done ? 'var(--color-bg)' : cur ? 'var(--color-accent-700)' : 'var(--app-muted)',
+        ring: cur ? 'inset 0 0 0 2px var(--color-accent)' : 'none',
+        icon: bad ? 'ph ph-x' : done ? 'ph ph-check' : cur ? 'ph-fill ph-circle' : 'ph ph-circle',
+        line: i === arr.length - 1 ? 'transparent' : (done ? 'var(--color-accent)' : 'var(--app-line)') };
+    });
+    const q = M.DATA.quotes.find(x => x.req === r.id && x.status !== 'Cancelled');
+    const closed = rejected || r.status === 'Confirmed';
+    const pool = M.DATA.trucks.filter(t => t.ver === 'Verified' && t.status === 'Available' && M.IDX.car[t.owner].status === 'Verified');
+    const fit = t => t.type === r.truck ? 'Best fit' : 'Alternative';
+    const sorted = pool.slice().sort((a, b) => (fit(a) === 'Best fit' ? -1 : 1) - (fit(b) === 'Best fit' ? -1 : 1));
+    const matches = sorted.filter(t => t.type === r.truck || ['Curtainsider', 'Flatbed', 'Box Truck'].indexOf(t.type) > -1).slice(0, 3).map(t => {
+      const k = M.IDX.car[t.owner], best = fit(t) === 'Best fit';
+      return { company: k.company, href: M.link('carriers', { id: k.id }), truck: t.reg + ' · ' + t.type + ' ' + t.cap, location: t.region, completed: k.completed, fit: fit(t), fitBg: best ? T.ok.bg : T.muted.bg, fitFg: best ? T.ok.fg : T.muted.fg, assign: () => this.doAssign(r, t) };
+    });
+    const notes = (r.internal || [{ by: 'Shedrack Maeda', at: r.created, text: 'Customer prefers a morning pickup. Confirm forklift at origin.' }]).map(n => ({ by: n.by, ini: n.by.split(' ').map(p => p[0]).join(''), when: M.rel(n.at), text: n.text }));
+    const baseLog = [{ at: r.created, text: 'Request submitted by ' + c.name, by: 'Website', tone: 'info' }];
+    if (idx >= 1 || rejected) baseLog.push({ at: r.created.slice(0, 11) + '10:15', text: 'Moved to Reviewing', by: 'Shedrack Maeda' });
+    if (q) baseLog.push({ at: q.created + 'T12:00', text: 'Quote ' + q.id + ' created · ' + M.tzs(q.amount), by: 'Shedrack Maeda' });
+    if (r.status === 'Confirmed') baseLog.push({ at: q ? q.created + 'T16:00' : r.created, text: 'Quote accepted, request confirmed', by: c.name });
+    if (rejected) baseLog.push({ at: r.created, text: 'Request rejected' + (r.notes ? ': ' + r.notes : ''), by: 'Shedrack Maeda', tone: 'bad' });
+    const all = baseLog.concat(r.log || []);
+    const log = all.slice().reverse().map((a, i, arr) => ({ text: a.text, by: a.by, when: M.rel(a.at), dot: a.tone === 'bad' ? 'var(--color-accent-2)' : i === 0 ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 30%,transparent)', line: i === arr.length - 1 ? 'transparent' : 'var(--app-line)' }));
+    const options = pool.map(t => { const k = M.IDX.car[t.owner]; const on = this.state.pick === t.reg; return { reg: t.reg, type: t.type, cap: t.cap, region: t.region, company: k.company, on, fit: fit(t), fitFg: fit(t) === 'Best fit' ? T.ok.fg : 'var(--app-muted)', pick: () => this.setState({ pick: t.reg }), bg: on ? 'color-mix(in srgb,var(--color-accent) 10%,transparent)' : 'var(--app-page)', outline: on ? '2px solid var(--color-accent)' : 'none' }; });
+    const b = M.badge(r.status);
+    return {
+      isList: false, isDetail: true, notFound: false, r, st: b, closed,
+      created: M.rel(r.created), weight: M.kg(r.weight),
+      quoteHref: q ? M.link('quotes', { id: q.id }) : M.link('quotes', { new: r.id }), quoteLabel: q ? 'View quote ' + q.id : 'Create quote',
+      steps,
+      kv: [
+        { k: 'Pickup', v: r.pickup }, { k: 'Destination', v: r.dest }, { k: 'Cargo type', v: r.cargo }, { k: 'Description', v: r.desc },
+        { k: 'Weight', v: M.kg(r.weight) }, { k: 'Quantity', v: r.qty + ' items' }, { k: 'Truck requirement', v: r.truck },
+        { k: 'Pickup date', v: M.d(r.date) }, { k: 'Delivery deadline', v: M.d(r.deadline) }
+      ],
+      hasNotes: !!r.notes && !rejected,
+      matches, hasMatches: matches.length > 0, noMatches: !matches.length,
+      notes, draft: this.state.draft, noDraft: !this.state.draft.trim(),
+      onDraft: e => this.setState({ draft: e.target.value }),
+      addNote: e => { e.preventDefault(); const t = this.state.draft.trim(); if (!t) return; r.internal = (r.internal || notes.map(n => ({ by: n.by, at: r.created, text: n.text }))).concat([{ by: M.me().name, at: M.TODAY + 'T' + new Date().toTimeString().slice(0, 5), text: t }]); this.setState({ draft: '' }); M.toast('Note added'); },
+      cust: { name: c.name, company: c.company, phone: c.phone, email: c.email, region: c.region, ini: c.name.split(' ').map(p => p[0]).join(''), href: M.link('customers', { id: c.id }), tel: 'tel:' + c.phone.replace(/\s/g, ''), mail: 'mailto:' + c.email, wa: 'https://wa.me/' + c.phone.replace(/\D/g, '') + '?text=' + encodeURIComponent('Hello ' + c.name.split(' ')[0] + ', this is ABRIA about your request ' + r.id + '.') },
+      log,
+      assignOpen: this.state.assignOpen, options, noPick: !this.state.pick,
+      openAssign: () => this.setState({ assignOpen: true, pick: (sorted[0] || {}).reg || '' }),
+      closeAssign: () => this.setState({ assignOpen: false }),
+      closeAssignBg: e => { if (e.target === e.currentTarget) this.setState({ assignOpen: false }); },
+      confirmAssign: e => { e.preventDefault(); const t = M.IDX.truck[this.state.pick]; if (t) this.doAssign(r, t); },
+      convert: async () => {
+        const ok = await M.confirm({ title: 'Convert ' + r.id + ' to a shipment?', body: 'A shipment record will be created and the request marked as confirmed. The customer can then follow it by reference.', confirm: 'Convert', icon: 'ph-arrow-square-out' });
+        if (!ok) return; r.status = 'Confirmed'; this.addLog(r, 'Converted to shipment'); M.toast(r.id + ' converted to a shipment', { action: 'View shipments', onAction: () => (location.href = M.R.shipments) }); this.bump();
+      },
+      reject: async () => {
+        const ok = await M.confirm({ title: 'Reject ' + r.id + '?', body: 'The request will be closed and ' + c.company + ' will be told it cannot be fulfilled. You can’t undo this.', confirm: 'Reject request', danger: true });
+        if (!ok) return; r.status = 'Rejected'; this.addLog(r, 'Request rejected', 'bad'); M.toast(r.id + ' rejected'); this.bump();
+      }
+    };
+  }
+  addLog(r, text, tone) { const M = window.ABRIA_M; r.log = (r.log || []).concat([{ at: M.TODAY + 'T' + new Date().toTimeString().slice(0, 5), text, by: M.me().name, tone }]); }
+  doAssign(r, t) {
+    const M = window.ABRIA_M, k = M.IDX.car[t.owner];
+    t.status = 'Assigned'; if (r.status === 'New') r.status = 'Reviewing';
+    this.addLog(r, 'Assigned ' + k.company + ' · ' + t.reg);
+    this.setState({ assignOpen: false });
+    M.toast(k.company + ' assigned to ' + r.id); this.bump();
+  }
+}
+</script>
+</body>
+</html>

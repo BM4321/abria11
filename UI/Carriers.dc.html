@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Carriers | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="carriers" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <div><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Carriers</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Truck owners and transport providers in the ABRIA network.</p></div>
+    <dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" initial="{{ initial }}" search="Search by name, company, location or route" noun="carriers" page-size="{{ 10 }}" simulate="{{ simulate }}" bulk="{{ true }}" bulk-actions="{{ bulkActions }}" empty-title="No carriers registered" empty-text="Carrier registrations will appear here." empty-icon="ph-truck" hint-size="100%,560px"></dc-import>
+  </sc-if>
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:44px;color:var(--app-muted)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Carrier not found</h1><a class="btn btn-primary" href="Carriers.dc.html" style="margin-top:12px;min-height:40px;border-radius:10px">Back to carriers</a></div>
+  </sc-if>
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Breadcrumb" style="display:flex;gap:8px;font-size:13px;color:var(--app-muted)"><a href="Carriers.dc.html" style="text-decoration:none">Carriers</a><span aria-hidden="true">/</span><span aria-current="page">{{ k.company }}</span></nav>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px 20px;margin-top:-8px">
+      <span style="width:60px;height:60px;border-radius:16px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 16%,transparent);color:var(--color-accent-800);flex:none"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:30px"></i></span>
+      <div style="margin-right:auto;min-width:0"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">{{ k.company }}</h1><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border-radius:999px;font-size:13px;font-weight:500;background:{{ st.bg }};color:{{ st.fg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ st.dot }}"></span>{{ st.label }}</span></div><p style="margin:4px 0 0;font-size:14px;color:var(--app-muted)">{{ k.name }} · {{ k.id }} · {{ k.location }} · Joined {{ joined }}</p></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn btn-secondary" href="{{ tel }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-phone" aria-hidden="true"></i>Call</a><a class="btn btn-secondary" href="{{ waHref }}" target="_blank" rel="noopener" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i>WhatsApp</a></div>
+    </div>
+
+    <section aria-labelledby="ver-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);outline:{{ verOutline }}">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px">
+        <span style="width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:{{ st.bg }};color:{{ st.fg }};flex:none"><i class="{{ verIcon }}" aria-hidden="true" style="font-size:28px"></i></span>
+        <div style="flex:1 1 240px;min-width:0"><h2 id="ver-h" style="margin:0;font-size:17px;font-weight:600">Verification status: {{ st.label }}</h2><p style="margin:3px 0 0;font-size:14px;color:var(--app-muted)">{{ verText }}</p></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <sc-if value="{{ canApprove }}"><button type="button" class="btn btn-primary" onClick="{{ approve }}" disabled="{{ notReady }}" style="min-height:40px;border-radius:10px"><i class="ph ph-seal-check" aria-hidden="true"></i>Approve carrier</button><button type="button" class="btn btn-secondary" onClick="{{ requestDocs }}" style="min-height:40px;border-radius:10px;background:var(--app-card)">Request documents</button></sc-if>
+          <sc-if value="{{ canSuspend }}"><button type="button" class="btn btn-secondary" onClick="{{ suspend }}" style="min-height:40px;border-radius:10px;background:var(--app-card);color:var(--color-accent-2-700)"><i class="ph ph-prohibit" aria-hidden="true"></i>Suspend</button></sc-if>
+          <sc-if value="{{ canReactivate }}"><button type="button" class="btn btn-primary" onClick="{{ reactivate }}" style="min-height:40px;border-radius:10px"><i class="ph ph-arrow-counter-clockwise" aria-hidden="true"></i>Reactivate</button></sc-if>
+        </div>
+      </div>
+      <ul style="list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px">
+        <sc-for list="{{ checks }}" as="x">
+          <li style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--app-page)">
+            <button type="button" role="checkbox" aria-checked="{{ x.done }}" onClick="{{ x.toggle }}" disabled="{{ x.locked }}" aria-label="{{ x.aria }}" style="width:26px;height:26px;border-radius:8px;flex:none;display:grid;place-items:center;cursor:pointer;border:{{ x.border }};background:{{ x.bg }};color:var(--color-bg)"><sc-if value="{{ x.done }}"><i class="ph-bold ph-check" aria-hidden="true" style="font-size:14px"></i></sc-if></button>
+            <span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500">{{ x.label }}</span><span style="display:block;font-size:12px;color:var(--app-muted)">{{ x.sub }}</span></span>
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section aria-labelledby="ki-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><h2 id="ki-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Carrier and company</h2><dl style="margin:0;display:flex;flex-direction:column;gap:12px"><sc-for list="{{ info }}" as="x"><div><dt style="font-size:12px;color:var(--app-muted)">{{ x.k }}</dt><dd style="margin:2px 0 0;font-size:14.5px">{{ x.v }}</dd></div></sc-for></dl></section>
+        <section aria-labelledby="kd-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><h2 id="kd-h" style="margin:0 0 12px;font-size:16px;font-weight:600">Verification documents</h2><ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><sc-for list="{{ docs }}" as="d"><li style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--app-page)"><i class="{{ d.icon }}" aria-hidden="true" style="font-size:22px;color:{{ d.ic }}"></i><span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500">{{ d.name }}</span><span style="display:block;font-size:12px;color:var(--app-muted)">{{ d.sub }}</span></span></li></sc-for></ul><p style="margin:10px 0 0;font-size:12px;color:var(--app-muted)">Documents are collected by the team until uploads are enabled on the registration form.</p></section>
+        <section aria-labelledby="kact-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><h2 id="kact-h" style="margin:0 0 12px;font-size:16px;font-weight:600">Activity</h2><ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px"><sc-for list="{{ activity }}" as="a"><li style="display:flex;gap:10px"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:18px;color:var(--color-accent);flex:none"></i><div><div style="font-size:14px">{{ a.text }}</div><div style="font-size:12px;color:var(--app-muted)">{{ a.when }}</div></div></li></sc-for></ol></section>
+      </div>
+      <div style="flex:2 1 560px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:16px"><sc-for list="{{ stats }}" as="x"><div style="padding:16px 18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><div style="font-size:13px;color:var(--app-muted)">{{ x.k }}</div><div style="margin-top:4px;font-size:24px;font-weight:600">{{ x.v }}</div></div></sc-for></div>
+        <dc-import name="DataTable" title="Trucks" compact="{{ true }}" columns="{{ truckCols }}" rows="{{ truckRows }}" page-size="{{ 5 }}" noun="trucks" empty-title="No trucks registered" empty-text="Trucks added by this carrier will appear here." empty-icon="ph-steering-wheel" hint-size="100%,300px"></dc-import>
+        <dc-import name="DataTable" title="Jobs" subtitle="Active and completed shipments" compact="{{ true }}" columns="{{ jobCols }}" rows="{{ jobRows }}" page-size="{{ 5 }}" noun="jobs" empty-title="No jobs yet" empty-text="Jobs assigned to this carrier will appear here after verification." empty-icon="ph-package" hint-size="100%,300px"></dc-import>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, tick: 0, checks: null };
+  componentDidMount() {
+    const b = () => (window.ABRIA_M ? this.setState({ ready: true }) : setTimeout(b, 30)); b();
+    this._d = () => this.setState(s => ({ tick: s.tick + 1 })); window.addEventListener('abria-data', this._d);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-data', this._d); }
+  renderVals() {
+    const M = window.ABRIA_M, E = { stats: [], info: [], docs: [], activity: [], checks: [] };
+    if (!M) return Object.assign({ isList: true }, E);
+    const id = M.param('id'), D = M.DATA, bump = () => window.dispatchEvent(new Event('abria-data'));
+    if (!id) {
+      const cur = M.param('status');
+      return Object.assign({}, E, { isList: true, cols: M.COLS.carriers, rows: M.ROWS.carriers(D.carriers), initial: cur ? { status: cur } : {}, simulate: M.param('state') || 'none',
+        filters: [{ key: 'status', label: 'Verification', all: 'Any status', options: ['Pending Verification', 'Verified', 'Suspended', 'Inactive'] }, { key: 'location', label: 'Location', options: M.uniq(D.carriers, 'location') }],
+        bulkActions: [{ label: 'Send reminder', onClick: ids => M.toast('Document reminder sent to ' + ids.length + ' carrier(s)') }] });
+    }
+    const k = M.IDX.car[id];
+    if (!k) return Object.assign({}, E, { notFound: true });
+    const trucks = D.trucks.filter(t => t.owner === id), jobs = D.shipments.filter(s => s.carrier === id);
+    const pending = k.status === 'Pending Verification';
+    const baseChecks = [['id', 'Identity confirmed', 'National ID or company registration'], ['reg', 'Vehicle registration', trucks.map(t => t.reg).join(', ') || 'No vehicles'], ['ins', 'Insurance certificate', 'Comprehensive cover, valid'], ['lic', 'Road licence', 'LATRA licence for goods vehicles']];
+    const state = this.state.checks || (pending ? { id: true, reg: true } : { id: true, reg: true, ins: true, lic: true });
+    const allDone = baseChecks.every(c => state[c[0]]);
+    const checks = baseChecks.map(c => { const done = !!state[c[0]]; return { label: c[1], sub: c[2], done, locked: !pending, aria: c[1] + (done ? ', checked' : ', not checked'),
+      border: done ? '0' : '1.5px solid color-mix(in srgb,var(--color-text) 30%,transparent)', bg: done ? 'var(--color-accent)' : 'transparent',
+      toggle: () => this.setState({ checks: Object.assign({}, state, { [c[0]]: !done }) }) }; });
+    const b = M.badge(k.status);
+    const verText = { 'Pending Verification': allDone ? 'All checks complete. Approve to start assigning jobs.' : 'Complete the checks below before approving. Jobs cannot be assigned yet.', 'Verified': 'Verified carrier. Eligible for AB Match assignments.', 'Suspended': 'Suspended. No new jobs will be assigned until reactivated.', 'Inactive': 'Inactive. No recent jobs or activity.' }[k.status];
+    const act = [{ at: k.joined + 'T09:00', icon: 'ph-duotone ph-user-plus', text: 'Registered via the website' }].concat(jobs.map(s => ({ at: s.created + 'T08:00', icon: 'ph-duotone ph-package', text: 'Assigned ' + s.id + ' · ' + s.pickup + ' → ' + s.dest }))).concat(k.log || []).sort((a, b2) => (a.at < b2.at ? 1 : -1)).slice(0, 6);
+    const now = () => M.TODAY + 'T' + new Date().toTimeString().slice(0, 5);
+    const setSt = (v, msg, icon) => { k.status = v; k.log = (k.log || []).concat([{ at: now(), icon: 'ph-duotone ' + icon, text: msg + ' by ' + M.me().name }]); this.setState({ checks: null }); M.toast(k.company + ': ' + v); bump(); };
+    return Object.assign({}, E, {
+      isDetail: true, k, st: b, joined: M.d(k.joined), tel: 'tel:' + k.phone.replace(/\s/g, ''), waHref: 'https://wa.me/' + k.phone.replace(/\D/g, ''),
+      verIcon: { 'Pending Verification': 'ph-duotone ph-shield-warning', 'Verified': 'ph-duotone ph-shield-check', 'Suspended': 'ph-duotone ph-prohibit', 'Inactive': 'ph-duotone ph-moon' }[k.status],
+      verText, verOutline: pending ? '2px solid color-mix(in srgb,var(--color-process-yellow) 60%,transparent)' : 'none',
+      checks, canApprove: pending, notReady: !allDone, canSuspend: k.status === 'Verified', canReactivate: k.status === 'Suspended' || k.status === 'Inactive',
+      approve: async () => { const ok = await M.confirm({ title: 'Approve ' + k.company + '?', body: 'The carrier and its ' + trucks.length + ' truck(s) become eligible for job assignments.', confirm: 'Approve', icon: 'ph-seal-check' }); if (ok) { trucks.forEach(t => { t.ver = 'Verified'; if (t.status === 'Pending') t.status = 'Available'; }); setSt('Verified', 'Verified', 'ph-shield-check'); } },
+      requestDocs: () => M.toast('Document request sent to ' + k.name + ' on WhatsApp'),
+      suspend: async () => { const ok = await M.confirm({ title: 'Suspend ' + k.company + '?', body: 'No new jobs will be assigned. Active jobs continue until delivered.', confirm: 'Suspend carrier', danger: true }); if (ok) setSt('Suspended', 'Suspended', 'ph-prohibit'); },
+      reactivate: async () => { const ok = await M.confirm({ title: 'Reactivate ' + k.company + '?', body: 'The carrier becomes eligible for new jobs again.', confirm: 'Reactivate' }); if (ok) setSt('Verified', 'Reactivated', 'ph-arrow-counter-clockwise'); },
+      info: [{ k: 'Contact', v: k.name }, { k: 'Phone', v: k.phone }, { k: 'Email', v: k.email }, { k: 'Base', v: k.location }, { k: 'Routes covered', v: k.routes }],
+      docs: [['Company registration', true], ['Vehicle registration cards', true], ['Insurance certificate', !pending], ['Road licence', !pending]].map(d => ({ name: d[0], icon: d[1] ? 'ph-duotone ph-file-pdf' : 'ph-duotone ph-file-dashed', ic: d[1] ? 'var(--color-accent)' : 'var(--app-muted)', sub: d[1] ? 'Received · checked by Godfrey Mushi' : 'Not received yet' })),
+      activity: act.map(a => ({ icon: a.icon, text: a.text, when: M.rel(a.at) })),
+      stats: [{ k: 'Trucks', v: trucks.length }, { k: 'Active jobs', v: jobs.filter(s => s.status !== 'Delivered').length }, { k: 'Completed deliveries', v: k.completed }, { k: 'On-time rate', v: k.completed ? '94%' : '—' }],
+      truckCols: M.COLS.trucks.filter(c => c.key !== 'owner'), truckRows: M.ROWS.trucks(trucks).map(r => Object.assign({}, r, { href: null, actions: [] })),
+      jobCols: M.COLS.shipmentsShort.filter(c => c.key !== 'carrier'), jobRows: M.ROWS.shipments(jobs)
+    });
+  }
+}
+</script>
+</body>
+</html>

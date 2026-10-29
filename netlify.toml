@@ -1,0 +1,34 @@
+# ABRIA Logistics — Netlify configuration
+# This file drives the Netlify build for the Next.js 15 App Router app.
+
+[build]
+  command = "npm run prisma:generate && npm run build"
+  publish = ".next"
+
+# Environment variables are set in the Netlify UI (Site settings > Environment).
+# Do NOT commit real secrets here. The placeholders below are for reference only.
+[build.environment]
+  # --- Database ---
+  # Supabase Postgres connection string for production.
+  # DATABASE_URL = "postgresql://postgres.xxxx:password@aws-0-<region>.pooler.supabase.com:6543/postgres"
+
+  # DIRECT_URL = "postgresql://postgres.xxxx:password@aws-0-<region>.pooler.supabase.com:5432/postgres"
+
+  # --- Public site URL (canonical links, sitemap, password-reset emails) ---
+  # NEXT_PUBLIC_SITE_URL = "https://abrialogistics.co.tz"
+
+  # --- Supabase Auth / Client ---
+  # NEXT_PUBLIC_SUPABASE_URL = "https://<project-ref>.supabase.co"
+  # NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "<publishable-key>"
+  # SUPABASE_SECRET_KEY = "<secret-key>"
+
+  # --- Notifications (optional) ---
+  # RESEND_API_KEY = "<resend-api-key>"
+  # ABRIA_WHATSAPP_NUMBER = "<whatsapp-number>"
+
+  # --- Seed / admin user ---
+  # ABRIA_ADMIN_EMAIL = "admin@abria.co.tz"
+
+# Netlify's Next.js runtime handles /_next static assets and /auth/callback
+# automatically, so no catch-all redirect is required. Do not add a redirect
+# to /index.html here — it would break App Router routing.

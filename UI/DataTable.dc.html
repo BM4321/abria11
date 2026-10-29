@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+</helmet>
+<section ref="{{ rootRef }}" aria-label="{{ ariaLabel }}" style="background:var(--app-card);border-radius:16px;box-shadow:var(--shadow-sm);overflow:hidden;font-family:Roboto,system-ui,sans-serif;min-width:0">
+  <sc-if value="{{ showHead }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;padding:16px 16px 12px">
+      <sc-if value="{{ hasTitle }}"><div style="margin-right:auto;min-width:0"><h2 style="margin:0;font-size:16px;font-weight:600;letter-spacing:0">{{ title }}</h2><sc-if value="{{ hasSubtitle }}"><p style="margin:2px 0 0;font-size:13px;color:var(--app-muted)">{{ subtitle }}</p></sc-if></div></sc-if>
+      <sc-if value="{{ showSearch }}">
+        <div style="position:relative;flex:1 1 220px;max-width:340px">
+          <i class="ph ph-magnifying-glass" aria-hidden="true" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--app-muted);pointer-events:none"></i>
+          <input class="input" type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="{{ searchPh }}" aria-label="{{ searchPh }}" style="padding-left:36px;min-height:40px;border-radius:10px;background:var(--app-page);font-size:14px">
+        </div>
+      </sc-if>
+      <sc-for list="{{ filterCtl }}" as="f">
+        <select class="input" aria-label="{{ f.label }}" value="{{ f.value }}" onChange="{{ f.onChange }}" style="width:auto;min-height:40px;border-radius:10px;background:var(--app-page);font-size:14px;padding-right:28px;color:{{ f.fg }}"><option value="">{{ f.all }}</option><sc-for list="{{ f.options }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
+      </sc-for>
+      <sc-if value="{{ dateFilter }}">
+        <select class="input" aria-label="Date range" value="{{ range }}" onChange="{{ onRange }}" style="width:auto;min-height:40px;border-radius:10px;background:var(--app-page);font-size:14px;padding-right:28px"><option value="">Any date</option><option value="today">Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select>
+      </sc-if>
+      <sc-if value="{{ hasClear }}"><button type="button" onClick="{{ clearAll }}" class="btn btn-ghost" style="min-height:40px;font-size:13px">Clear</button></sc-if>
+      <sc-if value="{{ hasPrimary }}"><a class="btn btn-primary" href="{{ primaryHref }}" onClick="{{ primaryClick }}" style="min-height:40px;border-radius:10px;margin-left:{{ primaryMl }}"><i class="ph ph-plus" aria-hidden="true" style="font-size:16px"></i>{{ primaryLabel }}</a></sc-if>
+    </div>
+  </sc-if>
+  <sc-if value="{{ bulkOn }}" hint-placeholder-val="{{ false }}">
+    <div role="toolbar" aria-label="Bulk actions" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 12px 8px;padding:8px 12px;border-radius:12px;background:color-mix(in srgb,var(--color-accent) 12%,transparent);animation:abria-in .16s ease">
+      <span style="font-size:14px;font-weight:500;margin-right:auto;color:var(--color-accent-800)">{{ selCount }} selected</span>
+      <sc-for list="{{ bulkBtns }}" as="b"><button type="button" onClick="{{ b.onClick }}" class="btn btn-secondary" style="min-height:34px;border-radius:8px;font-size:13px;background:var(--app-card);color:{{ b.fg }}">{{ b.label }}</button></sc-for>
+      <button type="button" onClick="{{ clearSel }}" aria-label="Clear selection" class="btn btn-ghost" style="min-height:34px;font-size:13px">Clear</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ true }}">
+    <div aria-busy="true" aria-label="Loading" style="padding:8px 16px 16px;display:flex;flex-direction:column;gap:0">
+      <sc-for list="{{ skelRows }}" as="s">
+        <div style="display:grid;grid-template-columns:{{ skelCols }};gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid var(--app-line)">
+          <sc-for list="{{ s.cells }}" as="c"><span class="abria-skel" style="height:12px;width:{{ c }}"></span></sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:48px 24px;text-align:center">
+      <span style="width:56px;height:56px;margin:0 auto;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent-2) 12%,transparent);color:var(--color-accent-2-700)"><i class="ph-duotone ph-cloud-warning" aria-hidden="true" style="font-size:28px"></i></span>
+      <p style="margin:16px 0 4px;font-size:17px;font-weight:600">Something went wrong</p>
+      <p style="margin:0 auto;max-width:36ch;font-size:14px;color:var(--app-muted)">We couldn’t load {{ noun }}. Check your connection and try again.</p>
+      <button type="button" onClick="{{ retry }}" class="btn btn-primary" style="margin-top:18px;min-height:40px;border-radius:10px"><i class="ph ph-arrow-clockwise" aria-hidden="true"></i>Try again</button>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:48px 24px;text-align:center">
+      <span style="width:56px;height:56px;margin:0 auto;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,transparent);color:var(--color-accent-700)"><i class="{{ emptyIcon }}" aria-hidden="true" style="font-size:28px"></i></span>
+      <p style="margin:16px 0 4px;font-size:17px;font-weight:600">{{ emptyTitle }}</p>
+      <p style="margin:0 auto;max-width:40ch;font-size:14px;color:var(--app-muted)">{{ emptyText }}</p>
+    </div>
+  </sc-if>
+  <sc-if value="{{ isNoMatch }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:40px 24px;text-align:center">
+      <i class="ph-duotone ph-funnel-x" aria-hidden="true" style="font-size:32px;color:var(--app-muted)"></i>
+      <p style="margin:10px 0 4px;font-size:16px;font-weight:600">No results</p>
+      <p style="margin:0;font-size:14px;color:var(--app-muted)">Nothing matches the current search or filters.</p>
+      <button type="button" onClick="{{ clearAll }}" class="btn btn-secondary" style="margin-top:14px;min-height:38px;border-radius:10px">Clear filters</button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showTable }}" hint-placeholder-val="{{ false }}">
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <thead>
+          <tr>
+            <sc-if value="{{ bulk }}"><th scope="col" style="width:44px;padding:10px 0 10px 16px;border-bottom:1px solid var(--app-line)"><input type="checkbox" aria-label="Select all on this page" checked="{{ allChecked }}" onChange="{{ toggleAll }}" style="width:16px;height:16px;accent-color:var(--color-accent);cursor:pointer"></th></sc-if>
+            <sc-for list="{{ cols }}" as="c">
+              <th scope="col" aria-sort="{{ c.aria }}" style="text-align:{{ c.align }};padding:10px 16px;border-bottom:1px solid var(--app-line);font-size:12px;font-weight:500;letter-spacing:.03em;color:var(--app-muted);white-space:nowrap">
+                <sc-if value="{{ c.sortable }}"><button type="button" onClick="{{ c.onSort }}" style="display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:4px 0;font:inherit;color:{{ c.fg }};cursor:pointer">{{ c.label }}<i class="{{ c.icon }}" aria-hidden="true" style="font-size:12px;opacity:{{ c.iconOp }}"></i></button></sc-if>
+                <sc-if value="{{ c.plain }}">{{ c.label }}</sc-if>
+              </th>
+            </sc-for>
+            <sc-if value="{{ hasActions }}"><th scope="col" style="padding:10px 16px;border-bottom:1px solid var(--app-line);font-size:12px;font-weight:500;color:var(--app-muted);text-align:right">Actions</th></sc-if>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{ pageRows }}" as="r">
+            <tr onClick="{{ r.open }}" style="cursor:{{ r.cursor }};background:{{ r.bg }};transition:background .12s ease" style-hover="background:var(--app-hover)">
+              <sc-if value="{{ bulk }}"><td style="padding:12px 0 12px 16px;border-bottom:1px solid var(--app-line)"><input type="checkbox" aria-label="{{ r.selLabel }}" checked="{{ r.checked }}" onChange="{{ r.onCheck }}" style="width:16px;height:16px;accent-color:var(--color-accent);cursor:pointer"></td></sc-if>
+              <sc-for list="{{ r.cells }}" as="c">
+                <td style="padding:12px 16px;border-bottom:1px solid var(--app-line);text-align:{{ c.align }};vertical-align:middle;white-space:{{ c.ws }}">
+                  <sc-if value="{{ c.isBadge }}"><span style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ c.badge.bg }};color:{{ c.badge.fg }};white-space:nowrap"><span aria-hidden="true" style="width:6px;height:6px;border-radius:50%;background:{{ c.badge.dot }}"></span>{{ c.badge.label }}</span></sc-if>
+                  <sc-if value="{{ c.isLink }}"><a href="{{ c.href }}" style="font-weight:600;color:var(--color-accent-700);text-decoration:none;font-feature-settings:'tnum' 1;white-space:nowrap">{{ c.t }}</a></sc-if>
+                  <sc-if value="{{ c.isPlain }}"><span style="display:block;font-weight:{{ c.fw }};font-feature-settings:'tnum' 1">{{ c.t }}</span></sc-if>
+                  <sc-if value="{{ c.hasSub }}"><span style="display:block;margin-top:1px;font-size:12px;color:var(--app-muted);white-space:nowrap">{{ c.sub }}</span></sc-if>
+                </td>
+              </sc-for>
+              <sc-if value="{{ r.hasActions }}">
+                <td style="padding:8px 12px;border-bottom:1px solid var(--app-line);text-align:right;white-space:nowrap">
+                  <sc-for list="{{ r.actions }}" as="a">
+                    <sc-if value="{{ a.isLink }}"><a href="{{ a.href }}" title="{{ a.label }}" aria-label="{{ a.label }}" style="display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;color:var(--app-muted);text-decoration:none" style-hover="background:var(--app-hover);color:var(--color-accent-700)"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:18px"></i></a></sc-if>
+                    <sc-if value="{{ a.isBtn }}"><button type="button" onClick="{{ a.onClick }}" title="{{ a.label }}" aria-label="{{ a.label }}" style="display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:{{ a.fg }};cursor:pointer" style-hover="background:var(--app-hover)"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:18px"></i></button></sc-if>
+                  </sc-for>
+                </td>
+              </sc-if>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showCards }}" hint-placeholder-val="{{ false }}">
+    <ul style="list-style:none;margin:0;padding:4px 12px 12px;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ pageRows }}" as="r">
+        <li onClick="{{ r.open }}" style="padding:14px;border-radius:12px;background:var(--app-page);cursor:{{ r.cursor }};outline:{{ r.outline }}">
+          <div style="display:flex;align-items:flex-start;gap:10px">
+            <sc-if value="{{ bulk }}"><input type="checkbox" aria-label="{{ r.selLabel }}" checked="{{ r.checked }}" onChange="{{ r.onCheck }}" style="width:18px;height:18px;margin-top:2px;accent-color:var(--color-accent)"></sc-if>
+            <div style="flex:1;min-width:0">
+              <sc-if value="{{ r.head.isLink }}"><a href="{{ r.head.href }}" style="font-weight:600;font-size:15px;color:var(--color-accent-700);text-decoration:none">{{ r.head.t }}</a></sc-if>
+              <sc-if value="{{ r.head.isPlain }}"><span style="font-weight:600;font-size:15px">{{ r.head.t }}</span></sc-if>
+              <sc-if value="{{ r.head.hasSub }}"><span style="display:block;font-size:12px;color:var(--app-muted)">{{ r.head.sub }}</span></sc-if>
+            </div>
+            <sc-if value="{{ r.hasBadge }}"><span style="display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;font-size:12px;font-weight:500;background:{{ r.badge.bg }};color:{{ r.badge.fg }};white-space:nowrap;flex:none"><span aria-hidden="true" style="width:6px;height:6px;border-radius:50%;background:{{ r.badge.dot }}"></span>{{ r.badge.label }}</span></sc-if>
+          </div>
+          <dl style="margin:10px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px">
+            <sc-for list="{{ r.kv }}" as="k">
+              <div style="min-width:0"><dt style="font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--app-muted)">{{ k.label }}</dt><dd style="margin:2px 0 0;font-size:13.5px;overflow:hidden;text-overflow:ellipsis">{{ k.t }}</dd></div>
+            </sc-for>
+          </dl>
+          <sc-if value="{{ r.hasActions }}">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+              <sc-for list="{{ r.actions }}" as="a">
+                <sc-if value="{{ a.isLink }}"><a href="{{ a.href }}" class="btn btn-secondary" style="min-height:36px;border-radius:8px;font-size:13px"><i class="{{ a.icon }}" aria-hidden="true"></i>{{ a.label }}</a></sc-if>
+                <sc-if value="{{ a.isBtn }}"><button type="button" onClick="{{ a.onClick }}" class="btn btn-secondary" style="min-height:36px;border-radius:8px;font-size:13px;color:{{ a.fg }}"><i class="{{ a.icon }}" aria-hidden="true"></i>{{ a.label }}</button></sc-if>
+              </sc-for>
+            </div>
+          </sc-if>
+        </li>
+      </sc-for>
+    </ul>
+  </sc-if>
+
+  <sc-if value="{{ showFoot }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px 14px;font-size:13px;color:var(--app-muted)">
+      <span>{{ rangeText }}</span>
+      <sc-if value="{{ hasFootLink }}"><a href="{{ footHref }}" style="font-size:14px;font-weight:500;color:var(--color-accent-700);text-decoration:none;display:inline-flex;align-items:center;gap:6px">{{ footLabel }}<i class="ph ph-arrow-right" aria-hidden="true"></i></a></sc-if>
+      <sc-if value="{{ hasPages }}">
+        <nav aria-label="Pagination" style="display:flex;align-items:center;gap:4px">
+          <button type="button" onClick="{{ prev }}" disabled="{{ atStart }}" aria-label="Previous page" style="width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--color-text);cursor:pointer;display:grid;place-items:center;opacity:{{ prevOp }}"><i class="ph ph-caret-left" aria-hidden="true"></i></button>
+          <sc-for list="{{ pageBtns }}" as="p"><button type="button" onClick="{{ p.go }}" aria-current="{{ p.aria }}" style="min-width:34px;height:34px;border-radius:10px;border:0;background:{{ p.bg }};color:{{ p.fg }};font:inherit;font-size:13px;font-weight:500;cursor:pointer">{{ p.n }}</button></sc-for>
+          <button type="button" onClick="{{ next }}" disabled="{{ atEnd }}" aria-label="Next page" style="width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--color-text);cursor:pointer;display:grid;place-items:center;opacity:{{ nextOp }}"><i class="ph ph-caret-right" aria-hidden="true"></i></button>
+        </nav>
+      </sc-if>
+    </div>
+  </sc-if>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;520px&quot;},&quot;columns&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{key:string,label:string,align?:string,sort?:boolean,strong?:boolean,wrap?:boolean}[]&quot;},&quot;rows&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{id:string,href?:string,cells:Record&lt;string,Cell&gt;,search?:string,f?:Record&lt;string,string&gt;,s?:Record&lt;string,any&gt;,date?:string,actions?:Action[]}[]&quot;},&quot;filters&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{key:string,label:string,options:string[],all?:string}[]&quot;},&quot;initial&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;Record&lt;string,string&gt;&quot;},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;subtitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;search&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Search&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;pageSize&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;tsType&quot;:&quot;number&quot;},&quot;compact&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;bulk&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;bulkActions&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{label:string,danger?:boolean,confirm?:string,onClick?:(ids:string[])=&gt;void}[]&quot;},&quot;dateFilter&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;primary&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{label:string,href?:string,onClick?:()=&gt;void}&quot;},&quot;footLink&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{label:string,href:string}&quot;},&quot;noun&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;this data&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;emptyTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Nothing here yet&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;emptyText&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;emptyIcon&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;ph-tray&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;simulate&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;loading&quot;,&quot;error&quot;,&quot;empty&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;delay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:480,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { q: '', sort: null, dir: 1, page: 0, sel: {}, f: null, range: '', loading: true, narrow: false, recovered: false };
+  rootRef = React.createRef();
+  componentDidMount() {
+    this._t = setTimeout(() => this.setState({ loading: false }), this.props.delay ?? 480);
+    if (window.ResizeObserver && this.rootRef.current) {
+      this._ro = new ResizeObserver(es => { const n = es[0].contentRect.width < 640; if (n !== this.state.narrow) this.setState({ narrow: n }); });
+      this._ro.observe(this.rootRef.current);
+    }
+  }
+  componentWillUnmount() { clearTimeout(this._t); this._ro && this._ro.disconnect(); }
+  filters() { return this.state.f || Object.assign({}, this.props.initial || {}); }
+  renderVals() {
+    const P = this.props, M = window.ABRIA_M;
+    const cols = P.columns || [], all = P.rows || [], sim = this.state.recovered ? 'none' : (P.simulate || 'none');
+    const f = this.filters(), q = this.state.q.trim().toLowerCase(), range = this.state.range;
+    const inRange = iso => {
+      if (!range || !iso || !M) return true;
+      const dd = M.daysFrom(iso);
+      if (range === 'today') return dd === 0;
+      return dd <= 0 && dd > -(+range);
+    };
+    let rows = all.filter(r => (!q || (r.search || '').toLowerCase().indexOf(q) > -1) && Object.keys(f).every(k => !f[k] || (r.f && r.f[k]) === f[k]) && inRange(r.date));
+    const sv = (r, k) => { if (r.s && r.s[k] != null) return r.s[k]; const c = r.cells[k] || {}; return (c.badge ? c.badge.label : c.t) || ''; };
+    if (this.state.sort) { const k = this.state.sort, d = this.state.dir; rows = rows.slice().sort((a, b) => { const x = sv(a, k), y = sv(b, k); return (x > y ? 1 : x < y ? -1 : 0) * d; }); }
+    const ps = P.pageSize || 8, pages = Math.max(1, Math.ceil(rows.length / ps)), page = Math.min(this.state.page, pages - 1);
+    const slice = rows.slice(page * ps, page * ps + ps);
+    const sel = this.state.sel, selIds = Object.keys(sel).filter(k => sel[k]);
+    const cellView = (c, col, i) => ({
+      t: c.t, sub: c.sub, hasSub: !!c.sub, badge: c.badge, isBadge: !!c.badge, isLink: !c.badge && !!c.href, isPlain: !c.badge && !c.href,
+      align: col.align || c.align || 'left', fw: col.strong ? 500 : 400, ws: col.wrap ? 'normal' : 'nowrap', label: col.label
+    });
+    const actView = a => ({ label: a.label, icon: 'ph ' + (a.icon || 'ph-dots-three'), href: a.href, isLink: !!a.href, isBtn: !a.href, fg: a.danger ? 'var(--color-accent-2-700)' : 'var(--app-muted)', onClick: e => { e.stopPropagation(); a.onClick && a.onClick(); } });
+    const pageRows = slice.map(r => {
+      const cells = cols.map((c, i) => cellView(r.cells[c.key] || {}, c, i));
+      const bi = cells.findIndex((c, i) => i > 0 && c.isBadge);
+      return {
+        id: r.id, cells, head: cells[0] || {}, hasBadge: bi > -1, badge: bi > -1 ? cells[bi].badge : null,
+        kv: cells.filter((c, i) => i > 0 && i !== bi).slice(0, 6).map(c => ({ label: c.label, t: c.isBadge ? c.badge.label : (c.t || '—') + (c.sub ? ' · ' + c.sub : '') })),
+        checked: !!sel[r.id], selLabel: 'Select ' + r.id,
+        onCheck: e => { e.stopPropagation(); this.setState(s => ({ sel: Object.assign({}, s.sel, { [r.id]: !s.sel[r.id] }) })); },
+        open: e => { if (e.target.closest && e.target.closest('a,button,input,label,select')) return; if (r.href) location.href = r.href; },
+        cursor: r.href ? 'pointer' : 'default',
+        bg: sel[r.id] ? 'color-mix(in srgb,var(--color-accent) 7%,transparent)' : 'transparent',
+        outline: sel[r.id] ? '2px solid var(--color-accent)' : 'none',
+        actions: (r.actions || []).map(actView), hasActions: !!(r.actions && r.actions.length)
+      };
+    });
+    const isLoading = this.state.loading || sim === 'loading';
+    const isError = !isLoading && sim === 'error';
+    const isEmpty = !isLoading && !isError && (sim === 'empty' || all.length === 0);
+    const isNoMatch = !isLoading && !isError && !isEmpty && rows.length === 0;
+    const show = !isLoading && !isError && !isEmpty && rows.length > 0;
+    const setF = (k, v) => this.setState({ f: Object.assign({}, f, { [k]: v }), page: 0 });
+    const anyFilter = q || range || Object.keys(f).some(k => f[k]);
+    const skelW = ['70%', '85%', '60%', '75%', '50%', '65%', '40%'];
+    const nCols = Math.min(cols.length || 5, 6);
+    const pageBtns = [];
+    const start = Math.max(0, Math.min(page - 2, pages - 5));
+    for (let i = start; i < Math.min(pages, start + 5); i++) pageBtns.push({ n: i + 1, go: () => this.setState({ page: i }), aria: i === page ? 'page' : undefined, bg: i === page ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent', fg: i === page ? 'var(--color-accent-800)' : 'var(--color-text)' });
+    return {
+      rootRef: this.rootRef, ariaLabel: P.title || P.noun || 'Table',
+      showHead: !P.compact || !!P.title, hasTitle: !!P.title, title: P.title, subtitle: P.subtitle, hasSubtitle: !!P.subtitle,
+      showSearch: !P.compact, searchPh: P.search || 'Search', q: this.state.q, onQ: e => this.setState({ q: e.target.value, page: 0 }),
+      filterCtl: P.compact ? [] : (P.filters || []).map(x => ({ label: x.label, all: x.all || 'All ' + x.label.toLowerCase(), options: x.options, value: f[x.key] || '', onChange: e => setF(x.key, e.target.value), fg: f[x.key] ? 'var(--color-accent-800)' : 'var(--color-text)' })),
+      dateFilter: !P.compact && !!P.dateFilter, range, onRange: e => this.setState({ range: e.target.value, page: 0 }),
+      hasClear: !P.compact && !!anyFilter,
+      clearAll: () => this.setState({ q: '', range: '', f: {}, page: 0 }),
+      hasPrimary: !!P.primary, primaryLabel: P.primary && P.primary.label, primaryHref: (P.primary && P.primary.href) || '#',
+      primaryMl: P.title ? '0' : 'auto',
+      primaryClick: e => { if (P.primary && P.primary.onClick) { e.preventDefault(); P.primary.onClick(); } },
+      bulk: !!P.bulk && !isLoading, bulkOn: !!P.bulk && selIds.length > 0, selCount: selIds.length,
+      bulkBtns: (P.bulkActions || []).map(b => ({ label: b.label, fg: b.danger ? 'var(--color-accent-2-700)' : 'var(--color-text)', onClick: async () => {
+        if (b.confirm && M) { const ok = await M.confirm({ title: b.confirm, body: (b.body || '') + ' ' + selIds.length + ' item(s) selected.', confirm: b.label, danger: b.danger }); if (!ok) return; }
+        b.onClick ? b.onClick(selIds) : M && M.toast(b.label + ': ' + selIds.length + ' item(s)'); this.setState({ sel: {} });
+      } })),
+      clearSel: () => this.setState({ sel: {} }),
+      allChecked: pageRows.length > 0 && pageRows.every(r => r.checked),
+      toggleAll: () => { const on = !(pageRows.length && pageRows.every(r => r.checked)); const s = Object.assign({}, sel); slice.forEach(r => (s[r.id] = on)); this.setState({ sel: s }); },
+      isLoading, isError, isEmpty, isNoMatch,
+      skelRows: Array.from({ length: P.compact ? 4 : 6 }, (_, i) => ({ cells: Array.from({ length: nCols }, (_, j) => skelW[(i + j) % skelW.length]) })),
+      skelCols: 'repeat(' + nCols + ',minmax(0,1fr))',
+      noun: P.noun || 'this data', retry: () => { this.setState({ loading: true, recovered: true }); setTimeout(() => this.setState({ loading: false }), 700); },
+      emptyTitle: P.emptyTitle || 'Nothing here yet', emptyText: P.emptyText || '', emptyIcon: 'ph-duotone ' + (P.emptyIcon || 'ph-tray'),
+      showTable: show && !this.state.narrow, showCards: show && this.state.narrow,
+      cols: cols.map(c => {
+        const on = this.state.sort === c.key;
+        return { label: c.label, align: c.align || 'left', sortable: c.sort !== false, plain: c.sort === false, aria: on ? (this.state.dir > 0 ? 'ascending' : 'descending') : undefined,
+          icon: on ? (this.state.dir > 0 ? 'ph ph-caret-up' : 'ph ph-caret-down') : 'ph ph-caret-up-down', iconOp: on ? 1 : 0.45, fg: on ? 'var(--color-text)' : 'var(--app-muted)',
+          onSort: () => this.setState(s => ({ sort: c.key, dir: s.sort === c.key ? -s.dir : 1, page: 0 })) };
+      }),
+      hasActions: pageRows.some(r => r.hasActions), pageRows,
+      showFoot: show || (P.footLink && !isLoading),
+      rangeText: rows.length ? (page * ps + 1) + '–' + Math.min(rows.length, page * ps + ps) + ' of ' + rows.length : '',
+      hasFootLink: !!P.footLink, footHref: P.footLink && P.footLink.href, footLabel: P.footLink && P.footLink.label,
+      hasPages: !P.footLink && pages > 1, pageBtns,
+      atStart: page === 0, atEnd: page >= pages - 1, prevOp: page === 0 ? 0.35 : 1, nextOp: page >= pages - 1 ? 0.35 : 1,
+      prev: () => this.setState({ page: Math.max(0, page - 1) }), next: () => this.setState({ page: Math.min(pages - 1, page + 1) })
+    };
+  }
+}
+</script>
+</body>
+</html>

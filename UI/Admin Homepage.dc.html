@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Homepage editor | ABRIA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="web:homepage" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:40px;color:var(--color-accent-2-700)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Permission denied</h1><p style="margin:0;color:var(--app-muted)">Editing the website is limited to administrators.</p><a class="btn btn-secondary" href="Admin%20Homepage.dc.html?role=admin" style="margin-top:16px;min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div>
+  </sc-if>
+  <sc-if value="{{ allowed }}" hint-placeholder-val="{{ true }}">
+    <div style="position:sticky;top:64px;z-index:20;margin:0 -8px;padding:10px 8px;background:color-mix(in srgb,var(--app-page) 90%,transparent);backdrop-filter:blur(10px);display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px">
+      <div style="margin-right:auto;min-width:0"><nav aria-label="Breadcrumb" style="font-size:13px;color:var(--app-muted)">Website / Homepage</nav><h1 style="margin:2px 0 0;font-size:24px;font-weight:600">Homepage</h1></div>
+      <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:{{ stateFg }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ stateDot }}"></span>{{ stateText }}</span>
+      <a class="btn btn-secondary" href="Home.dc.html" target="_blank" rel="noopener" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-eye" aria-hidden="true"></i>Preview</a>
+      <button type="button" class="btn btn-secondary" onClick="{{ saveDraft }}" disabled="{{ clean }}" style="min-height:40px;border-radius:10px;background:var(--app-card)">Save draft</button>
+      <button type="button" class="btn btn-primary" onClick="{{ publish }}" disabled="{{ nothingToPublish }}" style="min-height:40px;border-radius:10px"><i class="ph ph-rocket-launch" aria-hidden="true"></i>Publish</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <div style="flex:3 1 560px;min-width:0;display:flex;flex-direction:column;gap:16px">
+        <section aria-labelledby="he-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="he-h" style="margin:0 0 16px;font-size:16px;font-weight:600">Hero</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px">
+            <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px"><label for="h-head" style="font-size:13px;font-weight:500">Heading</label><input id="h-head" class="input" value="{{ h.heading }}" onChange="{{ on.heading }}" maxLength="80" style="min-height:42px;border-radius:10px;background:var(--app-page);font-size:15px"><span style="font-size:12px;color:var(--app-muted)">{{ headCount }}/80 · Use a full stop between the two lines</span></div>
+            <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:6px"><label for="h-desc" style="font-size:13px;font-weight:500">Description</label><textarea id="h-desc" class="input" value="{{ h.desc }}" onChange="{{ on.desc }}" style="min-height:84px;border-radius:10px;background:var(--app-page);font-size:14px"></textarea></div>
+            <div style="grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:12px;border-radius:12px;background:var(--app-page)">
+              <span style="width:96px;height:64px;border-radius:10px;flex:none;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,transparent);color:var(--color-accent-700)"><i class="ph-duotone ph-image" aria-hidden="true" style="font-size:28px"></i></span>
+              <span style="flex:1 1 180px;min-width:0"><span style="display:block;font-size:13px;font-weight:500">Hero image</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ h.image }} · alt: “{{ h.alt }}”</span></span>
+              <select class="input" aria-label="Choose hero image from media library" value="{{ h.image }}" onChange="{{ on.image }}" style="width:auto;min-height:38px;border-radius:10px;background:var(--app-card)"><sc-for list="{{ images }}" as="i"><option value="{{ i }}">{{ i }}</option></sc-for></select>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label for="h-p" style="font-size:13px;font-weight:500">Primary CTA</label><input id="h-p" class="input" value="{{ h.cta1 }}" onChange="{{ on.cta1 }}" style="min-height:42px;border-radius:10px;background:var(--app-page)"><select class="input" aria-label="Primary CTA link" value="{{ h.cta1href }}" onChange="{{ on.cta1href }}" style="min-height:38px;border-radius:10px;background:var(--app-page);font-size:13px"><sc-for list="{{ linkOpts }}" as="o"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></div>
+            <div style="display:flex;flex-direction:column;gap:6px"><label for="h-s" style="font-size:13px;font-weight:500">Secondary CTA</label><input id="h-s" class="input" value="{{ h.cta2 }}" onChange="{{ on.cta2 }}" style="min-height:42px;border-radius:10px;background:var(--app-page)"><select class="input" aria-label="Secondary CTA link" value="{{ h.cta2href }}" onChange="{{ on.cta2href }}" style="min-height:38px;border-radius:10px;background:var(--app-page);font-size:13px"><sc-for list="{{ linkOpts }}" as="o"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></div>
+          </div>
+        </section>
+        <section aria-labelledby="st-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px"><h2 id="st-h" style="margin:0;font-size:16px;font-weight:600">Statistics</h2><button type="button" class="btn btn-ghost" onClick="{{ addStat }}" style="min-height:36px"><i class="ph ph-plus" aria-hidden="true"></i>Add statistic</button></div>
+          <p style="margin:0 0 14px;font-size:13px;color:var(--app-muted)">Only publish figures verified against ABRIA records. Disabled statistics are hidden on the site.</p>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ stats }}" as="s">
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--app-page);opacity:{{ s.op }}">
+                <input class="input" aria-label="Statistic label" value="{{ s.label }}" onChange="{{ s.onLabel }}" style="flex:2 1 180px;min-height:38px;border-radius:8px;background:var(--app-card)">
+                <input class="input" aria-label="Statistic value" value="{{ s.value }}" onChange="{{ s.onValue }}" placeholder="e.g. 128" style="flex:1 1 90px;min-height:38px;border-radius:8px;background:var(--app-card)">
+                <button type="button" role="switch" aria-checked="{{ s.on }}" aria-label="{{ s.switchLabel }}" onClick="{{ s.toggle }}" style="position:relative;width:40px;height:24px;border-radius:999px;border:0;cursor:pointer;flex:none;background:{{ s.track }};transition:background .2s ease"><span style="position:absolute;top:3px;left:{{ s.knob }};width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s ease"></span></button>
+                <button type="button" onClick="{{ s.remove }}" aria-label="Remove statistic" style="width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--color-accent-2-700);cursor:pointer"><i class="ph ph-trash" aria-hidden="true"></i></button>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+        <section aria-labelledby="se-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="se-h" style="margin:0 0 4px;font-size:16px;font-weight:600">Sections</h2>
+          <p style="margin:0 0 14px;font-size:13px;color:var(--app-muted)">Drag to reorder, or use the arrows. Turn a section off to hide it.</p>
+          <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ sections }}" as="s">
+              <li draggable="true" onDragStart="{{ s.dragStart }}" onDragOver="{{ s.dragOver }}" onDrop="{{ s.drop }}" onDragEnd="{{ s.dragEnd }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--app-page);opacity:{{ s.op }};outline:{{ s.outline }};transition:outline .1s ease">
+                <i class="ph ph-dots-six-vertical" aria-hidden="true" style="font-size:20px;color:var(--app-muted);cursor:grab"></i>
+                <span style="width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-size:12px;font-weight:600;background:var(--app-card)">{{ s.n }}</span>
+                <span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500">{{ s.name }}</span><span style="display:block;font-size:12px;color:var(--app-muted)">{{ s.sub }}</span></span>
+                <button type="button" onClick="{{ s.up }}" disabled="{{ s.first }}" aria-label="{{ s.upLabel }}" style="width:32px;height:32px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--color-text);opacity:{{ s.upOp }}"><i class="ph ph-arrow-up" aria-hidden="true"></i></button>
+                <button type="button" onClick="{{ s.down }}" disabled="{{ s.last }}" aria-label="{{ s.downLabel }}" style="width:32px;height:32px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--color-text);opacity:{{ s.downOp }}"><i class="ph ph-arrow-down" aria-hidden="true"></i></button>
+                <button type="button" role="switch" aria-checked="{{ s.on }}" aria-label="{{ s.switchLabel }}" onClick="{{ s.toggle }}" style="position:relative;width:40px;height:24px;border-radius:999px;border:0;cursor:pointer;flex:none;background:{{ s.track }};transition:background .2s ease"><span style="position:absolute;top:3px;left:{{ s.knob }};width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .2s ease"></span></button>
+              </li>
+            </sc-for>
+          </ol>
+        </section>
+      </div>
+      <aside aria-label="Live preview" style="flex:2 1 340px;min-width:0;position:sticky;top:140px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-md);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--app-line)"><span style="width:10px;height:10px;border-radius:50%;background:var(--app-line)"></span><span style="width:10px;height:10px;border-radius:50%;background:var(--app-line)"></span><span style="width:10px;height:10px;border-radius:50%;background:var(--app-line)"></span><span style="margin-left:8px;font-size:12px;color:var(--app-muted)">abrialogistics.co.tz</span><span style="margin-left:auto;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-accent-700)">Live preview</span></div>
+        <div style="padding:22px 20px;background:var(--color-bg)">
+          <div style="font-size:26px;font-weight:600;line-height:1.08;letter-spacing:-0.02em">{{ h.heading }}</div>
+          <p style="margin:10px 0 0;font-size:13px;line-height:1.5;color:var(--app-muted)">{{ h.desc }}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"><span style="padding:8px 12px;border-radius:8px;background:var(--color-accent);color:var(--color-bg);font-size:12px;font-weight:600">{{ h.cta1 }}</span><span style="padding:8px 12px;border-radius:8px;border:1px solid var(--color-divider);font-size:12px;font-weight:600">{{ h.cta2 }}</span></div>
+          <div style="margin-top:14px;aspect-ratio:16/9;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,transparent);color:var(--color-accent-700);font-size:12px;gap:4px"><span style="display:flex;flex-direction:column;align-items:center;gap:4px"><i class="ph-duotone ph-image" aria-hidden="true" style="font-size:26px"></i>{{ h.image }}</span></div>
+          <sc-if value="{{ hasStats }}"><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;padding-top:12px;border-top:2px solid var(--color-text)"><sc-for list="{{ liveStats }}" as="s"><div style="font-size:11.5px;display:flex;justify-content:space-between;gap:6px"><span style="color:var(--app-muted)">{{ s.label }}</span><strong style="font-weight:600">{{ s.value }}</strong></div></sc-for></div></sc-if>
+          <ol style="list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:6px"><sc-for list="{{ liveSections }}" as="s"><li style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--app-page);font-size:12px"><span style="color:var(--app-muted)">{{ s.n }}</span>{{ s.name }}</li></sc-for></ol>
+        </div>
+      </aside>
+    </div>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    ready: false, dirty: false, draftSaved: false, drag: -1, over: -1,
+    h: { heading: 'Connected Logistics. Better Movement.', desc: 'ABRIA connects businesses and cargo owners with reliable transport providers, helping every shipment find the right truck, route, and partner.', image: 'hero-trunk-road.jpg', alt: 'Loaded truck on a trunk road', cta1: 'Request a Quote', cta1href: 'quote', cta2: 'I Have a Truck', cta2href: 'truck' },
+    stats: [{ label: 'Transport requests', value: '', on: false }, { label: 'Completed deliveries', value: '', on: false }, { label: 'Active carriers', value: '', on: false }, { label: 'Regions served', value: '', on: false }],
+    sections: [{ id: 'sides', name: 'One platform, two sides', sub: 'Shippers and carriers', on: true }, { id: 'solutions', name: 'Solutions', sub: 'Six AB services', on: true }, { id: 'how', name: 'How it works', sub: 'Four steps', on: true }, { id: 'quote', name: 'Founder quote', sub: 'Needs real founder name', on: false }, { id: 'close', name: 'Closing call to action', sub: 'Quote + WhatsApp', on: true }]
+  };
+  componentDidMount() {
+    const b = () => (window.ABRIA_M ? this.setState({ ready: true }) : setTimeout(b, 30)); b();
+    this._bu = e => { if (this.state.dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', this._bu);
+  }
+  componentWillUnmount() { window.removeEventListener('beforeunload', this._bu); }
+  set(patch) { this.setState(Object.assign({ dirty: true, draftSaved: false }, patch)); }
+  move(from, to) { const s = this.state.sections.slice(); const [x] = s.splice(from, 1); s.splice(to, 0, x); this.set({ sections: s }); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { allowed: true, h: this.state.h, stats: [], sections: [], images: [], linkOpts: [], liveStats: [], liveSections: [] };
+    if (M.role() !== 'admin') return { denied: true, allowed: false, h: {}, stats: [], sections: [], images: [], linkOpts: [], liveStats: [], liveSections: [] };
+    const h = this.state.h, on = {};
+    ['heading', 'desc', 'image', 'cta1', 'cta1href', 'cta2', 'cta2href'].forEach(k => { on[k] = e => { const v = e.target.value; const nh = Object.assign({}, h, { [k]: v }); if (k === 'image') { const m = M.DATA.media.find(x => x.file === v); nh.alt = m ? m.alt : ''; } this.set({ h: nh }); }; });
+    const sw = v => ({ track: v ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 25%,transparent)', knob: v ? '19px' : '3px' });
+    const S = this.state.stats, X = this.state.sections;
+    const stats = S.map((s, i) => Object.assign({ label: s.label, value: s.value, on: s.on, op: s.on ? 1 : 0.6, switchLabel: (s.on ? 'Hide ' : 'Show ') + s.label,
+      onLabel: e => { const n = S.slice(); n[i] = Object.assign({}, s, { label: e.target.value }); this.set({ stats: n }); },
+      onValue: e => { const n = S.slice(); n[i] = Object.assign({}, s, { value: e.target.value }); this.set({ stats: n }); },
+      toggle: () => { if (!s.on && !s.value.trim()) return M.toast('Add a verified value before enabling “' + s.label + '”', { tone: 'bad' }); const n = S.slice(); n[i] = Object.assign({}, s, { on: !s.on }); this.set({ stats: n }); },
+      remove: () => this.set({ stats: S.filter((_, j) => j !== i) }) }, sw(s.on)));
+    const sections = X.map((s, i) => Object.assign({ name: s.name, sub: s.sub, n: i + 1, on: s.on, op: s.on ? 1 : 0.55,
+      outline: this.state.over === i && this.state.drag !== i ? '2px dashed var(--color-accent)' : 'none',
+      first: i === 0, last: i === X.length - 1, upOp: i === 0 ? 0.3 : 1, downOp: i === X.length - 1 ? 0.3 : 1,
+      upLabel: 'Move ' + s.name + ' up', downLabel: 'Move ' + s.name + ' down', switchLabel: (s.on ? 'Hide ' : 'Show ') + s.name,
+      up: () => i > 0 && this.move(i, i - 1), down: () => i < X.length - 1 && this.move(i, i + 1),
+      toggle: () => { const n = X.slice(); n[i] = Object.assign({}, s, { on: !s.on }); this.set({ sections: n }); },
+      dragStart: e => { e.dataTransfer.effectAllowed = 'move'; this.setState({ drag: i }); },
+      dragOver: e => { e.preventDefault(); if (this.state.over !== i) this.setState({ over: i }); },
+      drop: e => { e.preventDefault(); const f = this.state.drag; this.setState({ drag: -1, over: -1 }); if (f > -1 && f !== i) this.move(f, i); },
+      dragEnd: () => this.setState({ drag: -1, over: -1 }) }, sw(s.on)));
+    const dirty = this.state.dirty, saved = this.state.draftSaved;
+    const T = M.TONES;
+    const pages = [['quote', 'Request a Quote page'], ['truck', 'Register Truck page'], ['solutions', 'Solutions page'], ['contact', 'Contact page'], ['whatsapp', 'WhatsApp chat']];
+    return {
+      allowed: true, h, on, headCount: h.heading.length,
+      images: M.DATA.media.map(m => m.file), linkOpts: pages.map(p => ({ v: p[0], l: p[1] })),
+      stats, sections,
+      addStat: () => this.set({ stats: S.concat([{ label: 'New statistic', value: '', on: false }]) }),
+      clean: !dirty, nothingToPublish: !dirty && !saved,
+      stateText: dirty ? 'Unsaved changes' : saved ? 'Draft saved · not published' : 'Published · updated today 09:12 by Amina Kweka',
+      stateDot: dirty ? T.warn.dot : saved ? T.info.dot : T.ok.dot, stateFg: dirty ? T.warn.fg : 'var(--app-muted)',
+      saveDraft: () => { this.setState({ dirty: false, draftSaved: true }); M.toast('Draft saved'); },
+      publish: async () => {
+        const ok = await M.confirm({ title: 'Publish changes?', body: 'Your homepage changes go live on abrialogistics.co.tz immediately. The previous version stays in the audit log.', confirm: 'Publish', icon: 'ph-rocket-launch' });
+        if (!ok) return;
+        M.DATA.audit.unshift({ at: M.TODAY + 'T' + new Date().toTimeString().slice(0, 5), user: M.me().name, action: 'Published', resource: 'Homepage', desc: 'Published homepage changes' });
+        this.setState({ dirty: false, draftSaved: false }); M.toast('Homepage published');
+      },
+      hasStats: S.some(s => s.on), liveStats: S.filter(s => s.on).map(s => ({ label: s.label, value: s.value })),
+      liveSections: X.filter(s => s.on).map((s, i) => ({ n: i + 1, name: s.name }))
+    };
+  }
+}
+</script>
+</body>
+</html>

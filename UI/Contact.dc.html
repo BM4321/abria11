@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Contact ABRIA Logistics | WhatsApp +255 723 999 039</title>
+<meta name="description" content="Contact ABRIA Logistics for transport, carrier and partnership enquiries. WhatsApp +255 723 999 039 or email info@abrialogistics.co.tz. Frequently asked questions.">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;text-wrap:pretty}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}summary{list-style:none}summary::-webkit-details-marker{display:none}details[open] .abria-caret{transform:rotate(45deg)}@keyframes abria-spin{to{transform:rotate(360deg)}}@keyframes abria-drive{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px) translateY(-1px)}}@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}</style>
+</helmet>
+<dc-import name="Nav" current="contact" hint-size="100%,72px" style="position:sticky;top:0;z-index:50"></dc-import>
+<main style="max-width:1200px;margin:0 auto;padding:clamp(48px,8vw,112px) clamp(20px,5vw,72px) 0">
+  <p style="margin:0 0 20px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Contact</p>
+  <h1 style="font-size:clamp(44px,6.4vw,88px);line-height:1.02;letter-spacing:-0.025em;margin:0 0 0 -0.035em;max-width:11em">Let's get your goods moving.</h1>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:56px clamp(40px,7vw,120px);margin-top:clamp(40px,5vw,64px);align-items:start">
+    <section aria-label="Contact details">
+      <a class="btn btn-primary" href="{{ waHref }}" target="_blank" rel="noopener" onClick="{{ waClick }}" style="font-size:17px;padding:16px 26px;min-height:56px"><i class="ph-duotone ph-whatsapp-logo" aria-hidden="true" style="font-size:24px"></i>Chat on WhatsApp</a>
+      <p style="margin:12px 0 0;font-size:15px;color:color-mix(in srgb,var(--color-text) 75%,transparent)">The fastest way to reach us for quotes and support.</p>
+      <dl style="margin:40px 0 0;display:flex;flex-direction:column;gap:22px">
+        <div><dt style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Phone / WhatsApp</dt><dd style="margin:6px 0 0;font-size:22px"><a href="tel:+255723999039" onClick="{{ phoneClick }}" style="color:var(--color-text)">+255 723 999 039</a></dd></div>
+        <div><dt style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Email</dt><dd style="margin:6px 0 0;font-size:22px"><a href="mailto:info@abrialogistics.co.tz" onClick="{{ emailClick }}" style="color:var(--color-text)">info@abrialogistics.co.tz</a></dd></div>
+        <div><dt style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">Office</dt><dd style="margin:6px 0 0;font-size:18px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">[Verified office address]</dd><dd style="margin:8px 0 0"><span class="tag tag-accent-2">To confirm</span></dd></div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="msg-h">
+      <h2 id="msg-h" style="margin:0;font-size:28px">Send a message</h2>
+      <sc-if value="{{ isForm }}" hint-placeholder-val="{{ true }}">
+        <form noValidate="{{ true }}" onSubmit="{{ submit }}" style="margin-top:24px">
+          <fieldset style="border:0;margin:0 0 24px;padding:0">
+            <legend style="font-size:14px;margin-bottom:10px;padding:0">What is it about?</legend>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ topics }}" as="tp" hint-placeholder-count="4">
+                <button type="button" aria-pressed="{{ tp.on }}" onClick="{{ tp.pick }}" style="min-height:44px;padding:0 16px;font:inherit;font-size:15px;cursor:pointer;border-radius:var(--radius-md);border:1px solid {{ tp.bd }};background:{{ tp.bg }};color:{{ tp.fg }}">{{ tp.label }}</button>
+              </sc-for>
+            </div>
+          </fieldset>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:20px 20px">
+            <sc-for list="{{ fields }}" as="f">
+              <div style="grid-column:{{ f.span }};display:flex;flex-direction:column;gap:6px;min-width:0">
+                <label for="{{ f.id }}" style="font-size:14px">{{ f.label }}<sc-if value="{{ f.req }}"><span aria-hidden="true" style="color:var(--color-accent-2-700)"> *</span></sc-if></label>
+                <sc-if value="{{ f.isInput }}"><input class="input" id="{{ f.id }}" name="{{ f.key }}" type="{{ f.type }}" autoComplete="{{ f.autoComplete }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-required="{{ f.req }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:46px;font-size:16px;border-color:{{ f.border }}"></sc-if>
+                <sc-if value="{{ f.isArea }}"><textarea class="input" id="{{ f.id }}" name="{{ f.key }}" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.ph }}" aria-required="{{ f.req }}" aria-invalid="{{ f.invalid }}" aria-describedby="{{ f.described }}" style="min-height:140px;font-size:16px;border-color:{{ f.border }}"></textarea></sc-if>
+                <sc-if value="{{ f.hasError }}"><p id="{{ f.errId }}" style="margin:0;font-size:13px;color:var(--color-accent-2-700);display:flex;gap:6px;align-items:center"><i class="ph-duotone ph-warning-circle" aria-hidden="true" style="font-size:16px;flex:none"></i>{{ f.error }}</p></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <button type="submit" class="btn btn-primary" disabled="{{ loading }}" style="margin-top:28px;font-size:16px;padding:14px 24px;min-height:50px"><sc-if value="{{ loading }}"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:20px;animation:abria-drive 0.7s ease-in-out infinite"></i></sc-if>{{ submitLabel }}</button>
+        </form>
+      </sc-if>
+      <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+        <div aria-live="polite" style="margin-top:24px">
+          <p style="margin:0;font-size:18px;line-height:28px;display:flex;gap:10px;align-items:flex-start"><i class="ph-duotone ph-check-circle" aria-hidden="true" style="font-size:26px;color:var(--color-accent);flex:none"></i><span>Message sent. The ABRIA team will reply by phone or email.</span></p>
+          <button type="button" class="btn btn-ghost" onClick="{{ reset }}" style="margin-top:12px;min-height:44px">Send another message</button>
+        </div>
+      </sc-if>
+    </section>
+  </div>
+
+  <section id="faq" aria-labelledby="faq-h" style="padding-top:clamp(96px,12vw,176px);scroll-margin-top:72px">
+    <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;color:color-mix(in srgb,var(--color-text) 72%,transparent)">FAQ</p>
+    <h2 id="faq-h" style="margin:0;font-size:clamp(32px,4.4vw,56px);line-height:1.06;letter-spacing:-0.02em">Frequently asked questions</h2>
+    <div data-stagger="1" style="display:flex;flex-direction:column;gap:56px;margin-top:48px">
+      <sc-for list="{{ faq }}" as="g" hint-placeholder-count="3">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px clamp(32px,6vw,96px);align-items:start">
+          <h3 style="margin:0;font-size:13px;font-weight:400;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-accent-700);padding-top:18px">{{ g.group }}</h3>
+          <div style="grid-column:span 2;min-width:0">
+            <sc-for list="{{ g.items }}" as="q">
+              <details style="border-bottom:1px solid color-mix(in srgb,var(--color-text) 12%,transparent)">
+                <summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:60px;padding:12px 0;cursor:pointer;font-size:20px;font-weight:600;line-height:1.3">{{ q.q }}<i class="ph ph-plus abria-caret" aria-hidden="true" style="font-size:20px;color:var(--color-accent);flex:none;transition:transform .15s ease"></i></summary>
+                <p style="margin:0 0 20px;font-size:16px;line-height:26px;max-width:40em;color:color-mix(in srgb,var(--color-text) 82%,transparent)">{{ q.a }}</p>
+              </details>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+</main>
+<dc-import name="Footer" hint-size="100%,520px"></dc-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { topic: 'Transport', form: {}, errors: {}, tried: false, status: 'idle' };
+  componentDidMount() {
+    const b = () => (window.ABRIA ? this.forceUpdate() : setTimeout(b, 40)); b();
+    if (location.hash === '#faq') setTimeout(() => { const el = document.getElementById('faq'); el && window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 72); }, 300);
+  }
+  componentWillUnmount() { clearTimeout(this._t); }
+  defs() {
+    return [
+      { key: 'name', en: 'Name', kind: 'text', required: true, auto: 'name' },
+      { key: 'company', en: 'Company', kind: 'text', auto: 'organization', ph: 'Optional' },
+      { key: 'phone', en: 'Phone', kind: 'tel', required: true, auto: 'tel', ph: '+255 7XX XXX XXX' },
+      { key: 'email', en: 'Email', kind: 'email', auto: 'email' },
+      { key: 'message', en: 'Message', kind: 'textarea', required: true, full: true }
+    ];
+  }
+  onField(k, v) {
+    this.setState(s => { const form = Object.assign({}, s.form, { [k]: v }); return { form, errors: s.tried ? window.ABRIA.validate(this.defs(), form, false) : s.errors }; });
+  }
+  submit(e) {
+    e.preventDefault();
+    const A = window.ABRIA; if (!A) return;
+    const defs = this.defs(), errors = A.validate(defs, this.state.form, false), bad = defs.filter(d => errors[d.key]);
+    if (bad.length) { this.setState({ errors, tried: true }); setTimeout(() => document.getElementById('f-' + bad[0].key)?.focus(), 30); return; }
+    this.setState({ status: 'loading', errors: {} });
+    this._t = setTimeout(() => { A.track('contact_submit', { topic: this.state.topic }); this.setState({ status: 'done' }); }, 900);
+  }
+  renderVals() {
+    const A = window.ABRIA, st = this.state.status;
+    const topics = ['Transport', 'Carrier / truck', 'Partnership', 'Other'].map(label => {
+      const on = this.state.topic === label;
+      return { label, on, pick: () => this.setState({ topic: label }), bg: on ? 'var(--color-text)' : 'transparent', fg: on ? 'var(--color-bg)' : 'var(--color-text)', bd: on ? 'var(--color-text)' : 'var(--color-divider)' };
+    });
+    const faq = [
+      { group: 'Businesses', items: [
+        ['How do I request transport?', 'Use the Request a Quote form, or send the details on WhatsApp. Include pickup and delivery locations, cargo type, approximate weight and the date. You receive an ABR reference as soon as you submit.'],
+        ['What types of cargo can ABRIA transport?', 'The request form covers general cargo, refrigerated, hazardous, fragile and heavy machinery. If your cargo is something else, choose Other and describe it; the team will confirm whether it can be moved.'],
+        ['How are transport quotes handled?', 'The ABRIA team reviews each request and sends you a written quotation. Nothing is booked until you approve it.'],
+        ['How can I track my shipment?', 'Every request has an ABR reference. Online tracking is coming soon; until then, send your reference on WhatsApp for a status update.']
+      ] },
+      { group: 'Carriers', items: [
+        ['How do I register my truck?', 'Fill in the Register Your Truck form with your details, truck type, registration number and the routes you cover. You receive a partner ID straight away.'],
+        ['What types of trucks are accepted?', 'Flatbed, curtainsider, box truck, refrigerated, container truck, tipper, lowbed and pickup. Other vehicle types can be registered as Other.'],
+        ['How do I receive jobs?', 'After the ABRIA team reviews your details and verifies your vehicle, jobs that fit your truck type, capacity and routes are assigned to you.']
+      ] },
+      { group: 'General', items: [
+        ['Where does ABRIA operate?', 'ABRIA is based in Tanzania. [Confirmed regions to be added.] Ask us about your route and we will tell you whether we can serve it.'],
+        ['How does ABRIA work?', 'Businesses request transport, ABRIA quotes the job and assigns a verified carrier, and the shipment is tracked by its ABR reference through to proof of delivery. See How It Works for both sides.'],
+        ['How can I contact ABRIA?', 'WhatsApp or call +255 723 999 039, or email info@abrialogistics.co.tz.']
+      ] }
+    ].map(g => ({ group: g.group, items: g.items.map(i => ({ q: i[0], a: i[1] })) }));
+    return {
+      topics, faq,
+      fields: A ? A.fields(this.defs(), this.state.form, this.state.errors, false, (k, v) => this.onField(k, v), false) : [],
+      isForm: st !== 'done', isDone: st === 'done', loading: st === 'loading',
+      submitLabel: st === 'loading' ? 'Sending…' : 'Send message',
+      submit: e => this.submit(e),
+      reset: () => this.setState({ status: 'idle', form: {}, tried: false }),
+      waHref: A ? A.wa('Hello ABRIA, I have a question.') : '#',
+      waClick: () => A && A.track('whatsapp_click', { from: 'contact' }),
+      phoneClick: () => A && A.track('phone_click'), emailClick: () => A && A.track('email_click')
+    };
+  }
+}
+</script>
+</body>
+</html>

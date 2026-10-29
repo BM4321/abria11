@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}</style>
+</helmet>
+<sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeDrawer }}" aria-hidden="true" style="position:fixed;inset:0;z-index:79;background:color-mix(in srgb,#000 42%,transparent);animation:abria-fade .2s ease"></div>
+</sc-if>
+<aside aria-label="Console navigation" style="position:fixed;top:0;bottom:0;left:0;z-index:80;width:{{ sideW }};background:var(--app-card);box-shadow:{{ sideShadow }};display:flex;flex-direction:column;transform:translateX({{ sideX }});transition:width .25s cubic-bezier(.4,0,.2,1), transform .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+  <div style="height:64px;display:flex;align-items:center;gap:10px;padding:0 {{ brandPad }};flex:none">
+    <a href="{{ homeHref }}" aria-label="ABRIA console home" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--color-text);min-width:0">
+      <span aria-hidden="true" style="width:36px;height:36px;border-radius:10px;flex:none;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg);font-weight:700;font-size:17px;letter-spacing:.02em">A</span>
+      <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+        <span style="display:flex;flex-direction:column;line-height:1.1;min-width:0"><span style="font-weight:700;font-size:17px;letter-spacing:.08em">ABRIA</span><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--app-muted)">{{ areaLabel }}</span></span>
+      </sc-if>
+    </a>
+    <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+      <button type="button" aria-label="Close menu" onClick="{{ closeDrawer }}" style="margin-left:auto;width:40px;height:40px;border-radius:50%;border:0;background:transparent;color:var(--color-text);display:grid;place-items:center;cursor:pointer"><i class="ph ph-x" aria-hidden="true" style="font-size:20px"></i></button>
+    </sc-if>
+  </div>
+  <nav aria-label="Sections" style="flex:1;overflow-y:auto;overflow-x:hidden;padding:4px 12px 12px;scrollbar-width:thin">
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+      <div style="margin-top:{{ g.mt }}">
+        <sc-if value="{{ g.hasHead }}">
+          <button type="button" onClick="{{ g.toggle }}" aria-expanded="{{ g.open }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;height:32px;padding:0 12px;border:0;background:transparent;cursor:pointer;font:inherit;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--app-muted);border-radius:8px" style-hover="color:var(--color-text)">{{ g.label }}<i class="ph ph-caret-down" aria-hidden="true" style="font-size:12px;transition:transform .2s ease;transform:rotate({{ g.rot }})"></i></button>
+        </sc-if>
+        <sc-if value="{{ g.divider }}"><div aria-hidden="true" style="height:1px;margin:8px 10px;background:var(--app-line)"></div></sc-if>
+        <sc-if value="{{ g.showItems }}">
+          <sc-for list="{{ g.items }}" as="it">
+            <a href="{{ it.href }}" title="{{ it.title }}" aria-current="{{ it.aria }}" data-ripple="1" style="position:relative;display:flex;align-items:center;gap:12px;height:40px;padding:0 {{ it.px }};margin-top:2px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:{{ it.fw }};color:{{ it.fg }};background:{{ it.bg }};justify-content:{{ it.jc }}" style-hover="background:{{ it.hover }}">
+              <i class="{{ it.icon }}" aria-hidden="true" style="font-size:20px;flex:none;color:{{ it.ic }}"></i>
+              <sc-if value="{{ it.showLabel }}"><span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span></sc-if>
+              <sc-if value="{{ it.pill }}"><span style="min-width:22px;height:20px;padding:0 6px;border-radius:999px;display:grid;place-items:center;font-size:11px;font-weight:600;background:var(--color-accent);color:var(--color-bg)">{{ it.count }}</span></sc-if>
+              <sc-if value="{{ it.dot }}"><span aria-label="{{ it.count }}" style="position:absolute;top:8px;right:14px;width:8px;height:8px;border-radius:50%;background:var(--color-accent-2)"></span></sc-if>
+            </a>
+          </sc-for>
+        </sc-if>
+      </div>
+    </sc-for>
+  </nav>
+  <div style="flex:none;padding:8px 12px 14px;display:flex;flex-direction:column;gap:2px">
+    <sc-for list="{{ bottom }}" as="it">
+      <a href="{{ it.href }}" title="{{ it.title }}" aria-current="{{ it.aria }}" style="display:flex;align-items:center;gap:12px;height:40px;padding:0 {{ it.px }};border-radius:10px;text-decoration:none;font-size:14px;color:{{ it.fg }};background:{{ it.bg }};justify-content:{{ it.jc }}" style-hover="background:var(--app-hover)"><i class="{{ it.icon }}" aria-hidden="true" style="font-size:20px;flex:none"></i><sc-if value="{{ it.showLabel }}"><span>{{ it.label }}</span></sc-if></a>
+    </sc-for>
+    <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}">
+      <button type="button" onClick="{{ toggleCollapse }}" aria-label="{{ collapseLabel }}" title="{{ collapseLabel }}" style="display:flex;align-items:center;gap:12px;height:40px;padding:0 {{ bottomPx }};border-radius:10px;border:0;background:transparent;cursor:pointer;font:inherit;font-size:14px;color:var(--app-muted);justify-content:{{ bottomJc }}" style-hover="background:var(--app-hover);color:var(--color-text)"><i class="{{ collapseIcon }}" aria-hidden="true" style="font-size:20px"></i><sc-if value="{{ showLabels }}"><span>Collapse</span></sc-if></button>
+    </sc-if>
+  </div>
+</aside>
+
+<header style="position:fixed;top:0;right:0;left:var(--shell-w,0px);height:64px;z-index:70;display:flex;align-items:center;gap:6px;padding:0 clamp(12px,2vw,24px);background:color-mix(in srgb,var(--app-page) 86%,transparent);backdrop-filter:saturate(1.2) blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:{{ topShadow }};transition:left .25s cubic-bezier(.4,0,.2,1), box-shadow .2s ease;font-family:Roboto,system-ui,sans-serif">
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <button type="button" aria-label="Open menu" aria-expanded="{{ drawerOpen }}" onClick="{{ openDrawer }}" style="width:44px;height:44px;border-radius:50%;border:0;background:transparent;color:var(--color-text);display:grid;place-items:center;cursor:pointer;flex:none"><i class="ph ph-list" aria-hidden="true" style="font-size:24px"></i></button>
+  </sc-if>
+  <div ref="{{ searchRef }}" role="search" style="position:relative;flex:1 1 auto;max-width:520px;min-width:0">
+    <i class="ph ph-magnifying-glass" aria-hidden="true" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--app-muted);pointer-events:none"></i>
+    <input type="search" value="{{ q }}" onChange="{{ onQ }}" onFocus="{{ openSearch }}" onKeyDown="{{ onSearchKey }}" placeholder="{{ searchPh }}" aria-label="Search shipments, requests, customers and carriers" aria-expanded="{{ searchOpen }}" aria-controls="abria-search-results" style="width:100%;height:42px;padding:0 14px 0 42px;border-radius:999px;border:1px solid transparent;background:var(--app-card);color:var(--color-text);font:inherit;font-size:14px;box-shadow:var(--shadow-sm);outline:none" style-focus="border-color:var(--color-accent)">
+    <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+      <div id="abria-search-results" role="listbox" style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--app-card);border-radius:14px;box-shadow:var(--shadow-lg);padding:8px;animation:abria-in .16s ease;max-height:420px;overflow-y:auto">
+        <sc-if value="{{ hasResults }}">
+          <sc-for list="{{ results }}" as="r">
+            <a href="{{ r.href }}" role="option" style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;text-decoration:none;color:var(--color-text)" style-hover="background:var(--app-hover)">
+              <span style="width:34px;height:34px;border-radius:10px;flex:none;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,transparent);color:var(--color-accent-700)"><i class="{{ r.icon }}" aria-hidden="true" style="font-size:18px"></i></span>
+              <span style="min-width:0;flex:1"><span style="display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span><span style="display:block;font-size:12px;color:var(--app-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.sub }}</span></span>
+              <span style="font-size:11px;color:var(--app-muted);letter-spacing:.06em;text-transform:uppercase">{{ r.kind }}</span>
+            </a>
+          </sc-for>
+        </sc-if>
+        <sc-if value="{{ noResults }}"><p style="margin:0;padding:18px 12px;font-size:14px;color:var(--app-muted)">No matches for “{{ q }}”.</p></sc-if>
+        <sc-if value="{{ searchHint }}"><p style="margin:0;padding:12px;font-size:13px;color:var(--app-muted)">Try a reference like REQ-1042 or SHP-2048, a customer or a carrier.</p></sc-if>
+      </div>
+    </sc-if>
+  </div>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:4px;flex:none">
+    <button type="button" data-ripple="1" aria-label="{{ themeLabel }}" onClick="{{ toggleTheme }}" style="width:42px;height:42px;border-radius:50%;border:0;background:transparent;color:var(--color-text);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--app-hover)"><i class="{{ themeIcon }}" aria-hidden="true" style="font-size:21px;transition:transform .6s cubic-bezier(.4,0,.2,1);transform:rotate({{ themeRot }})"></i></button>
+    <div ref="{{ bellRef }}" style="position:relative">
+      <button type="button" data-ripple="1" aria-label="{{ bellLabel }}" aria-expanded="{{ bellOpen }}" onClick="{{ toggleBell }}" style="position:relative;width:42px;height:42px;border-radius:50%;border:0;background:{{ bellBg }};color:var(--color-text);display:grid;place-items:center;cursor:pointer" style-hover="background:var(--app-hover)"><i class="ph-duotone ph-bell" aria-hidden="true" style="font-size:22px"></i><sc-if value="{{ hasUnread }}"><span aria-hidden="true" style="position:absolute;top:7px;right:7px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--color-accent-2);color:#fff;font-size:10px;font-weight:700;display:grid;place-items:center;box-shadow:0 0 0 2px var(--app-page)">{{ unread }}</span></sc-if></button>
+      <sc-if value="{{ bellOpen }}" hint-placeholder-val="{{ false }}">
+        <div role="dialog" aria-label="Notifications" style="position:absolute;top:calc(100% + 8px);right:-8px;width:min(380px,calc(100vw - 24px));background:var(--app-card);border-radius:16px;box-shadow:var(--shadow-lg);animation:abria-in .16s ease;overflow:hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px"><span style="font-weight:600;font-size:15px">Notifications</span><button type="button" onClick="{{ markAll }}" style="border:0;background:none;color:var(--color-accent-700);font:inherit;font-size:13px;font-weight:500;cursor:pointer;padding:6px">Mark all as read</button></div>
+          <div style="max-height:360px;overflow-y:auto">
+            <sc-for list="{{ notes }}" as="n">
+              <a href="{{ n.href }}" style="display:flex;gap:12px;padding:12px 16px;text-decoration:none;color:var(--color-text);background:{{ n.bg }}" style-hover="background:var(--app-hover)">
+                <i class="{{ n.icon }}" aria-hidden="true" style="font-size:20px;color:var(--color-accent);flex:none;margin-top:1px"></i>
+                <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:{{ n.fw }};line-height:1.35">{{ n.title }}</span><span style="display:block;margin-top:2px;font-size:12px;color:var(--app-muted)">{{ n.when }}</span></span>
+                <sc-if value="{{ n.unread }}"><span aria-label="Unread" style="width:8px;height:8px;border-radius:50%;background:var(--color-accent);flex:none;margin-top:6px"></span></sc-if>
+              </a>
+            </sc-for>
+          </div>
+          <a href="Notifications.dc.html" style="display:block;padding:12px 16px;text-align:center;font-size:14px;font-weight:500;color:var(--color-accent-700);text-decoration:none;border-top:1px solid var(--app-line)">View all notifications</a>
+        </div>
+      </sc-if>
+    </div>
+    <div ref="{{ userRef }}" style="position:relative">
+      <button type="button" aria-label="Account menu" aria-expanded="{{ userOpen }}" onClick="{{ toggleUser }}" style="display:flex;align-items:center;gap:10px;height:44px;padding:0 {{ userPad }} 0 4px;border-radius:999px;border:0;background:{{ userBg }};color:var(--color-text);cursor:pointer;font:inherit" style-hover="background:var(--app-hover)">
+        <span aria-hidden="true" style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent-2);color:#fff;font-weight:600;font-size:13px">{{ initials }}</span>
+        <sc-if value="{{ wide }}" hint-placeholder-val="{{ true }}"><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15"><span style="font-size:13.5px;font-weight:500">{{ user.name }}</span><span style="font-size:11.5px;color:var(--app-muted)">{{ user.role }}</span></span><i class="ph ph-caret-down" aria-hidden="true" style="font-size:12px;color:var(--app-muted)"></i></sc-if>
+      </button>
+      <sc-if value="{{ userOpen }}" hint-placeholder-val="{{ false }}">
+        <div role="menu" style="position:absolute;top:calc(100% + 8px);right:0;width:260px;background:var(--app-card);border-radius:16px;box-shadow:var(--shadow-lg);padding:8px;animation:abria-in .16s ease">
+          <div style="padding:10px 12px 12px"><div style="font-weight:600;font-size:15px">{{ user.name }}</div><div style="font-size:13px;color:var(--app-muted)">{{ user.role }} · {{ user.email }}</div></div>
+          <div style="height:1px;background:var(--app-line);margin:0 4px 6px"></div>
+          <sc-for list="{{ userItems }}" as="m">
+            <a href="{{ m.href }}" role="menuitem" onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:12px;height:42px;padding:0 12px;border-radius:10px;text-decoration:none;color:{{ m.fg }};font-size:14px" style-hover="background:var(--app-hover)"><i class="{{ m.icon }}" aria-hidden="true" style="font-size:19px"></i>{{ m.label }}</a>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</header>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;640px&quot;},&quot;active&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;dash&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { ready: false, wide: true, collapsed: false, drawer: false, open: {}, q: '', searchOpen: false, bell: false, user: false, scrolled: false, theme: 'light', rot: 0, tick: 0 };
+  searchRef = React.createRef(); bellRef = React.createRef(); userRef = React.createRef();
+  componentDidMount() {
+    let collapsed = false; try { collapsed = localStorage.getItem('abria-sidebar') === '1'; } catch (e) {}
+    const boot = () => {
+      if (!window.ABRIA_M || !window.ABRIA) return setTimeout(boot, 30);
+      this.setState({ ready: true, collapsed, theme: window.ABRIA.getTheme() });
+    };
+    boot();
+    this._r = () => { const wide = window.innerWidth >= 1024; if (wide !== this.state.wide) this.setState({ wide, drawer: false }); };
+    this._s = () => { const s = window.scrollY > 4; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
+    this._doc = e => {
+      const inside = r => r.current && r.current.contains(e.target);
+      const patch = {};
+      if (this.state.searchOpen && !inside(this.searchRef)) patch.searchOpen = false;
+      if (this.state.bell && !inside(this.bellRef)) patch.bell = false;
+      if (this.state.user && !inside(this.userRef)) patch.user = false;
+      if (Object.keys(patch).length) this.setState(patch);
+    };
+    this._k = e => { if (e.key === 'Escape') this.setState({ searchOpen: false, bell: false, user: false, drawer: false }); if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); const i = this.searchRef.current && this.searchRef.current.querySelector('input'); i && i.focus(); } };
+    this._th = e => this.setState({ theme: e.detail });
+    this._n = () => this.setState(s => ({ tick: s.tick + 1 }));
+    window.addEventListener('resize', this._r); window.addEventListener('scroll', this._s, { passive: true });
+    document.addEventListener('pointerdown', this._doc); window.addEventListener('keydown', this._k);
+    window.addEventListener('abria-theme', this._th); window.addEventListener('abria-notes', this._n);
+    this._r(); this.syncWidth();
+  }
+  componentDidUpdate() { this.syncWidth(); }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._r); window.removeEventListener('scroll', this._s);
+    document.removeEventListener('pointerdown', this._doc); window.removeEventListener('keydown', this._k);
+    window.removeEventListener('abria-theme', this._th); window.removeEventListener('abria-notes', this._n);
+  }
+  syncWidth() {
+    const w = this.state.wide ? (this.state.collapsed ? '76px' : '256px') : '0px';
+    if (this._w !== w) { this._w = w; document.documentElement.style.setProperty('--shell-w', w); }
+  }
+  navFor(isAdmin) {
+    const M = window.ABRIA_M, L = M.link, c = M.counts();
+    const it = (k, label, icon, href, count) => ({ k, label, icon, href, count: count || 0 });
+    const ops = [it('requests', 'Requests', 'ph-duotone ph-clipboard-text', L('requests'), c.newReq), it('quotes', 'Quotes', 'ph-duotone ph-receipt', L('quotes'), c.expiring), it('shipments', 'Shipments', 'ph-duotone ph-package', L('shipments'), c.delayed), it('deliveries', 'Deliveries', 'ph-duotone ph-seal-check', L('deliveries'))];
+    const net = [it('customers', 'Customers', 'ph-duotone ph-users', L('customers')), it('carriers', 'Carriers', 'ph-duotone ph-truck', L('carriers'), c.pendingCar), it('trucks', 'Trucks', 'ph-duotone ph-steering-wheel', L('trucks'))];
+    if (!isAdmin) return [
+      { id: 'main', items: [it('dash', 'Dashboard', 'ph-duotone ph-squares-four', L('dash'))] },
+      { id: 'ops', label: 'Operations', items: ops },
+      { id: 'net', label: 'Network', items: net },
+      { id: 'ins', label: 'Insights', items: [it('reports', 'Reports', 'ph-duotone ph-chart-line-up', L('reports')), it('notifications', 'Notifications', 'ph-duotone ph-bell', L('notifications'), c.unread)] }
+    ];
+    return [
+      { id: 'main', items: [it('admin', 'Dashboard', 'ph-duotone ph-squares-four', L('admin'))] },
+      { id: 'ops', label: 'Operations', items: [ops[2], ops[0], ops[1], net[0], net[1], net[2], it('reports', 'Reports', 'ph-duotone ph-chart-line-up', L('reports'))] },
+      { id: 'web', label: 'Website', items: [it('web:homepage', 'Homepage', 'ph-duotone ph-house-line', L('homepage')), it('web:pages', 'Pages', 'ph-duotone ph-files', L('website', { s: 'pages' })), it('web:solutions', 'Solutions', 'ph-duotone ph-stack', L('website', { s: 'solutions' })), it('web:faq', 'FAQ', 'ph-duotone ph-question', L('website', { s: 'faq' })), it('web:partners', 'Partners', 'ph-duotone ph-handshake', L('website', { s: 'partners' })), it('web:media', 'Media', 'ph-duotone ph-images', L('media'))] },
+      { id: 'forms', label: 'Forms', items: [it('forms:all', 'All forms', 'ph-duotone ph-list-bullets', L('forms')), it('forms:quote', 'Quote Form', 'ph-duotone ph-clipboard-text', L('forms', { id: 'quote' })), it('forms:truck', 'Truck Registration', 'ph-duotone ph-truck', L('forms', { id: 'truck' })), it('forms:contact', 'Contact Form', 'ph-duotone ph-chat-text', L('forms', { id: 'contact' })), it('forms:submissions', 'Submissions', 'ph-duotone ph-tray', L('forms', { s: 'submissions' }), M.DATA.submissions.filter(s => s.status === 'Open').length)] },
+      { id: 'users', label: 'Users', items: [it('users:all', 'Users', 'ph-duotone ph-users-three', L('users')), it('users:roles', 'Roles & Permissions', 'ph-duotone ph-shield-check', L('users', { s: 'roles' }))] },
+      { id: 'settings', label: 'Settings', items: ['General:gear:general', 'Branding:palette:branding', 'SEO:magnifying-glass:seo', 'Notifications:bell-ringing:notifications', 'Integrations:plugs:integrations', 'Security:lock-key:security'].map(s => { const p = s.split(':'); return it('settings:' + p[2], p[0], 'ph-duotone ph-' + p[1], L('settings', { s: p[2] })); }) },
+      { id: 'audit', items: [it('audit', 'Audit Logs', 'ph-duotone ph-scroll', L('audit'))] }
+    ];
+  }
+  renderVals() {
+    const M = window.ABRIA_M, A = window.ABRIA;
+    if (!M) return { groups: [], bottom: [], results: [], notes: [], userItems: [], user: {} };
+    const isAdmin = M.role() === 'admin', active = this.props.active || '';
+    const wide = this.state.wide, col = wide && this.state.collapsed, showLabels = !col;
+    const nav = this.navFor(isAdmin);
+    const item = (x, ctx) => {
+      const on = x.k === active;
+      return Object.assign({}, x, {
+        aria: on ? 'page' : undefined, title: col ? x.label : undefined, showLabel: showLabels,
+        fw: on ? 600 : 400, fg: on ? 'var(--color-accent-800)' : 'var(--color-text)', ic: on ? 'var(--color-accent)' : 'var(--app-muted)',
+        bg: on ? 'color-mix(in srgb,var(--color-accent) 14%,transparent)' : 'transparent',
+        hover: on ? 'color-mix(in srgb,var(--color-accent) 18%,transparent)' : 'var(--app-hover)',
+        px: col ? '0' : '12px', jc: col ? 'center' : 'flex-start',
+        pill: showLabels && x.count > 0, dot: col && x.count > 0
+      });
+    };
+    const groups = nav.map((g, gi) => {
+      const hasActive = g.items.some(i => i.k === active);
+      const stored = this.state.open[g.id];
+      const open = stored == null ? (hasActive || !isAdmin || g.id === 'ops') : stored;
+      const collapsible = isAdmin && !!g.label;
+      return {
+        label: g.label, hasHead: !!g.label && showLabels, divider: !!g.label && col,
+        mt: gi === 0 ? '0' : (col ? '0' : '14px'), open: collapsible ? open : true,
+        rot: (collapsible && !open) ? '-90deg' : '0deg',
+        toggle: () => collapsible && this.setState(s => ({ open: Object.assign({}, s.open, { [g.id]: !open }) })),
+        showItems: col || !collapsible || open,
+        items: g.items.map(item)
+      };
+    });
+    const bottom = (isAdmin
+      ? [{ k: 'site', label: 'Public website', icon: 'ph-duotone ph-globe-hemisphere-east', href: M.R.site }]
+      : [{ k: 'settings:notifications', label: 'Settings', icon: 'ph-duotone ph-gear', href: M.link('settings', { s: 'notifications' }) }, { k: 'site', label: 'Public website', icon: 'ph-duotone ph-globe-hemisphere-east', href: M.R.site }]
+    ).map(item);
+    // search across mock records
+    const q = this.state.q.trim().toLowerCase(), D = M.DATA, I = M.IDX;
+    let results = [];
+    if (q.length >= 2) {
+      const push = (kind, icon, title, sub, href, hay) => { if (hay.toLowerCase().indexOf(q) > -1) results.push({ kind, icon, title, sub, href }); };
+      D.requests.forEach(r => { const c = I.cust[r.cust]; push('Request', 'ph-duotone ph-clipboard-text', r.id + ' · ' + c.company, r.pickup + ' → ' + r.dest + ' · ' + r.status, M.link('requests', { id: r.id }), r.id + c.company + c.name + r.dest + r.pickup); });
+      D.shipments.forEach(s => { const c = I.cust[s.cust]; push('Shipment', 'ph-duotone ph-package', s.id + ' · ' + c.company, s.pickup + ' → ' + s.dest + ' · ' + s.status, M.link('shipments', { id: s.id }), s.id + c.company + s.dest + s.truck); });
+      D.quotes.forEach(x => { const c = I.cust[x.cust] || {}; push('Quote', 'ph-duotone ph-receipt', x.id + ' · ' + (c.company || ''), M.tzs(x.amount) + ' · ' + x.status, M.link('quotes', { id: x.id }), x.id + (c.company || '')); });
+      D.customers.forEach(c => push('Customer', 'ph-duotone ph-user', c.name, c.company + ' · ' + c.region, M.link('customers', { id: c.id }), c.name + c.company + c.id));
+      D.carriers.forEach(c => push('Carrier', 'ph-duotone ph-truck', c.company, c.name + ' · ' + c.location, M.link('carriers', { id: c.id }), c.name + c.company + c.id));
+      results = results.slice(0, 7);
+    }
+    const unread = D.notifications.filter(n => !n.read).length;
+    const me = M.me(), initials = me.name.split(' ').map(p => p[0]).join('').slice(0, 2);
+    const other = isAdmin ? 'manager' : 'admin';
+    const on = x => x ? 'var(--app-hover)' : 'transparent';
+    return {
+      wide, narrow: !wide, showLabels, drawerOpen: !wide && this.state.drawer,
+      sideW: wide ? (col ? '76px' : '256px') : '280px',
+      sideX: wide || this.state.drawer ? '0' : '-105%',
+      sideShadow: wide ? '1px 0 0 var(--app-line)' : 'var(--shadow-lg)',
+      brandPad: col ? '20px' : '18px',
+      areaLabel: isAdmin ? 'Admin' : 'Operations',
+      homeHref: isAdmin ? M.R.admin : M.R.dash,
+      groups, bottom,
+      bottomPx: col ? '0' : '12px', bottomJc: col ? 'center' : 'flex-start',
+      toggleCollapse: () => { const v = !this.state.collapsed; try { localStorage.setItem('abria-sidebar', v ? '1' : '0'); } catch (e) {} this.setState({ collapsed: v }); },
+      collapseLabel: col ? 'Expand sidebar' : 'Collapse sidebar',
+      collapseIcon: col ? 'ph ph-sidebar-simple' : 'ph ph-caret-double-left',
+      openDrawer: () => this.setState({ drawer: true }), closeDrawer: () => this.setState({ drawer: false }),
+      topShadow: this.state.scrolled ? '0 1px 0 var(--app-line), var(--shadow-sm)' : 'none',
+      q: this.state.q, onQ: e => this.setState({ q: e.target.value, searchOpen: true }),
+      openSearch: () => this.setState({ searchOpen: true, bell: false, user: false }),
+      onSearchKey: e => { if (e.key === 'Enter' && results[0]) location.href = results[0].href; },
+      searchOpen: this.state.searchOpen, results, hasResults: results.length > 0,
+      noResults: q.length >= 2 && !results.length, searchHint: q.length < 2,
+      searchPh: wide ? 'Search shipments, requests, customers…  ( / )' : 'Search…',
+      themeIcon: this.state.theme === 'dark' ? 'ph-duotone ph-sun' : 'ph-duotone ph-moon',
+      themeRot: this.state.rot + 'deg', themeLabel: this.state.theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+      toggleTheme: e => { this.setState(s => ({ rot: s.rot + 180 })); A && A.toggleTheme(e); },
+      bellOpen: this.state.bell, bellBg: on(this.state.bell),
+      toggleBell: () => this.setState(s => ({ bell: !s.bell, user: false, searchOpen: false })),
+      unread, hasUnread: unread > 0, bellLabel: 'Notifications, ' + unread + ' unread',
+      notes: D.notifications.slice().sort((a, b) => (a.at < b.at ? 1 : -1)).slice(0, 6).map(n => ({ title: n.title, icon: 'ph-duotone ' + n.icon, when: n.cat + ' · ' + M.rel(n.at), href: M.hrefOf(n.href), unread: !n.read, fw: n.read ? 400 : 600, bg: n.read ? 'transparent' : 'color-mix(in srgb,var(--color-accent) 5%,transparent)' })),
+      markAll: () => { D.notifications.forEach(n => (n.read = true)); window.dispatchEvent(new Event('abria-notes')); M.toast('All notifications marked as read'); },
+      userOpen: this.state.user, userBg: on(this.state.user), userPad: wide ? '12px' : '4px',
+      toggleUser: () => this.setState(s => ({ user: !s.user, bell: false, searchOpen: false })),
+      user: me, initials,
+      userItems: [
+        { label: 'Profile', icon: 'ph-duotone ph-user-circle', href: '#', fg: 'var(--color-text)', onClick: e => { e.preventDefault(); M.toast('Profile editing arrives with authentication'); } },
+        { label: 'Settings', icon: 'ph-duotone ph-gear', href: isAdmin ? M.link('settings', { s: 'general' }) : M.link('settings', { s: 'notifications' }), fg: 'var(--color-text)' },
+        { label: 'Switch to ' + (isAdmin ? 'Manager' : 'Admin') + ' view', icon: 'ph-duotone ph-arrows-left-right', href: other === 'admin' ? M.link('admin', { role: 'admin' }) : M.link('dash', { role: 'manager' }), fg: 'var(--color-text)' },
+        { label: 'Public website', icon: 'ph-duotone ph-globe-hemisphere-east', href: M.R.site, fg: 'var(--color-text)' },
+        { label: 'Sign out', icon: 'ph-duotone ph-sign-out', href: M.R.signin, fg: 'var(--color-accent-2-700)' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

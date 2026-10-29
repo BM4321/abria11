@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Admin | ABRIA</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="admin" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+  <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><span style="width:64px;height:64px;margin:0 auto;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent-2) 12%,transparent);color:var(--color-accent-2-700)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:32px"></i></span><h1 style="margin:16px 0 6px;font-size:22px;font-weight:600">Permission denied</h1><p style="margin:0 auto;max-width:44ch;color:var(--app-muted)">The admin area is limited to administrators. Ask an admin if you need access.</p><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:18px"><a class="btn btn-primary" href="Dashboard.dc.html" style="min-height:40px;border-radius:10px">Go to dashboard</a><a class="btn btn-secondary" href="Admin.dc.html?role=admin" style="min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div></div>
+  </sc-if>
+  <sc-if value="{{ allowed }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px">
+      <div style="margin-right:auto"><p style="margin:0;font-size:13px;color:var(--app-muted)">Friday, 25 September 2026</p><h1 style="margin:4px 0 0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Welcome back, {{ first }}</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Operations, website and system at a glance.</p></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><a class="btn btn-secondary" href="Admin%20Homepage.dc.html" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-pencil-simple" aria-hidden="true"></i>Edit homepage</a><a class="btn btn-primary" href="Admin%20Users.dc.html?invite=1" style="min-height:40px;border-radius:10px"><i class="ph ph-user-plus" aria-hidden="true"></i>Invite user</a></div>
+    </div>
+    <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+      <section aria-label="{{ g.title }}" style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px"><i class="{{ g.icon }}" aria-hidden="true" style="font-size:18px;color:var(--color-accent)"></i><h2 style="margin:0;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--app-muted)">{{ g.title }}</h2></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:16px">
+          <sc-for list="{{ g.cards }}" as="k"><a href="{{ k.href }}" data-ripple="1" style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);text-decoration:none;color:var(--color-text);transition:box-shadow .2s ease, transform .2s ease" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)"><span style="width:44px;height:44px;border-radius:12px;flex:none;display:grid;place-items:center;background:{{ k.bg }};color:{{ k.fg }}"><i class="{{ k.icon }}" aria-hidden="true" style="font-size:22px"></i></span><span style="min-width:0"><span style="display:block;font-size:24px;font-weight:600;font-feature-settings:'tnum' 1">{{ k.v }}</span><span style="display:block;font-size:13px;color:var(--app-muted)">{{ k.k }}</span></span></a></sc-for>
+        </div>
+      </section>
+    </sc-for>
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <section aria-labelledby="aa-h" style="flex:2 1 520px;min-width:0;padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px"><h2 id="aa-h" style="margin:0;font-size:16px;font-weight:600">Recent administrative activity</h2><a href="Audit%20Logs.dc.html" style="font-size:14px;font-weight:500;text-decoration:none">Audit logs →</a></div>
+        <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+          <sc-for list="{{ recent }}" as="a"><li style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--app-line)"><span style="width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--color-accent-2);color:#fff;font-size:12px;font-weight:600">{{ a.ini }}</span><div style="flex:1;min-width:0"><div style="font-size:14px">{{ a.desc }}</div><div style="font-size:12px;color:var(--app-muted)">{{ a.user }} · {{ a.resource }} · {{ a.when }}</div></div></li></sc-for>
+        </ol>
+      </section>
+      <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section aria-labelledby="sa-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="sa-h" style="margin:0 0 12px;font-size:16px;font-weight:600">System alerts</h2>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px"><sc-for list="{{ alerts }}" as="a"><li><a href="{{ a.href }}" style="display:flex;gap:12px;padding:12px;border-radius:12px;background:{{ a.bg }};text-decoration:none;color:var(--color-text)"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:20px;color:{{ a.fg }};flex:none"></i><span><span style="display:block;font-size:14px;font-weight:500">{{ a.title }}</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ a.sub }}</span></span></a></li></sc-for></ul>
+        </section>
+        <section aria-labelledby="qa-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="qa-h" style="margin:0 0 12px;font-size:16px;font-weight:600">Quick links</h2>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ quick }}" as="q"><a href="{{ q.href }}" data-ripple="1" style="display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:12px;background:var(--app-page);text-decoration:none;color:var(--color-text);font-size:13.5px;font-weight:500" style-hover="background:var(--app-hover)"><i class="{{ q.icon }}" aria-hidden="true" style="font-size:22px;color:var(--color-accent)"></i>{{ q.label }}</a></sc-for></div>
+        </section>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() { const b = () => (window.ABRIA_M ? this.forceUpdate() : setTimeout(b, 30)); b(); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { allowed: true, groups: [], recent: [], alerts: [], quick: [] };
+    if (M.role() !== 'admin') return { denied: true, allowed: false, groups: [], recent: [], alerts: [], quick: [] };
+    const D = M.DATA, c = M.counts(), T = M.TONES, L = M.link;
+    const card = (k, v, icon, href, t) => ({ k, v, icon: 'ph-duotone ' + icon, href, bg: T[t || 'info'].bg, fg: T[t || 'info'].fg });
+    return {
+      allowed: true, first: M.me().name.split(' ')[0],
+      groups: [
+        { title: 'Operations', icon: 'ph-duotone ph-truck', cards: [card('Active shipments', 42, 'ph-package', L('shipments')), card('Pending requests', c.newReq + c.reviewing, 'ph-clipboard-text', L('requests', { status: 'New' }), 'warn'), card('Pending quotes', c.pendingQuotes, 'ph-receipt', L('quotes')), card('Registered carriers', 84, 'ph-truck', L('carriers'), 'ok')] },
+        { title: 'Website', icon: 'ph-duotone ph-globe-hemisphere-east', cards: [card('Published pages', D.pages.filter(p => p.status === 'Published').length, 'ph-files', L('website', { s: 'pages' }), 'ok'), card('Open form submissions', D.submissions.filter(s => s.status === 'Open').length, 'ph-tray', L('forms', { s: 'submissions' }), 'warn'), card('Media items', D.media.length, 'ph-images', L('media')), card('Published solutions', 6, 'ph-stack', L('website', { s: 'solutions' }), 'ok')] },
+        { title: 'System', icon: 'ph-duotone ph-gear', cards: [card('Managers', D.users.filter(u => u.role === 'Manager' && u.status !== 'Disabled').length, 'ph-users', L('users')), card('Admins', D.users.filter(u => u.role === 'Admin').length, 'ph-shield-check', L('users', { s: 'roles' })), card('Changes in last 24h', D.audit.filter(a => M.daysFrom(a.at) >= -1).length, 'ph-scroll', L('audit'), 'muted'), card('System alerts', 1, 'ph-warning', L('settings', { s: 'integrations' }), 'bad')] }
+      ],
+      recent: D.audit.slice(0, 6).map(a => ({ desc: a.desc, user: a.user, resource: a.resource, when: M.rel(a.at), ini: a.user.split(' ').map(p => p[0]).join('') })),
+      alerts: [
+        { title: 'Email notifications not configured', sub: 'The email provider key is missing. WhatsApp links still work.', icon: 'ph-duotone ph-envelope-simple-open', href: L('settings', { s: 'integrations' }), bg: T.bad.bg, fg: 'var(--color-accent-2-700)' },
+        { title: D.pages.filter(p => p.status === 'Draft').length + ' pages in draft', sub: 'FAQ, Partners, Privacy Policy and Terms', icon: 'ph-duotone ph-files', href: L('website', { s: 'pages' }), bg: T.warn.bg, fg: T.warn.fg },
+        { title: 'Partner Application form is a draft', sub: 'Publish it to show the Become a Partner form', icon: 'ph-duotone ph-handshake', href: L('forms', { id: 'partner' }), bg: T.info.bg, fg: 'var(--color-accent-700)' }
+      ],
+      quick: [{ label: 'Homepage', icon: 'ph-duotone ph-house-line', href: L('homepage') }, { label: 'Quote form', icon: 'ph-duotone ph-clipboard-text', href: L('forms', { id: 'quote' }) }, { label: 'Media library', icon: 'ph-duotone ph-images', href: L('media') }, { label: 'SEO settings', icon: 'ph-duotone ph-magnifying-glass', href: L('settings', { s: 'seo' }) }]
+    };
+  }
+}
+</script>
+</body>
+</html>

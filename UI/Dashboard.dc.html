@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Dashboard | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="dash" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px">
+    <div style="margin-right:auto">
+      <p style="margin:0;font-size:13px;color:var(--app-muted)">{{ today }}</p>
+      <h1 style="margin:4px 0 0;font-size:28px;font-weight:600;letter-spacing:-0.01em">{{ greeting }}</h1>
+      <p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Here's what's happening across ABRIA today.</p>
+    </div>
+    <div role="group" aria-label="Period" style="display:flex;padding:3px;border-radius:12px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <sc-for list="{{ periods }}" as="p"><button type="button" onClick="{{ p.pick }}" aria-pressed="{{ p.on }}" style="min-height:34px;padding:0 14px;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;background:{{ p.bg }};color:{{ p.fg }};transition:background .15s ease">{{ p.label }}</button></sc-for>
+    </div>
+    <a class="btn btn-primary" href="Request%20Quote.dc.html" style="min-height:40px;border-radius:10px"><i class="ph ph-plus" aria-hidden="true"></i>New request</a>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,196px),1fr));gap:16px">
+    <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
+      <a href="{{ k.href }}" data-ripple="1" style="display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);text-decoration:none;color:var(--color-text);transition:box-shadow .2s ease, transform .2s ease;min-width:0" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+        <span style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:13px;color:var(--app-muted)">{{ k.label }}</span><i class="{{ k.icon }}" aria-hidden="true" style="font-size:20px;color:var(--color-accent)"></i></span>
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><span class="abria-skel" style="height:32px;width:60%;margin:4px 0"></span><span class="abria-skel" style="height:12px;width:80%"></span></sc-if>
+        <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:30px;font-weight:600;letter-spacing:-0.01em;font-feature-settings:'tnum' 1">{{ k.value }}</span>
+          <span style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:500;padding:2px 8px;border-radius:999px;background:{{ k.dBg }};color:{{ k.dFg }}"><i class="{{ k.dIcon }}" aria-hidden="true"></i>{{ k.delta }}</span>
+            <svg viewBox="0 0 80 24" width="80" height="24" aria-hidden="true" style="overflow:visible"><polyline points="{{ k.spark }}" fill="none" stroke="var(--color-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></polyline></svg>
+          </span>
+          <span style="font-size:12px;color:var(--app-muted)">{{ k.note }}</span>
+        </sc-if>
+      </a>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:20px">
+    <section aria-labelledby="att-h" style="flex:1 1 320px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);min-width:0">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><h2 id="att-h" style="margin:0;font-size:16px;font-weight:600">Needs attention</h2><span style="padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;background:color-mix(in srgb,var(--color-accent-2) 14%,transparent);color:var(--color-accent-2-800)">{{ attTotal }}</span></div>
+      <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px">
+        <sc-for list="{{ attention }}" as="a" hint-placeholder-count="4">
+          <li><a href="{{ a.href }}" data-ripple="1" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;text-decoration:none;color:var(--color-text)" style-hover="background:var(--app-hover)">
+            <span style="width:40px;height:40px;border-radius:12px;flex:none;display:grid;place-items:center;background:{{ a.bg }};color:{{ a.fg }}"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:20px"></i></span>
+            <span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500">{{ a.title }}</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">{{ a.sub }}</span></span>
+            <i class="ph ph-caret-right" aria-hidden="true" style="color:var(--app-muted)"></i>
+          </a></li>
+        </sc-for>
+      </ul>
+    </section>
+    <section aria-labelledby="trend-h" style="flex:2 1 520px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);min-width:0">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px">
+        <div><h2 id="trend-h" style="margin:0;font-size:16px;font-weight:600">Requests over time</h2><p style="margin:2px 0 0;font-size:13px;color:var(--app-muted)">Weekly transport requests and accepted quotes, last 12 weeks</p></div>
+        <div style="display:flex;gap:16px;font-size:12.5px;color:var(--app-muted)"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:3px;border-radius:2px;background:var(--color-accent)"></span>Requests</span><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:3px;border-radius:2px;background:var(--color-accent-2)"></span>Accepted quotes</span></div>
+      </div>
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><div class="abria-skel" style="height:220px;margin-top:16px;border-radius:12px"></div></sc-if>
+      <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative;margin-top:12px" onMouseLeave="{{ clearHover }}">
+          <svg viewBox="0 0 640 230" width="100%" role="img" aria-label="{{ trendLabel }}" style="display:block">
+            <defs><linearGradient id="abria-area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--color-accent)" stop-opacity=".22"></stop><stop offset="1" stop-color="var(--color-accent)" stop-opacity="0"></stop></linearGradient></defs>
+            <sc-for list="{{ grid }}" as="g"><line x1="36" x2="632" y1="{{ g.y }}" y2="{{ g.y }}" stroke="var(--app-line)"></line><text x="28" y="{{ g.ty }}" text-anchor="end" font-size="11" fill="var(--app-muted)">{{ g.v }}</text></sc-for>
+            <path d="{{ area }}" fill="url(#abria-area)"></path>
+            <polyline points="{{ line1 }}" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+            <polyline points="{{ line2 }}" fill="none" stroke="var(--color-accent-2)" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round" stroke-linecap="round"></polyline>
+            <sc-for list="{{ pts }}" as="p">
+              <text x="{{ p.x }}" y="222" text-anchor="middle" font-size="11" fill="var(--app-muted)">{{ p.lbl }}</text>
+              <circle cx="{{ p.x }}" cy="{{ p.y }}" r="{{ p.r }}" fill="var(--app-card)" stroke="var(--color-accent)" stroke-width="2"></circle>
+              <rect x="{{ p.hx }}" y="0" width="{{ p.hw }}" height="200" fill="transparent" onMouseEnter="{{ p.enter }}"></rect>
+            </sc-for>
+          </svg>
+          <sc-if value="{{ hasTip }}"><div style="position:absolute;top:0;left:{{ tip.left }};transform:translateX(-50%);padding:8px 10px;border-radius:10px;background:var(--color-text);color:var(--color-bg);font-size:12px;line-height:1.4;pointer-events:none;white-space:nowrap;box-shadow:var(--shadow-md)"><strong style="font-weight:600">{{ tip.lbl }}</strong><br>{{ tip.a }} requests · {{ tip.b }} accepted</div></sc-if>
+        </div>
+      </sc-if>
+    </section>
+  </div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+    <div style="flex:2 1 560px;min-width:0">
+      <dc-import name="DataTable" title="Recent transport requests" compact="{{ true }}" page-size="{{ 5 }}" columns="{{ reqCols }}" rows="{{ reqRows }}" noun="requests" foot-link="{{ reqFoot }}" hint-size="100%,380px"></dc-import>
+    </div>
+    <section aria-labelledby="act-h" style="flex:1 1 320px;padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);min-width:0">
+      <h2 id="act-h" style="margin:0 0 12px;font-size:16px;font-weight:600">Activity</h2>
+      <ol style="list-style:none;margin:0;padding:0">
+        <sc-for list="{{ activity }}" as="a" hint-placeholder-count="6">
+          <li style="display:grid;grid-template-columns:44px 32px minmax(0,1fr);gap:0 8px;align-items:start">
+            <span style="font-size:12px;color:var(--app-muted);padding-top:7px;font-feature-settings:'tnum' 1">{{ a.time }}</span>
+            <span style="position:relative;display:flex;justify-content:center;height:100%"><span aria-hidden="true" style="position:absolute;top:32px;bottom:0;width:2px;background:{{ a.line }}"></span><span style="width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,transparent);color:var(--color-accent-700);position:relative"><i class="{{ a.icon }}" aria-hidden="true" style="font-size:15px"></i></span></span>
+            <a href="{{ a.href }}" style="display:block;padding:6px 0 18px;font-size:13.5px;line-height:1.4;color:var(--color-text);text-decoration:none" style-hover="color:var(--color-accent-700)">{{ a.text }}</a>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+  </div>
+
+  <dc-import name="DataTable" title="Active shipments" compact="{{ true }}" page-size="{{ 5 }}" columns="{{ shipCols }}" rows="{{ shipRows }}" noun="shipments" foot-link="{{ shipFoot }}" empty-title="No shipments yet" empty-text="When transport requests are converted into shipments, they'll appear here." empty-icon="ph-package" hint-size="100%,380px"></dc-import>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px">
+    <section aria-labelledby="donut-h" style="padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <h2 id="donut-h" style="margin:0;font-size:16px;font-weight:600">Shipments by status</h2>
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}"><div class="abria-skel" style="width:160px;height:160px;border-radius:50%;margin:24px auto"></div></sc-if>
+      <sc-if value="{{ ready }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:20px;margin-top:16px">
+          <div style="position:relative;width:160px;height:160px;flex:none">
+            <svg viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="{{ donutLabel }}" style="transform:rotate(-90deg)">
+              <circle cx="80" cy="80" r="60" fill="none" stroke="var(--app-line)" stroke-width="20"></circle>
+              <sc-for list="{{ donut }}" as="s"><circle cx="80" cy="80" r="60" fill="none" stroke="{{ s.color }}" stroke-width="20" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.off }}"></circle></sc-for>
+            </svg>
+            <div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center"><div><div style="font-size:28px;font-weight:600">{{ donutTotal }}</div><div style="font-size:12px;color:var(--app-muted)">active</div></div></div>
+          </div>
+          <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;flex:1;min-width:140px">
+            <sc-for list="{{ donut }}" as="s"><li style="display:flex;align-items:center;gap:8px;font-size:13.5px"><span style="width:10px;height:10px;border-radius:3px;background:{{ s.color }}"></span><span style="flex:1">{{ s.label }}</span><strong style="font-weight:600">{{ s.v }}</strong></li></sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </section>
+    <section aria-labelledby="reg-h" style="padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <h2 id="reg-h" style="margin:0;font-size:16px;font-weight:600">Deliveries by region</h2>
+      <p style="margin:2px 0 0;font-size:13px;color:var(--app-muted)">Last 30 days</p>
+      <div role="img" aria-label="{{ regionLabel }}" style="display:flex;align-items:flex-end;gap:10px;height:170px;margin-top:18px;padding-bottom:22px;position:relative">
+        <sc-for list="{{ regions }}" as="r">
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;position:relative">
+            <span style="font-size:12px;font-weight:600">{{ r.v }}</span>
+            <span style="width:100%;max-width:38px;height:{{ r.h }};border-radius:8px 8px 3px 3px;background:{{ r.color }};transition:height .6s cubic-bezier(.2,.7,.2,1)"></span>
+            <span style="position:absolute;bottom:-20px;font-size:11px;color:var(--app-muted);white-space:nowrap">{{ r.short }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+    <section aria-labelledby="routes-h" style="padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <h2 id="routes-h" style="margin:0;font-size:16px;font-weight:600">Popular routes</h2>
+      <p style="margin:2px 0 0;font-size:13px;color:var(--app-muted)">Requests, last 30 days</p>
+      <ul style="list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:12px">
+        <sc-for list="{{ routes }}" as="r"><li><div style="display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px"><span>{{ r.label }}</span><strong style="font-weight:600">{{ r.v }}</strong></div><div style="height:8px;border-radius:999px;background:var(--app-line);overflow:hidden"><div style="height:100%;width:{{ r.w }};border-radius:999px;background:var(--color-accent);transition:width .6s cubic-bezier(.2,.7,.2,1)"></div></div></li></sc-for>
+      </ul>
+    </section>
+  </div>
+  <p style="margin:0;font-size:12px;color:var(--app-muted)">Prototype: figures on this page are mock data.</p>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, loading: true, period: '30', hover: -1, tick: 0 };
+  componentDidMount() {
+    const b = () => { if (!window.ABRIA_M) return setTimeout(b, 30); this.setState({ ready: true }); setTimeout(() => this.setState({ loading: false }), 650); };
+    b();
+    this._d = () => this.setState(s => ({ tick: s.tick + 1 }));
+    window.addEventListener('abria-data', this._d);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-data', this._d); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { kpis: [], attention: [], activity: [], periods: [], grid: [], pts: [], donut: [], regions: [], routes: [], loading: true, ready: false };
+    const c = M.counts(), L = M.link, me = M.me();
+    const hour = new Date().getHours();
+    const greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    const P = this.state.period, scale = P === 'today' ? 0.06 : P === '7' ? 0.24 : 1;
+    const up = v => ({ dBg: v >= 0 ? M.TONES.ok.bg : M.TONES.bad.bg, dFg: v >= 0 ? M.TONES.ok.fg : M.TONES.bad.fg, dIcon: v >= 0 ? 'ph ph-trend-up' : 'ph ph-trend-down', delta: (v >= 0 ? '+' : '') + v.toFixed(1) + '%' });
+    const spark = arr => { const mx = Math.max(...arr), mn = Math.min(...arr); return arr.map((v, i) => (i * 80 / (arr.length - 1)).toFixed(1) + ',' + (22 - ((v - mn) / (mx - mn || 1)) * 20).toFixed(1)).join(' '); };
+    const per = P === 'today' ? 'vs yesterday' : P === '7' ? 'vs previous 7 days' : 'vs previous 30 days';
+    // Mock aggregates (would come from GET /api/metrics?period=)
+    const kpis = [
+      Object.assign({ label: 'Transport requests', icon: 'ph-duotone ph-clipboard-text', value: Math.max(1, Math.round(128 * scale)), href: L('requests'), note: per, spark: spark([18, 22, 19, 27, 24, 31, 29, 34]) }, up(12.4)),
+      Object.assign({ label: 'Active shipments', icon: 'ph-duotone ph-package', value: 42, href: L('shipments'), note: 'on the road now', spark: spark([30, 34, 33, 36, 38, 37, 40, 42]) }, up(6.2)),
+      Object.assign({ label: 'Pending quotes', icon: 'ph-duotone ph-receipt', value: 17, href: L('quotes'), note: c.expiring + ' expire today', spark: spark([22, 20, 21, 19, 18, 19, 18, 17]) }, up(-3.1)),
+      Object.assign({ label: 'Completed deliveries', icon: 'ph-duotone ph-seal-check', value: Math.max(1, Math.round(69 * scale)), href: L('deliveries'), note: per, spark: spark([9, 12, 11, 14, 13, 16, 15, 18]) }, up(9.8)),
+      Object.assign({ label: 'Registered carriers', icon: 'ph-duotone ph-truck', value: 84, href: L('carriers'), note: '+5 this month', spark: spark([70, 72, 74, 75, 78, 80, 82, 84]) }, up(6.3)),
+      Object.assign({ label: 'Pending verification', icon: 'ph-duotone ph-shield-warning', value: c.pendingCar, href: L('carriers', { status: 'Pending Verification' }), note: 'carrier registrations', spark: spark([1, 3, 2, 4, 2, 3, 1, 2]) }, up(-50))
+    ];
+    const T = M.TONES;
+    const attention = [
+      { icon: 'ph-duotone ph-shield-warning', title: c.pendingCar + ' carrier registrations awaiting verification', sub: 'Oldest submitted yesterday', href: L('carriers', { status: 'Pending Verification' }), bg: T.warn.bg, fg: T.warn.fg, n: c.pendingCar },
+      { icon: 'ph-duotone ph-clock-countdown', title: c.delayed + ' shipments delayed', sub: 'Past their ETA', href: L('shipments', { delay: 'Delayed' }), bg: T.bad.bg, fg: T.bad.fg, n: c.delayed },
+      { icon: 'ph-duotone ph-clipboard-text', title: c.newReq + ' requests have not been reviewed', sub: 'Status: New', href: L('requests', { status: 'New' }), bg: T.info.bg, fg: T.info.fg, n: c.newReq },
+      { icon: 'ph-duotone ph-hourglass-medium', title: c.expiring + ' quotes expiring today', sub: 'Follow up before end of day', href: L('quotes', { status: 'Sent' }), bg: T.warn.bg, fg: T.warn.fg, n: c.expiring }
+    ].filter(a => a.n > 0);
+    // Weekly series (mock)
+    const A = [18, 22, 19, 27, 24, 31, 29, 34, 30, 38, 35, 41], B = [9, 12, 10, 15, 13, 17, 16, 19, 18, 22, 20, 24];
+    const W = ['29 Jun', '6 Jul', '13 Jul', '20 Jul', '27 Jul', '3 Aug', '10 Aug', '17 Aug', '24 Aug', '31 Aug', '7 Sep', '14 Sep'];
+    const max = 50, x = i => 48 + i * (576 / 11), y = v => 196 - (v / max) * 180;
+    const pts = A.map((v, i) => ({ x: x(i).toFixed(1), y: y(v).toFixed(1), lbl: i % 2 ? '' : W[i], r: this.state.hover === i ? 5 : 3, hx: (x(i) - 24).toFixed(1), hw: 48, enter: () => this.setState({ hover: i }) }));
+    const line1 = A.map((v, i) => x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
+    const line2 = B.map((v, i) => x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
+    const area = 'M' + x(0) + ',196 L' + line1.split(' ').join(' L') + ' L' + x(11) + ',196 Z';
+    const h = this.state.hover;
+    const dn = [['In transit', 18, 'var(--color-accent)'], ['Assigned', 9, 'var(--color-accent-300)'], ['Picked up', 7, 'var(--color-process-yellow)'], ['Out for delivery', 8, 'var(--color-accent-2)']];
+    const tot = dn.reduce((a, s) => a + s[1], 0), C = 2 * Math.PI * 60;
+    let off = 0;
+    const donut = dn.map(s => { const len = C * s[1] / tot; const o = { label: s[0], v: s[1], color: s[2], dash: (len - 2).toFixed(1) + ' ' + (C - len + 2).toFixed(1), off: (-off).toFixed(1) }; off += len; return o; });
+    const rg = [['Dar es Salaam', 'Dar', 24], ['Arusha', 'Arusha', 13], ['Dodoma', 'Dodoma', 11], ['Mwanza', 'Mwanza', 8], ['Mbeya', 'Mbeya', 7], ['Moshi', 'Moshi', 6]];
+    const rt = [['Dar es Salaam → Arusha', 21], ['Dar es Salaam → Dodoma', 17], ['Dar es Salaam → Mwanza', 12], ['Dar es Salaam → Mbeya', 10], ['Arusha → Dar es Salaam Port', 8]];
+    const periods = [['today', 'Today'], ['7', '7 days'], ['30', '30 days']].map(p => ({ label: p[1], on: P === p[0], pick: () => this.setState({ period: p[0] }), bg: P === p[0] ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent', fg: P === p[0] ? 'var(--color-accent-800)' : 'var(--color-text)' }));
+    const loading = this.state.loading;
+    return {
+      loading, ready: !loading,
+      today: 'Friday, 25 September 2026 · Operations day',
+      greeting: greet + ', ' + me.name.split(' ')[0],
+      periods, kpis, attention, attTotal: attention.reduce((a, x) => a + x.n, 0),
+      grid: [0, 10, 20, 30, 40, 50].map(v => ({ v, y: y(v).toFixed(1), ty: (y(v) + 4).toFixed(1) })),
+      pts, line1, line2, area, hasTip: h > -1, tip: h > -1 ? { left: (x(h) / 640 * 100).toFixed(1) + '%', lbl: 'Week of ' + W[h], a: A[h], b: B[h] } : {},
+      clearHover: () => this.setState({ hover: -1 }),
+      trendLabel: 'Requests rose from 18 to 41 per week over 12 weeks; accepted quotes from 9 to 24.',
+      reqCols: M.COLS.requestsShort, reqRows: M.ROWS.requests(M.DATA.requests.slice().sort((a, b) => (a.created < b.created ? 1 : -1))), reqFoot: { label: 'View all requests', href: L('requests') },
+      shipCols: M.COLS.shipmentsShort, shipRows: M.ROWS.shipments(M.DATA.shipments.filter(s => s.status !== 'Delivered')), shipFoot: { label: 'View all shipments', href: L('shipments') },
+      activity: M.DATA.activity.map((a, i, arr) => ({ time: M.time(a.at), icon: 'ph-duotone ' + a.icon, text: a.text, href: M.hrefOf(a.href), line: i === arr.length - 1 ? 'transparent' : 'var(--app-line)' })),
+      donut, donutTotal: tot, donutLabel: dn.map(s => s[0] + ' ' + s[1]).join(', '),
+      regions: rg.map((r, i) => ({ label: r[0], short: r[1], v: r[2], h: (r[2] / 24 * 100).toFixed(0) + '%', color: i === 0 ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-accent) 55%,var(--app-card))' })),
+      regionLabel: rg.map(r => r[0] + ' ' + r[2]).join(', '),
+      routes: rt.map(r => ({ label: r[0], v: r[1], w: (r[1] / 21 * 100).toFixed(0) + '%' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

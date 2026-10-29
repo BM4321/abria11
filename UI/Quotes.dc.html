@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Quotes | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="quotes" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+    <div><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Quotes</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">Prepare, send and follow up on transport quotations.</p></div>
+    <dc-import name="DataTable" columns="{{ cols }}" rows="{{ rows }}" filters="{{ filters }}" initial="{{ initial }}" search="Search by quote, request or customer" date-filter="{{ true }}" noun="quotes" page-size="{{ 10 }}" simulate="{{ simulate }}" empty-title="No quotes yet" empty-text="Create a quote from any transport request." empty-icon="ph-receipt" hint-size="100%,600px"></dc-import>
+  </sc-if>
+
+  <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-magnifying-glass-minus" aria-hidden="true" style="font-size:44px;color:var(--app-muted)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Quote not found</h1><p style="margin:0;color:var(--app-muted)">We couldn’t find {{ id }}.</p><a class="btn btn-primary" href="Quotes.dc.html" style="margin-top:18px;min-height:40px;border-radius:10px">Back to quotes</a></div>
+  </sc-if>
+
+  <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+    <nav aria-label="Breadcrumb" style="display:flex;gap:8px;font-size:13px;color:var(--app-muted)"><a href="Quotes.dc.html" style="text-decoration:none">Quotes</a><span aria-hidden="true">/</span><span aria-current="page">{{ q.id }}</span></nav>
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px 24px;margin-top:-8px">
+      <div style="margin-right:auto">
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Quote #{{ q.id }}</h1><span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px 4px 10px;border-radius:999px;font-size:13px;font-weight:500;background:{{ st.bg }};color:{{ st.fg }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ st.dot }}"></span>{{ st.label }}</span></div>
+        <p style="margin:6px 0 0;font-size:14px;color:var(--app-muted)">For <a href="{{ reqHref }}">{{ q.req }}</a> · {{ cust.company }} · {{ q.route }}</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <sc-if value="{{ canSend }}"><button type="button" class="btn btn-primary" onClick="{{ send }}" style="min-height:40px;border-radius:10px"><i class="ph ph-paper-plane-tilt" aria-hidden="true"></i>Send to customer</button></sc-if>
+        <sc-if value="{{ canAccept }}"><button type="button" class="btn btn-primary" onClick="{{ accept }}" style="min-height:40px;border-radius:10px"><i class="ph ph-check" aria-hidden="true"></i>Record acceptance</button></sc-if>
+        <sc-if value="{{ canEdit }}"><button type="button" class="btn btn-secondary" onClick="{{ toggleEdit }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="{{ editIcon }}" aria-hidden="true"></i>{{ editLabel }}</button></sc-if>
+        <button type="button" class="btn btn-secondary" onClick="{{ print }}" style="min-height:40px;border-radius:10px;background:var(--app-card)"><i class="ph ph-file-pdf" aria-hidden="true"></i>Download PDF</button>
+        <sc-if value="{{ canCancel }}"><button type="button" class="btn btn-secondary" onClick="{{ cancel }}" style="min-height:40px;border-radius:10px;background:var(--app-card);color:var(--color-accent-2-700)"><i class="ph ph-x-circle" aria-hidden="true"></i>Cancel</button></sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+      <article aria-label="Quote preview" style="flex:2 1 560px;min-width:0;padding:clamp(20px,4vw,48px);border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-md)">
+        <header style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding-bottom:24px;border-bottom:2px solid var(--color-text)">
+          <div><div style="font-size:26px;font-weight:700;letter-spacing:.08em">ABRIA</div><div style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--app-muted)">Logistics</div><div style="margin-top:12px;font-size:12.5px;line-height:1.6;color:var(--app-muted)">info@abrialogistics.co.tz<br>+255 723 999 039</div></div>
+          <div style="text-align:right"><div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--app-muted)">Transport quotation</div><div style="font-size:24px;font-weight:600;margin-top:4px">{{ q.id }}</div><div style="margin-top:8px;font-size:13px;line-height:1.6">Issued {{ issued }}<br>Valid until <strong style="font-weight:600">{{ validUntil }}</strong></div></div>
+        </header>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:20px;padding:24px 0">
+          <div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--app-muted)">Bill to</div><div style="margin-top:6px;font-size:15px;font-weight:600">{{ cust.company }}</div><div style="font-size:13.5px;line-height:1.6">{{ cust.name }}<br>{{ cust.phone }}<br>{{ cust.email }}</div></div>
+          <div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--app-muted)">Shipment</div><div style="margin-top:6px;font-size:15px;font-weight:600">{{ q.route }}</div><div style="font-size:13.5px;line-height:1.6">{{ ship.cargo }} · {{ ship.weight }}<br>{{ ship.truck }} · Pickup {{ ship.date }}<br>Reference {{ q.req }}</div></div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:14px">
+          <thead><tr><th scope="col" style="text-align:left;padding:10px 0;border-bottom:1px solid var(--app-line);font-size:12px;font-weight:500;color:var(--app-muted)">Description</th><th scope="col" style="text-align:right;padding:10px 0;border-bottom:1px solid var(--app-line);font-size:12px;font-weight:500;color:var(--app-muted);width:180px">Amount (TZS)</th><sc-if value="{{ editing }}"><th style="width:44px;border-bottom:1px solid var(--app-line)"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Remove</span></th></sc-if></tr></thead>
+          <tbody>
+            <sc-for list="{{ lines }}" as="l">
+              <tr>
+                <td style="padding:12px 12px 12px 0;border-bottom:1px solid var(--app-line)">
+                  <sc-if value="{{ editing }}"><input class="input" aria-label="Line description" value="{{ l.d }}" onChange="{{ l.onD }}" style="min-height:38px;border-radius:8px;background:var(--app-page);font-size:14px"></sc-if>
+                  <sc-if value="{{ viewing }}">{{ l.d }}</sc-if>
+                </td>
+                <td style="padding:12px 0;border-bottom:1px solid var(--app-line);text-align:right;font-feature-settings:'tnum' 1">
+                  <sc-if value="{{ editing }}"><input class="input" aria-label="Line amount" type="number" min="0" step="1000" value="{{ l.a }}" onChange="{{ l.onA }}" style="min-height:38px;border-radius:8px;background:var(--app-page);font-size:14px;text-align:right"></sc-if>
+                  <sc-if value="{{ viewing }}">{{ l.fmt }}</sc-if>
+                </td>
+                <sc-if value="{{ editing }}"><td style="border-bottom:1px solid var(--app-line);text-align:right"><button type="button" onClick="{{ l.remove }}" aria-label="Remove line" style="width:34px;height:34px;border-radius:50%;border:0;background:transparent;color:var(--color-accent-2-700);cursor:pointer"><i class="ph ph-trash" aria-hidden="true"></i></button></td></sc-if>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <sc-if value="{{ editing }}"><button type="button" onClick="{{ addLine }}" class="btn btn-ghost" style="margin-top:8px;min-height:36px"><i class="ph ph-plus" aria-hidden="true"></i>Add charge</button></sc-if>
+        <dl style="margin:20px 0 0 auto;max-width:320px;display:flex;flex-direction:column;gap:8px;font-size:14px">
+          <div style="display:flex;justify-content:space-between"><dt style="color:var(--app-muted)">Transport cost</dt><dd style="margin:0;font-feature-settings:'tnum' 1">{{ subFreight }}</dd></div>
+          <div style="display:flex;justify-content:space-between"><dt style="color:var(--app-muted)">Additional charges</dt><dd style="margin:0;font-feature-settings:'tnum' 1">{{ subExtra }}</dd></div>
+          <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:2px solid var(--color-text);font-size:18px;font-weight:600"><dt>Total</dt><dd style="margin:0;font-feature-settings:'tnum' 1">{{ total }}</dd></div>
+        </dl>
+        <p style="margin:28px 0 0;font-size:12.5px;line-height:1.6;color:var(--app-muted)">This quotation is valid until {{ validUntil }}. Prices include loading and offloading at the stated locations. Waiting time beyond 4 hours and route changes are charged separately. [Terms to be confirmed by ABRIA.]</p>
+      </article>
+
+      <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:20px">
+        <section aria-labelledby="val-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="val-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Validity</h2>
+          <div style="display:flex;align-items:center;gap:14px"><span style="width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:{{ valTone.bg }};color:{{ valTone.fg }}"><i class="ph-duotone ph-hourglass-medium" aria-hidden="true" style="font-size:24px"></i></span><div><div style="font-size:18px;font-weight:600">{{ valText }}</div><div style="font-size:13px;color:var(--app-muted)">Valid until {{ validUntil }}</div></div></div>
+          <sc-if value="{{ editing }}">
+            <label for="valid-in" style="display:block;margin-top:16px;font-size:13px;color:var(--app-muted)">Valid until</label>
+            <input id="valid-in" class="input" type="date" value="{{ q.valid }}" onChange="{{ onValid }}" style="margin-top:4px;min-height:40px;border-radius:10px;background:var(--app-page)">
+            <button type="button" class="btn btn-primary" onClick="{{ save }}" style="margin-top:16px;width:100%;min-height:42px;border-radius:10px">Save changes</button>
+          </sc-if>
+        </section>
+        <section aria-labelledby="hist-h" style="padding:20px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+          <h2 id="hist-h" style="margin:0 0 14px;font-size:16px;font-weight:600">Quote history</h2>
+          <ol style="list-style:none;margin:0;padding:0">
+            <sc-for list="{{ history }}" as="a"><li style="display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px"><span style="position:relative;display:flex;justify-content:center"><span aria-hidden="true" style="position:absolute;top:18px;bottom:0;width:2px;background:{{ a.line }}"></span><span style="margin-top:4px;width:12px;height:12px;border-radius:50%;background:{{ a.dot }};position:relative"></span></span><div style="padding-bottom:16px"><div style="font-size:14px">{{ a.text }}</div><div style="font-size:12px;color:var(--app-muted)">{{ a.when }}</div></div></li></sc-for>
+          </ol>
+        </section>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, tick: 0, editing: false, lines: null };
+  componentDidMount() {
+    const b = () => {
+      const M = window.ABRIA_M; if (!M) return setTimeout(b, 30);
+      const nr = M.param('new');
+      if (nr && M.IDX.req[nr]) {
+        const r = M.IDX.req[nr];
+        let q = M.DATA.quotes.find(x => x.req === nr && x.status === 'Draft');
+        if (!q) {
+          const n = 3026 + M.DATA.quotes.filter(x => +x.id.slice(4) >= 3026).length;
+          const base = Math.round(r.weight * 180 / 1000) * 1000 + 600000;
+          q = { id: 'QTE-' + n, req: nr, cust: r.cust, route: r.pickup + ' → ' + r.dest, amount: base, created: M.TODAY, valid: '2026-09-28', status: 'Draft', lines: [{ d: 'Road freight, ' + r.pickup + ' → ' + r.dest + ' (' + r.truck.toLowerCase() + ')', a: base - 250000 }, { d: 'Loading, securing and offloading', a: 250000 }], fresh: true };
+          M.DATA.quotes.unshift(q); M.IDX.quote[q.id] = q;
+        }
+        history.replaceState(null, '', 'Quotes.dc.html?id=' + q.id);
+        this.setState({ ready: true, editing: true, lines: q.lines.map(l => Object.assign({}, l)) });
+        M.toast('Draft ' + q.id + ' created from ' + nr);
+        return;
+      }
+      this.setState({ ready: true });
+    };
+    b();
+    this._d = () => this.setState(s => ({ tick: s.tick + 1 })); window.addEventListener('abria-data', this._d);
+  }
+  componentWillUnmount() { window.removeEventListener('abria-data', this._d); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { isList: true, lines: [], history: [] };
+    const id = M.param('id');
+    if (!id) {
+      const cur = M.param('status') || '';
+      return { isList: true, cols: M.COLS.quotes, rows: M.ROWS.quotes(M.DATA.quotes), filters: [{ key: 'status', label: 'Status', options: ['Draft', 'Sent', 'Accepted', 'Rejected', 'Expired', 'Cancelled'] }], initial: cur ? { status: cur } : {}, simulate: M.param('state') || 'none' };
+    }
+    const q = M.IDX.quote[id];
+    if (!q) return { notFound: true, id, lines: [], history: [] };
+    const r = M.IDX.req[q.req] || {}, c = M.IDX.cust[q.cust] || {};
+    const editing = this.state.editing;
+    const src = editing && this.state.lines ? this.state.lines : q.lines;
+    const set = (i, k, v) => { const ls = this.state.lines.slice(); ls[i] = Object.assign({}, ls[i], { [k]: k === 'a' ? +v || 0 : v }); this.setState({ lines: ls }); };
+    const sum = src.reduce((a, l) => a + (+l.a || 0), 0), freight = src[0] ? +src[0].a || 0 : 0;
+    const days = M.daysFrom(q.valid);
+    const open = q.status === 'Draft' || q.status === 'Sent';
+    const T = M.TONES;
+    const valTone = !open ? T.muted : days <= 0 ? T.bad : days <= 1 ? T.warn : T.ok;
+    const hist = [{ at: q.created + 'T11:20', text: 'Draft created by Shedrack Maeda' }];
+    if (q.status !== 'Draft') hist.push({ at: q.created + 'T12:05', text: 'Sent to ' + c.name + ' by email and WhatsApp' });
+    if (q.status === 'Accepted') hist.push({ at: q.created + 'T16:40', text: 'Accepted by ' + c.name });
+    if (q.status === 'Rejected') hist.push({ at: q.created + 'T15:10', text: 'Declined by customer' });
+    if (q.status === 'Expired') hist.push({ at: q.valid + 'T23:59', text: 'Expired without response' });
+    if (q.status === 'Cancelled') hist.push({ at: M.TODAY + 'T09:00', text: 'Cancelled by ' + M.me().name });
+    (q.log || []).forEach(x => hist.push(x));
+    const bump = () => window.dispatchEvent(new Event('abria-data'));
+    const now = () => M.TODAY + 'T' + new Date().toTimeString().slice(0, 5);
+    return {
+      isDetail: true, q, st: M.badge(q.status), cust: c, reqHref: M.link('requests', { id: q.req }),
+      ship: { cargo: r.cargo || '—', weight: r.weight ? M.kg(r.weight) : '—', truck: r.truck || '—', date: M.d(r.date) },
+      issued: M.d(q.created), validUntil: M.d(q.valid),
+      editing, viewing: !editing,
+      lines: src.map((l, i) => ({ d: l.d, a: l.a, fmt: M.tzs(l.a).replace('TZS ', ''), onD: e => set(i, 'd', e.target.value), onA: e => set(i, 'a', e.target.value), remove: () => this.setState({ lines: this.state.lines.filter((_, j) => j !== i) }) })),
+      addLine: () => this.setState({ lines: this.state.lines.concat([{ d: 'Additional charge', a: 0 }]) }),
+      subFreight: M.tzs(freight), subExtra: M.tzs(sum - freight), total: M.tzs(sum),
+      valTone, valText: !open ? q.status : days < 0 ? 'Expired' : days === 0 ? 'Expires today' : days + (days === 1 ? ' day left' : ' days left'),
+      onValid: e => { q.valid = e.target.value; this.setState({}); },
+      canSend: q.status === 'Draft' && !editing, canAccept: q.status === 'Sent', canEdit: open, canCancel: open,
+      editLabel: editing ? 'Discard edits' : 'Edit', editIcon: editing ? 'ph ph-arrow-counter-clockwise' : 'ph ph-pencil-simple',
+      toggleEdit: () => this.setState(s => ({ editing: !s.editing, lines: q.lines.map(l => Object.assign({}, l)) })),
+      save: () => { q.lines = this.state.lines; q.amount = sum; q.log = (q.log || []).concat([{ at: now(), text: 'Edited by ' + M.me().name + ' · ' + M.tzs(sum) }]); this.setState({ editing: false }); M.toast(q.id + ' saved'); bump(); },
+      send: async () => { const ok = await M.confirm({ title: 'Send ' + q.id + ' to ' + c.company + '?', body: 'The customer receives the quote by email and WhatsApp and can accept it until ' + M.d(q.valid) + '.', confirm: 'Send quote', icon: 'ph-paper-plane-tilt' }); if (!ok) return; q.status = 'Sent'; if (r.status) r.status = 'Quoted'; M.toast(q.id + ' sent'); bump(); },
+      accept: async () => { const ok = await M.confirm({ title: 'Record acceptance?', body: c.company + ' accepted ' + q.id + ' for ' + M.tzs(q.amount) + '. The request will be confirmed.', confirm: 'Record acceptance', icon: 'ph-check-circle' }); if (!ok) return; q.status = 'Accepted'; if (r.status) r.status = 'Confirmed'; M.toast(q.id + ' accepted'); bump(); },
+      cancel: async () => { const ok = await M.confirm({ title: 'Cancel ' + q.id + '?', body: 'The customer will no longer be able to accept this quote. This cannot be undone.', confirm: 'Cancel quote', danger: true }); if (!ok) return; q.status = 'Cancelled'; this.setState({ editing: false }); M.toast(q.id + ' cancelled'); bump(); },
+      print: () => window.print(),
+      history: hist.slice().reverse().map((a, i, arr) => ({ text: a.text, when: M.rel(a.at), dot: i === 0 ? 'var(--color-accent)' : 'color-mix(in srgb,var(--color-text) 30%,transparent)', line: i === arr.length - 1 ? 'transparent' : 'var(--app-line)' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

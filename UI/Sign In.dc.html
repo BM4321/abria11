@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Sign in | ABRIA</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}@keyframes abria-drive{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px) translateY(-1px)}}</style>
+</helmet>
+<main style="min-height:100vh;display:grid;place-items:center;padding:32px 16px;font-family:Roboto,system-ui,sans-serif">
+  <div style="width:min(420px,100%);display:flex;flex-direction:column;gap:20px">
+    <a href="Home.dc.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--color-text);align-self:center"><span aria-hidden="true" style="width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg);font-weight:700;font-size:20px">A</span><span style="display:flex;flex-direction:column;line-height:1.1"><span style="font-weight:700;font-size:20px;letter-spacing:.08em">ABRIA</span><span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--app-muted)">Staff console</span></span></a>
+    <form noValidate="{{ true }}" onSubmit="{{ submit }}" aria-labelledby="si-h" style="padding:28px;border-radius:20px;background:var(--app-card);box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:16px">
+      <div><h1 id="si-h" style="margin:0;font-size:24px;font-weight:600">Sign in</h1><p style="margin:4px 0 0;font-size:14px;color:var(--app-muted)">For ABRIA managers and administrators.</p></div>
+      <sc-if value="{{ hasError }}"><p role="alert" style="margin:0;padding:12px 14px;border-radius:12px;background:color-mix(in srgb,var(--color-accent-2) 12%,transparent);color:var(--color-accent-2-800);font-size:14px;display:flex;gap:10px;align-items:center"><i class="ph-duotone ph-warning-circle" aria-hidden="true" style="font-size:20px"></i>{{ error }}</p></sc-if>
+      <div style="display:flex;flex-direction:column;gap:6px"><label for="si-e" style="font-size:13px;font-weight:500">Email</label><input id="si-e" class="input" type="email" autoComplete="username" value="{{ email }}" onChange="{{ onEmail }}" style="min-height:46px;border-radius:12px;background:var(--app-page);font-size:15px"></div>
+      <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;align-items:baseline"><label for="si-p" style="font-size:13px;font-weight:500">Password</label><a href="#" onClick="{{ forgot }}" style="font-size:13px;text-decoration:none">Forgot password?</a></div><div style="position:relative"><input id="si-p" class="input" type="{{ pwType }}" autoComplete="current-password" value="{{ pw }}" onChange="{{ onPw }}" style="min-height:46px;border-radius:12px;background:var(--app-page);font-size:15px;padding-right:48px"><button type="button" onClick="{{ togglePw }}" aria-label="{{ pwLabel }}" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--app-muted)"><i class="{{ pwIcon }}" aria-hidden="true" style="font-size:18px"></i></button></div></div>
+      <fieldset style="border:0;margin:0;padding:0"><legend style="font-size:13px;font-weight:500;margin-bottom:8px;padding:0">Sign in as <span style="font-weight:400;color:var(--app-muted)">(prototype)</span></legend><div style="display:flex;padding:3px;border-radius:12px;background:var(--app-page)"><sc-for list="{{ roles }}" as="r"><button type="button" onClick="{{ r.pick }}" aria-pressed="{{ r.on }}" style="flex:1;min-height:40px;border:0;border-radius:9px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;background:{{ r.bg }};color:{{ r.fg }};box-shadow:{{ r.sh }}">{{ r.label }}</button></sc-for></div></fieldset>
+      <button type="submit" class="btn btn-primary" disabled="{{ loading }}" style="min-height:50px;border-radius:12px;font-size:16px"><sc-if value="{{ loading }}"><i class="ph-duotone ph-truck" aria-hidden="true" style="font-size:20px;animation:abria-drive .7s ease-in-out infinite"></i></sc-if>{{ cta }}</button>
+    </form>
+    <p style="margin:0;text-align:center;font-size:13px;color:var(--app-muted)">Not staff? <a href="Home.dc.html">Back to abrialogistics.co.tz</a></p>
+  </div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { email: 'shedrack@abria.example', pw: '', show: false, role: 'manager', loading: false, error: '' };
+  submit(e) {
+    e.preventDefault();
+    const M = window.ABRIA_M; if (!M) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(this.state.email)) return this.setState({ error: 'Enter the email address you were invited with.' });
+    if (this.state.pw.length < 4) return this.setState({ error: 'Incorrect email or password. Check both and try again.' });
+    this.setState({ loading: true, error: '' });
+    setTimeout(() => { M.setRole(this.state.role); location.href = this.state.role === 'admin' ? M.R.admin : M.R.dash; }, 900);
+  }
+  renderVals() {
+    const r = this.state.role;
+    return {
+      email: this.state.email, onEmail: e => this.setState({ email: e.target.value, error: '' }),
+      pw: this.state.pw, onPw: e => this.setState({ pw: e.target.value, error: '' }),
+      pwType: this.state.show ? 'text' : 'password', pwIcon: this.state.show ? 'ph ph-eye-slash' : 'ph ph-eye', pwLabel: this.state.show ? 'Hide password' : 'Show password',
+      togglePw: () => this.setState(s => ({ show: !s.show })),
+      roles: [['manager', 'Manager'], ['admin', 'Admin']].map(x => ({ label: x[1], on: r === x[0], pick: () => this.setState({ role: x[0], email: x[0] === 'admin' ? 'amina@abria.example' : 'shedrack@abria.example' }), bg: r === x[0] ? 'var(--app-card)' : 'transparent', fg: r === x[0] ? 'var(--color-accent-800)' : 'var(--app-muted)', sh: r === x[0] ? 'var(--shadow-sm)' : 'none' })),
+      hasError: !!this.state.error, error: this.state.error,
+      loading: this.state.loading, cta: this.state.loading ? 'Signing in…' : 'Sign in',
+      submit: e => this.submit(e),
+      forgot: e => { e.preventDefault(); window.ABRIA_M && window.ABRIA_M.toast('Password reset links arrive with authentication'); }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Media library | ABRIA Admin</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="web:media" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+  <sc-if value="{{ denied }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="padding:64px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-lock-key" aria-hidden="true" style="font-size:40px;color:var(--color-accent-2-700)"></i><h1 style="margin:14px 0 6px;font-size:22px;font-weight:600">Permission denied</h1><p style="margin:0;color:var(--app-muted)">The media library is limited to administrators.</p><a class="btn btn-secondary" href="Admin%20Media.dc.html?role=admin" style="margin-top:16px;min-height:40px;border-radius:10px;background:var(--app-card)">Switch to admin (prototype)</a></div>
+  </sc-if>
+  <sc-if value="{{ allowed }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px">
+      <div style="margin-right:auto"><nav aria-label="Breadcrumb" style="font-size:13px;color:var(--app-muted)">Website</nav><h1 style="margin:2px 0 0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Media library</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">{{ countText }}</p></div>
+      <label class="btn btn-primary" style="min-height:40px;border-radius:10px;cursor:pointer"><i class="ph ph-upload-simple" aria-hidden="true"></i>Upload<input type="file" accept="image/*" multiple="{{ true }}" onChange="{{ onUpload }}" style="position:absolute;width:1px;height:1px;opacity:0"></label>
+    </div>
+    <label onDragOver="{{ dragOver }}" onDragLeave="{{ dragLeave }}" onDrop="{{ drop }}" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;padding:22px;border-radius:16px;border:2px dashed {{ dropBorder }};background:{{ dropBg }};cursor:pointer;text-align:center;transition:background .15s ease, border-color .15s ease">
+      <i class="ph-duotone ph-cloud-arrow-up" aria-hidden="true" style="font-size:30px;color:var(--color-accent)"></i>
+      <span><span style="display:block;font-size:14.5px;font-weight:500">Drop images here or click to upload</span><span style="display:block;font-size:12.5px;color:var(--app-muted)">JPG, PNG, SVG or WebP · up to 5 MB each · add alt text after upload</span></span>
+      <input type="file" accept="image/*" multiple="{{ true }}" onChange="{{ onUpload }}" style="position:absolute;width:1px;height:1px;opacity:0">
+    </label>
+    <sc-if value="{{ hasUploads }}">
+      <ul aria-label="Uploads" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ uploads }}" as="u"><li style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--app-card);box-shadow:var(--shadow-sm);outline:{{ u.outline }}"><i class="{{ u.icon }}" aria-hidden="true" style="font-size:22px;color:{{ u.ic }}"></i><span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ u.name }}</span><span style="display:block;font-size:12px;color:{{ u.sc }}">{{ u.msg }}</span><span style="display:block;height:4px;margin-top:6px;border-radius:999px;background:var(--app-line);overflow:hidden"><span style="display:block;height:100%;width:{{ u.w }};background:{{ u.bar }};transition:width .5s ease"></span></span></span><button type="button" onClick="{{ u.dismiss }}" aria-label="Dismiss" style="width:32px;height:32px;border-radius:50%;border:0;background:transparent;cursor:pointer;color:var(--app-muted)"><i class="ph ph-x" aria-hidden="true"></i></button></li></sc-for>
+      </ul>
+    </sc-if>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+      <div style="position:relative;flex:1 1 220px;max-width:340px"><i class="ph ph-magnifying-glass" aria-hidden="true" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--app-muted)"></i><input class="input" type="search" value="{{ q }}" onChange="{{ onQ }}" placeholder="Search filename or alt text" aria-label="Search media" style="padding-left:36px;min-height:40px;border-radius:10px;background:var(--app-card)"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ cats }}" as="c"><button type="button" onClick="{{ c.pick }}" aria-pressed="{{ c.on }}" style="min-height:34px;padding:0 12px;border-radius:999px;border:0;font:inherit;font-size:13px;font-weight:500;cursor:pointer;background:{{ c.bg }};color:{{ c.fg }};box-shadow:var(--shadow-sm)">{{ c.label }}</button></sc-for></div>
+      <div role="group" aria-label="View" style="margin-left:auto;display:flex;padding:3px;border-radius:10px;background:var(--app-card);box-shadow:var(--shadow-sm)"><button type="button" onClick="{{ setGrid }}" aria-pressed="{{ isGrid }}" aria-label="Grid view" style="width:36px;height:32px;border:0;border-radius:8px;cursor:pointer;background:{{ gridBg }};color:var(--color-text)"><i class="ph ph-squares-four" aria-hidden="true"></i></button><button type="button" onClick="{{ setList }}" aria-pressed="{{ isList }}" aria-label="List view" style="width:36px;height:32px;border:0;border-radius:8px;cursor:pointer;background:{{ listBg }};color:var(--color-text)"><i class="ph ph-list" aria-hidden="true"></i></button></div>
+    </div>
+    <sc-if value="{{ empty }}"><div style="padding:48px 24px;text-align:center;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><i class="ph-duotone ph-images" aria-hidden="true" style="font-size:36px;color:var(--app-muted)"></i><p style="margin:10px 0 4px;font-size:16px;font-weight:600">No media found</p><p style="margin:0;font-size:14px;color:var(--app-muted)">Try another search or category.</p></div></sc-if>
+    <sc-if value="{{ showGrid }}">
+      <ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:16px">
+        <sc-for list="{{ items }}" as="m">
+          <li><button type="button" onClick="{{ m.open }}" data-ripple="1" style="width:100%;text-align:left;padding:0;border:0;border-radius:16px;overflow:hidden;background:var(--app-card);box-shadow:var(--shadow-sm);cursor:pointer;font:inherit;color:var(--color-text);transition:box-shadow .2s ease, transform .2s ease" style-hover="box-shadow:var(--shadow-md);transform:translateY(-2px)">
+            <span style="display:grid;place-items:center;aspect-ratio:4/3;background:{{ m.tint }};color:{{ m.tintFg }}"><i class="ph-duotone ph-image" aria-hidden="true" style="font-size:36px"></i></span>
+            <span style="display:block;padding:10px 12px 12px"><span style="display:block;font-size:13.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.file }}</span><span style="display:block;font-size:12px;color:var(--app-muted)">{{ m.cat }} · {{ m.size }}</span><sc-if value="{{ m.noAlt }}"><span style="display:inline-block;margin-top:6px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--color-accent-2) 13%,transparent);color:var(--color-accent-2-800)">Missing alt text</span></sc-if></span>
+          </button></li>
+        </sc-for>
+      </ul>
+    </sc-if>
+    <sc-if value="{{ showList }}"><dc-import name="DataTable" compact="{{ true }}" columns="{{ cols }}" rows="{{ rows }}" page-size="{{ 12 }}" delay="{{ 0 }}" noun="media" hint-size="100%,480px"></dc-import></sc-if>
+  </sc-if>
+</div>
+</main>
+<sc-if value="{{ hasSel }}" hint-placeholder-val="{{ false }}">
+  <div class="dialog-backdrop" onClick="{{ closeBg }}" style="z-index:2400;animation:abria-fade .16s ease">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="md-h" style="width:min(760px,100%);padding:0;overflow:hidden;background:var(--app-card);border-radius:16px;animation:abria-in .2s cubic-bezier(.2,.7,.2,1);font-family:Roboto,system-ui,sans-serif;display:flex;flex-wrap:wrap">
+      <div style="flex:1 1 300px;min-height:240px;display:grid;place-items:center;background:{{ sel.tint }};color:{{ sel.tintFg }}"><span style="display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px"><i class="ph-duotone ph-image" aria-hidden="true" style="font-size:56px"></i>{{ sel.dims }}</span></div>
+      <div style="flex:1 1 300px;padding:20px;display:flex;flex-direction:column;gap:12px">
+        <h2 id="md-h" style="margin:0;font-size:17px;font-weight:600;word-break:break-all">{{ sel.file }}</h2>
+        <dl style="margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px"><dt style="color:var(--app-muted)">Size</dt><dd style="margin:0">{{ sel.size }}</dd><dt style="color:var(--app-muted)">Uploaded by</dt><dd style="margin:0">{{ sel.by }}</dd><dt style="color:var(--app-muted)">Date</dt><dd style="margin:0">{{ sel.date }}</dd></dl>
+        <div style="display:flex;flex-direction:column;gap:6px"><label for="md-alt" style="font-size:13px;font-weight:500">Alt text</label><textarea id="md-alt" class="input" value="{{ alt }}" onChange="{{ onAlt }}" placeholder="Describe the image for screen readers" style="min-height:70px;border-radius:10px;background:var(--app-page)"></textarea></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><label for="md-cat" style="font-size:13px;font-weight:500">Category</label><select id="md-cat" class="input" value="{{ cat }}" onChange="{{ onCat }}" style="min-height:40px;border-radius:10px;background:var(--app-page)"><sc-for list="{{ catOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:8px"><button type="button" onClick="{{ del }}" class="btn btn-secondary" style="min-height:40px;border-radius:10px;color:var(--color-accent-2-700);margin-right:auto"><i class="ph ph-trash" aria-hidden="true"></i>Delete</button><button type="button" onClick="{{ close }}" class="btn btn-secondary" style="min-height:40px;border-radius:10px">Close</button><button type="button" onClick="{{ saveSel }}" class="btn btn-primary" style="min-height:40px;border-radius:10px">Save</button></div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { ready: false, view: 'grid', q: '', cat: 'All', sel: null, alt: '', selCat: '', uploads: [], over: false, tick: 0 };
+  componentDidMount() { const b = () => (window.ABRIA_M ? this.setState({ ready: true }) : setTimeout(b, 30)); b(); }
+  addFiles(files) {
+    const M = window.ABRIA_M;
+    Array.from(files || []).forEach((f, k) => {
+      const id = Date.now() + '-' + k, ok = f.size <= 5 * 1024 * 1024 && /^image\//.test(f.type || 'image/');
+      this.setState(s => ({ uploads: s.uploads.concat([{ id, name: f.name, p: 10, ok, done: false, size: f.size }]) }));
+      setTimeout(() => this.setState(s => ({ uploads: s.uploads.map(u => u.id === id ? Object.assign({}, u, { p: ok ? 70 : 35 }) : u) })), 250);
+      setTimeout(() => {
+        this.setState(s => ({ uploads: s.uploads.map(u => u.id === id ? Object.assign({}, u, { p: 100, done: true }) : u) }));
+        if (ok) { M.DATA.media.unshift({ id: 'M' + id, file: f.name, cat: 'General', alt: '', by: M.me().name, at: M.TODAY, size: (f.size / 1048576).toFixed(1) + ' MB', dims: '—' }); M.toast(f.name + ' uploaded'); }
+        else M.toast('Upload failed: ' + f.name, { tone: 'bad' });
+      }, 900);
+    });
+  }
+  renderVals() {
+    const M = window.ABRIA_M, E = { cats: [], items: [], uploads: [], catOpts: [] };
+    if (!M) return Object.assign({ allowed: true }, E);
+    if (M.role() !== 'admin') return Object.assign({ denied: true }, E);
+    const CATS = ['Homepage', 'Solutions', 'About', 'Partners', 'Team', 'General'];
+    const tint = { Homepage: 'accent', Solutions: 'accent-2', About: 'process-yellow', Partners: 'accent', Team: 'accent-2', General: 'text' };
+    const t = c => ({ tint: 'color-mix(in srgb,var(--color-' + tint[c] + ') 14%,var(--app-card))', tintFg: tint[c] === 'text' ? 'var(--app-muted)' : 'var(--color-' + (tint[c] === 'process-yellow' ? 'text' : tint[c]) + ')' });
+    const q = this.state.q.toLowerCase(), cat = this.state.cat;
+    const list = M.DATA.media.filter(m => (cat === 'All' || m.cat === cat) && (!q || (m.file + ' ' + m.alt).toLowerCase().indexOf(q) > -1));
+    const sel = this.state.sel;
+    const bump = () => this.setState(s => ({ tick: s.tick + 1 }));
+    const drop = e => { e.preventDefault(); this.setState({ over: false }); this.addFiles(e.dataTransfer.files); };
+    const openItem = m => this.setState({ sel: m, alt: m.alt, selCat: m.cat });
+    return Object.assign({}, E, {
+      allowed: true, countText: M.DATA.media.length + ' items · ' + M.DATA.media.filter(m => !m.alt).length + ' missing alt text',
+      onUpload: e => { this.addFiles(e.target.files); e.target.value = ''; },
+      dragOver: e => { e.preventDefault(); if (!this.state.over) this.setState({ over: true }); }, dragLeave: () => this.setState({ over: false }), drop,
+      dropBorder: this.state.over ? 'var(--color-accent)' : 'var(--color-divider)', dropBg: this.state.over ? 'color-mix(in srgb,var(--color-accent) 8%,transparent)' : 'transparent',
+      hasUploads: this.state.uploads.length > 0,
+      uploads: this.state.uploads.map(u => ({ name: u.name, w: u.p + '%', icon: u.done ? (u.ok ? 'ph-duotone ph-check-circle' : 'ph-duotone ph-warning-circle') : 'ph-duotone ph-image', ic: u.done && !u.ok ? 'var(--color-accent-2)' : 'var(--color-accent)',
+        msg: !u.done ? 'Uploading… ' + u.p + '%' : u.ok ? 'Uploaded · add alt text' : 'Upload failed: files must be images under 5 MB', sc: u.done && !u.ok ? 'var(--color-accent-2-700)' : 'var(--app-muted)',
+        bar: u.done && !u.ok ? 'var(--color-accent-2)' : 'var(--color-accent)', outline: u.done && !u.ok ? '1.5px solid var(--color-accent-2)' : 'none',
+        dismiss: () => this.setState(s => ({ uploads: s.uploads.filter(x => x.id !== u.id) })) })),
+      q: this.state.q, onQ: e => this.setState({ q: e.target.value }),
+      cats: ['All'].concat(CATS).map(c => ({ label: c, on: cat === c, pick: () => this.setState({ cat: c }), bg: cat === c ? 'var(--color-accent)' : 'var(--app-card)', fg: cat === c ? 'var(--color-bg)' : 'var(--color-text)' })),
+      isGrid: this.state.view === 'grid', isList: this.state.view === 'list', setGrid: () => this.setState({ view: 'grid' }), setList: () => this.setState({ view: 'list' }),
+      gridBg: this.state.view === 'grid' ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent', listBg: this.state.view === 'list' ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent',
+      empty: !list.length, showGrid: list.length > 0 && this.state.view === 'grid', showList: list.length > 0 && this.state.view === 'list',
+      items: list.map(m => Object.assign({ file: m.file, cat: m.cat, size: m.size, noAlt: !m.alt, open: () => openItem(m) }, t(m.cat))),
+      cols: [{ key: 'file', label: 'File' }, { key: 'cat', label: 'Category' }, { key: 'alt', label: 'Alt text', wrap: true }, { key: 'by', label: 'Uploaded by' }, { key: 'at', label: 'Date' }],
+      rows: list.map(m => ({ id: m.id, cells: { file: { t: m.file, sub: m.size }, cat: M.C.t(m.cat), alt: m.alt ? M.C.t(m.alt) : M.C.b('Pending', 'Missing alt text'), by: M.C.t(m.by), at: M.C.t(M.dShort(m.at)) }, actions: [{ label: 'Details', icon: 'ph-pencil-simple', onClick: () => openItem(m) }] })),
+      hasSel: !!sel, sel: sel ? Object.assign({ file: sel.file, size: sel.size, by: sel.by, date: M.d(sel.at), dims: sel.dims }, t(sel.cat)) : {},
+      alt: this.state.alt, onAlt: e => this.setState({ alt: e.target.value }), cat: this.state.selCat, onCat: e => this.setState({ selCat: e.target.value }), catOpts: CATS,
+      close: () => this.setState({ sel: null }), closeBg: e => { if (e.target === e.currentTarget) this.setState({ sel: null }); },
+      saveSel: () => { sel.alt = this.state.alt.trim(); sel.cat = this.state.selCat; this.setState({ sel: null }); M.toast('Media details saved'); },
+      del: async () => { const ok = await M.confirm({ title: 'Delete ' + sel.file + '?', body: 'Pages using this image will show an empty placeholder until you choose another. This cannot be undone.', confirm: 'Delete', danger: true }); if (!ok) return; M.DATA.media.splice(M.DATA.media.indexOf(sel), 1); this.setState({ sel: null }); M.toast(sel.file + ' deleted'); bump(); }
+    });
+  }
+}
+</script>
+</body>
+</html>

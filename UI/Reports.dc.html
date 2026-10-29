@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Reports | ABRIA Operations</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<script src="_ds/broadsheet-76d094bf-a515-4560-a98d-59aa4166844d/_ds_bundle.js"></script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<script src="abria-data.js"></script>
+<script src="abria-mock.js"></script>
+<style>:root{--radius-sm:6px;--radius-md:10px;--radius-lg:16px;--font-heading:"Roboto",system-ui,sans-serif;--font-body:"Roboto",system-ui,sans-serif}body{margin:0;background:var(--app-page,#eae9e9);font-size:14px}a:not(.btn){color:var(--color-accent-700)}a:not(.btn):hover{color:var(--color-accent)}</style>
+</helmet>
+<dc-import name="Shell" active="reports" hint-size="100%,0px"></dc-import>
+<main style="padding:88px clamp(16px,3vw,32px) 56px calc(var(--shell-w,0px) + clamp(16px,3vw,32px));transition:padding-left .25s cubic-bezier(.4,0,.2,1);font-family:Roboto,system-ui,sans-serif">
+<div style="max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:24px">
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px">
+    <div style="margin-right:auto"><h1 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-0.01em">Reports</h1><p style="margin:4px 0 0;font-size:15px;color:var(--app-muted)">{{ periodText }}</p></div>
+    <div role="group" aria-label="Date range" style="display:flex;flex-wrap:wrap;padding:3px;border-radius:12px;background:var(--app-card);box-shadow:var(--shadow-sm)">
+      <sc-for list="{{ ranges }}" as="r"><button type="button" onClick="{{ r.pick }}" aria-pressed="{{ r.on }}" style="min-height:34px;padding:0 12px;border:0;border-radius:9px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;background:{{ r.bg }};color:{{ r.fg }}">{{ r.label }}</button></sc-for>
+    </div>
+    <sc-if value="{{ custom }}"><div style="display:flex;gap:6px;align-items:center"><label for="rf" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">From</label><input id="rf" class="input" type="date" value="{{ from }}" onChange="{{ onFrom }}" style="min-height:40px;border-radius:10px;background:var(--app-card);width:auto"><span aria-hidden="true">–</span><label for="rt" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">To</label><input id="rt" class="input" type="date" value="{{ to }}" onChange="{{ onTo }}" style="min-height:40px;border-radius:10px;background:var(--app-card);width:auto"></div></sc-if>
+    <select class="input" aria-label="Region" value="{{ region }}" onChange="{{ onRegion }}" style="width:auto;min-height:40px;border-radius:10px;background:var(--app-card)"><option value="">All regions</option><sc-for list="{{ regionOpts }}" as="o"><option value="{{ o }}">{{ o }}</option></sc-for></select>
+    <button type="button" class="btn btn-primary" onClick="{{ exportCsv }}" style="min-height:40px;border-radius:10px"><i class="ph ph-download-simple" aria-hidden="true"></i>Export</button>
+  </div>
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="4">
+    <section aria-label="{{ sec.title }}" style="display:flex;flex-direction:column;gap:14px">
+      <h2 style="margin:0;font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--app-muted)">{{ sec.title }}</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:16px">
+        <sc-for list="{{ sec.kpis }}" as="k"><div style="padding:16px 18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm)"><div style="font-size:13px;color:var(--app-muted)">{{ k.k }}</div><div style="display:flex;align-items:baseline;gap:10px;margin-top:4px"><span style="font-size:26px;font-weight:600;font-feature-settings:'tnum' 1">{{ k.v }}</span><span style="font-size:12px;font-weight:500;color:{{ k.dc }}">{{ k.d }}</span></div></div></sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:16px">
+        <sc-for list="{{ sec.charts }}" as="ch">
+          <div style="padding:18px;border-radius:16px;background:var(--app-card);box-shadow:var(--shadow-sm);min-width:0">
+            <h3 style="margin:0;font-size:15px;font-weight:600">{{ ch.title }}</h3>
+            <p style="margin:2px 0 14px;font-size:12.5px;color:var(--app-muted)">{{ ch.sub }}</p>
+            <sc-if value="{{ ch.isCols }}">
+              <div role="img" aria-label="{{ ch.aria }}" style="display:flex;align-items:flex-end;gap:6px;height:160px;padding-bottom:20px">
+                <sc-for list="{{ ch.bars }}" as="b"><div style="flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px;position:relative;min-width:0"><span style="display:flex;gap:2px;align-items:flex-end;height:100%;width:100%;justify-content:center"><span title="{{ b.t1 }}" style="width:42%;max-width:16px;height:{{ b.h1 }};border-radius:5px 5px 2px 2px;background:var(--color-accent);transition:height .5s cubic-bezier(.2,.7,.2,1)"></span><span title="{{ b.t2 }}" style="width:42%;max-width:16px;height:{{ b.h2 }};border-radius:5px 5px 2px 2px;background:var(--color-accent-2);opacity:.85;transition:height .5s cubic-bezier(.2,.7,.2,1)"></span></span><span style="position:absolute;bottom:-18px;font-size:10.5px;color:var(--app-muted);white-space:nowrap">{{ b.l }}</span></div></sc-for>
+              </div>
+              <div style="display:flex;gap:16px;font-size:12px;color:var(--app-muted)"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:var(--color-accent)"></span>{{ ch.s1 }}</span><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:var(--color-accent-2)"></span>{{ ch.s2 }}</span></div>
+            </sc-if>
+            <sc-if value="{{ ch.isRows }}">
+              <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px">
+                <sc-for list="{{ ch.rows }}" as="r"><li><div style="display:flex;justify-content:space-between;gap:10px;font-size:13.5px;margin-bottom:5px"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.l }}</span><strong style="font-weight:600;font-feature-settings:'tnum' 1">{{ r.v }}</strong></div><div style="height:8px;border-radius:999px;background:var(--app-line);overflow:hidden"><div style="height:100%;width:{{ r.w }};border-radius:999px;background:{{ r.c }};transition:width .5s cubic-bezier(.2,.7,.2,1)"></div></div></li></sc-for>
+              </ul>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+  <p style="margin:0;font-size:12px;color:var(--app-muted)">Prototype: report figures are mock data and scale with the selected range.</p>
+</div>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { range: '30', region: '', from: '2026-09-01', to: '2026-09-25' };
+  componentDidMount() { const b = () => (window.ABRIA_M ? this.forceUpdate() : setTimeout(b, 30)); b(); }
+  renderVals() {
+    const M = window.ABRIA_M;
+    if (!M) return { sections: [], ranges: [], regionOpts: [] };
+    const R = this.state.range, f = { '7': 0.25, '30': 1, '90': 2.9, 'ytd': 8.4, 'custom': 0.85 }[R], rf = this.state.region ? 0.34 : 1;
+    const n = v => Math.max(1, Math.round(v * f * rf));
+    const T = M.TONES, up = v => ({ d: (v >= 0 ? '▲ ' : '▼ ') + Math.abs(v) + '%', dc: v >= 0 ? T.ok.fg : T.bad.fg });
+    const bars = (a, b, labels) => { const mx = Math.max(...a, ...b); return a.map((v, i) => ({ l: labels[i], h1: (v / mx * 100).toFixed(0) + '%', h2: (b[i] / mx * 100).toFixed(0) + '%', t1: v + '', t2: b[i] + '' })); };
+    const rows = (list, color) => { const mx = Math.max(...list.map(x => x[1])); return list.map(x => ({ l: x[0], v: x[1], w: (x[1] / mx * 100).toFixed(0) + '%', c: color || 'var(--color-accent)' })); };
+    const wk = ['W31', 'W32', 'W33', 'W34', 'W35', 'W36', 'W37', 'W38'];
+    const req = [24, 29, 27, 34, 30, 38, 35, 41].map(n), shp = [18, 21, 22, 26, 24, 30, 28, 33].map(n);
+    const regions = ['Dar es Salaam', 'Arusha', 'Dodoma', 'Mwanza', 'Mbeya', 'Moshi', 'Tanga'];
+    const ranges = [['7', '7 days'], ['30', '30 days'], ['90', '90 days'], ['ytd', 'Year to date'], ['custom', 'Custom']].map(r => ({ label: r[1], on: R === r[0], pick: () => this.setState({ range: r[0] }), bg: R === r[0] ? 'color-mix(in srgb,var(--color-accent) 16%,transparent)' : 'transparent', fg: R === r[0] ? 'var(--color-accent-800)' : 'var(--color-text)' }));
+    const label = { '7': 'Last 7 days · 19–25 Sep 2026', '30': 'Last 30 days · 27 Aug – 25 Sep 2026', '90': 'Last 90 days · 28 Jun – 25 Sep 2026', 'ytd': 'Year to date · 1 Jan – 25 Sep 2026', 'custom': M.d(this.state.from) + ' – ' + M.d(this.state.to) }[R] + (this.state.region ? ' · ' + this.state.region : ' · All regions');
+    const sections = [
+      { title: 'Operations', kpis: [Object.assign({ k: 'Requests', v: n(128) }, up(12.4)), Object.assign({ k: 'Shipments', v: n(96) }, up(8.1)), Object.assign({ k: 'Deliveries', v: n(69) }, up(9.8)), Object.assign({ k: 'Cancellations', v: n(4) }, up(-20))],
+        charts: [{ isCols: true, title: 'Requests and shipments', sub: 'Per week', s1: 'Requests', s2: 'Shipments', bars: bars(req, shp, wk), aria: 'Weekly requests and shipments, rising over the period' },
+          { isRows: true, title: 'Request outcomes', sub: 'Share of requests by final status', rows: rows([['Confirmed', n(71)], ['Quoted, awaiting decision', n(22)], ['Under review', n(19)], ['Rejected', n(9)], ['Expired quotes', n(7)]]) }] },
+      { title: 'Customers', kpis: [Object.assign({ k: 'New customers', v: n(14) }, up(16.7)), Object.assign({ k: 'Active customers', v: n(46) }, up(4.5)), Object.assign({ k: 'Repeat customers', v: n(29) }, up(7.4)), Object.assign({ k: 'Repeat rate', v: '63%' }, up(2.1))],
+        charts: [{ isRows: true, title: 'Top customers by requests', sub: 'Fictional sample customers', rows: rows(M.DATA.customers.slice(0, 5).map((c, i) => [c.company, n([14, 11, 9, 8, 6][i])])) }] },
+      { title: 'Carriers', kpis: [Object.assign({ k: 'Registered carriers', v: 84 }, up(6.3)), Object.assign({ k: 'Active carriers', v: n(52) }, up(3.9)), Object.assign({ k: 'Jobs completed', v: n(69) }, up(9.8)), Object.assign({ k: 'On-time delivery', v: '91%' }, up(1.2))],
+        charts: [{ isRows: true, title: 'Jobs completed by carrier', sub: 'Top five', rows: rows(M.DATA.carriers.filter(k => k.completed).sort((a, b) => b.completed - a.completed).slice(0, 5).map(k => [k.company, n(k.completed / 3)]), 'var(--color-accent-2)') }] },
+      { title: 'Geography', kpis: [],
+        charts: [{ isRows: true, title: 'Requests by region', sub: 'Pickup region', rows: rows(regions.map((r, i) => [r, n([44, 21, 17, 14, 12, 9, 7][i])])) },
+          { isRows: true, title: 'Deliveries by region', sub: 'Destination region', rows: rows(regions.map((r, i) => [r, n([24, 13, 11, 8, 7, 6, 4][i])]), 'var(--color-accent-2)') },
+          { isRows: true, title: 'Popular routes', sub: 'By number of requests', rows: rows([['Dar es Salaam → Arusha', n(21)], ['Dar es Salaam → Dodoma', n(17)], ['Dar es Salaam → Mwanza', n(12)], ['Dar es Salaam → Mbeya', n(10)], ['Arusha → Dar es Salaam Port', n(8)]]) }] }
+    ];
+    return {
+      ranges, custom: R === 'custom', from: this.state.from, to: this.state.to,
+      onFrom: e => this.setState({ from: e.target.value }), onTo: e => this.setState({ to: e.target.value }),
+      region: this.state.region, regionOpts: regions, onRegion: e => this.setState({ region: e.target.value }),
+      periodText: label, sections,
+      exportCsv: () => M.toast('Report exported: abria-report-' + R + '.csv', { icon: 'ph-download-simple' })
+    };
+  }
+}
+</script>
+</body>
+</html>
