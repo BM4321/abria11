@@ -3,7 +3,7 @@ import { requireRole, deniedPath } from "@/lib/auth";
 import { REQUEST_MANAGER_ROLES } from "@/lib/roles";
 import { redirect } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
-import { requestUiStatus, shipmentUiStatus } from "@/lib/console";
+import { REPORT_EXPORTS, buildSummary, parseRange, presetRanges, rangeLabel } from "@/lib/reports";
 
 export const dynamic = "force-dynamic";
 
@@ -36,72 +36,136 @@ function Bars({ data }: { data: { label: string; value: number }[] }) {
   );
 }
 
-export default async function ReportsPage() {
+function rangeQuery(from: string, to: string, extra: Record<string, string> = {}) {
+  const q = new URLSearchParams(extra);
+  if (from) q.set("from", from);
+  if (to) q.set("to", to);
+  const str = q.toString();
+  return str ? `?${str}` : "";
+}
+
+export default async function ReportsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string; to?: string }>;
+}) {
   const access = await requireRole([...REQUEST_MANAGER_ROLES]);
   if (!access.allowed) redirect(deniedPath(access.reason));
 
+  const params = await searchParams;
+  const range = parseRange(params.from, params.to);
+  const period = rangeLabel(range);
+
   const [requests, shipments] = await Promise.all([
-    prisma.request.findMany(),
-    prisma.shipment.findMany(),
+    prisma.request.findMany({ where: { createdAt: range.where } }),
+    prisma.shipment.findMany({ where: { createdAt: range.where } }),
   ]);
 
-  const byStatus = ["New", "Reviewing", "Quoted", "Confirmed", "Rejected"].map((s) => ({
-    label: s,
-    value: requests.filter((r) => requestUiStatus(r.status) === s).length,
-  }));
+  const summary = buildSummary(requests, shipments);
+  const { byStatus, shipmentStatus, cargo } = summary;
+  const routes = summary.routes.slice(0, 8);
+  const regions = summary.regions.slice(0, 8);
 
-  const routeCounts = new Map<string, number>();
-  for (const r of requests) {
-    const k = `${r.pickupLocation} → ${r.deliveryLocation}`;
-    routeCounts.set(k, (routeCounts.get(k) ?? 0) + 1);
-  }
-  const routes = [...routeCounts.entries()]
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
-
-  const regionCounts = new Map<string, number>();
-  for (const s of shipments) {
-    regionCounts.set(s.deliveryLocation, (regionCounts.get(s.deliveryLocation) ?? 0) + 1);
-  }
-  const regions = [...regionCounts.entries()]
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
-
-  const cargoCounts = new Map<string, number>();
-  for (const r of requests) {
-    cargoCounts.set(r.cargoType, (cargoCounts.get(r.cargoType) ?? 0) + 1);
-  }
-  const cargo = [...cargoCounts.entries()]
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value);
-
-  const shipmentStatus = ["Assigned", "Picked Up", "In Transit", "Out for Delivery", "Delivered"].map((s) => ({
-    label: s,
-    value: shipments.filter((x) => shipmentUiStatus(x.status) === s).length,
+  const presets = presetRanges().map((p) => ({
+    ...p,
+    on: p.from === range.from && p.to === range.to,
   }));
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <PageHeader title="Reports" subtitle="Requests, routes and delivery performance drawn from live records." />
+
+      <Card title="Period" sub={`Showing records created: ${period}. Dates are in Tanzania time.`}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+            {presets.map((p) => (
+              <a
+                key={p.label}
+                href={`/operations/reports${rangeQuery(p.from, p.to)}`}
+                aria-current={p.on ? "true" : undefined}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  minHeight: 36,
+                  padding: "0 14px",
+                  borderRadius: 999,
+                  textDecoration: "none",
+                  fontSize: 13.5,
+                  fontWeight: 500,
+                  background: p.on ? "var(--color-accent)" : "var(--app-card)",
+                  color: p.on ? "var(--color-bg)" : "var(--color-text)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
+                {p.label}
+              </a>
+            ))}
+          </div>
+          <form method="get" action="/operations/reports" style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 12 }}>
+            <div className="field" style={{ minWidth: 0, flex: "1 1 160px", maxWidth: 220 }}>
+              <label htmlFor="report-from">From</label>
+              <input id="report-from" name="from" type="date" className="input" defaultValue={range.from} max={range.to || undefined} />
+            </div>
+            <div className="field" style={{ minWidth: 0, flex: "1 1 160px", maxWidth: 220 }}>
+              <label htmlFor="report-to">To</label>
+              <input id="report-to" name="to" type="date" className="input" defaultValue={range.to} min={range.from || undefined} />
+            </div>
+            <button type="submit" className="btn btn-primary" style={{ minHeight: 42 }}>
+              Apply
+            </button>
+          </form>
+        </div>
+      </Card>
+
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,340px),1fr))", gap: 20 }}>
-        <Card title="Requests by status" sub="All time">
+        <Card title="Requests by status" sub={`${period} · ${requests.length} total`}>
           <Bars data={byStatus} />
         </Card>
-        <Card title="Shipments by status" sub="All time">
+        <Card title="Shipments by status" sub={`${period} · ${shipments.length} total`}>
           <Bars data={shipmentStatus} />
         </Card>
         <Card title="Popular routes" sub="Requests">
-          {routes.length ? <Bars data={routes} /> : <p style={{ margin: 0, fontSize: 14, color: "var(--app-muted)" }}>No route data yet.</p>}
+          {routes.length ? <Bars data={routes} /> : <p style={{ margin: 0, fontSize: 14, color: "var(--app-muted)" }}>No route data for this period.</p>}
         </Card>
         <Card title="Deliveries by region" sub="Shipment destinations">
-          {regions.length ? <Bars data={regions} /> : <p style={{ margin: 0, fontSize: 14, color: "var(--app-muted)" }}>No shipment data yet.</p>}
+          {regions.length ? <Bars data={regions} /> : <p style={{ margin: 0, fontSize: 14, color: "var(--app-muted)" }}>No shipment data for this period.</p>}
         </Card>
         <Card title="Cargo types" sub="Requests">
-          {cargo.length ? <Bars data={cargo} /> : <p style={{ margin: 0, fontSize: 14, color: "var(--app-muted)" }}>No cargo data yet.</p>}
+          {cargo.length ? <Bars data={cargo} /> : <p style={{ margin: 0, fontSize: 14, color: "var(--app-muted)" }}>No cargo data for this period.</p>}
         </Card>
       </div>
+
+      <Card title="Download reports" sub={`CSV files for ${period}. They open in Excel, Google Sheets or Numbers.`}>
+        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column" }}>
+          {REPORT_EXPORTS.map((r, i) => (
+            <li
+              key={r.key}
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: "8px 16px",
+                padding: "12px 0",
+                borderTop: i ? "1px solid var(--app-line)" : undefined,
+              }}
+            >
+              <div style={{ flex: "1 1 240px", minWidth: 0 }}>
+                <p style={{ margin: 0, fontSize: 14.5, fontWeight: 600 }}>{r.label}</p>
+                <p style={{ margin: "2px 0 0", fontSize: 13, color: "var(--app-muted)" }}>{r.description}</p>
+              </div>
+              <a
+                className="btn btn-secondary"
+                href={`/api/reports/export${rangeQuery(range.from, range.to, { type: r.key })}`}
+                download
+                style={{ minHeight: 38, gap: 8, textDecoration: "none" }}
+              >
+                <i className="ph-duotone ph-download-simple" aria-hidden="true" style={{ fontSize: 17 }} />
+                Download CSV
+              </a>
+            </li>
+          ))}
+        </ul>
+      </Card>
     </div>
   );
 }
